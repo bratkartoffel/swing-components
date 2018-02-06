@@ -1,16 +1,21 @@
-wfhcommon-gui
+swing-components
 ====
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/se.wfh.libs.common/gui/badge.svg)](https://maven-badges.herokuapp.com/maven-central/se.wfh.libs.common/gui)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/eu.fraho.libs/swing-components/badge.svg)](https://maven-badges.herokuapp.com/maven-central/eu.fraho.libs/swing-components)
+[![Build Status](https://travis-ci.org/bratkartoffel/swing-components.svg?branch=develop)](https://travis-ci.org/bratkartoffel/swing-components)
+[![Code Coverage](https://img.shields.io/codecov/c/github/bratkartoffel/swing-components/develop.svg)](https://codecov.io/github/bratkartoffel/swing-components?branch=develop)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3632c543331d4fe3b98c96a2964d43ae)](https://www.codacy.com/app/bratkartoffel/swing-components?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bratkartoffel/swing-components&amp;utm_campaign=Badge_Grade)
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://doge.mit-license.org)
 
-Some java helper classes (gui parts) I needed for several projects.
+
+Some swing components I needed for several projects.
 
 Usage: (in pom.xml)
 ```xml
 	<dependency>
-		<groupId>se.wfh.libs.common</groupId>
-		<artifactId>gui</artifactId>
-		<version>0.17</version>
+		<groupId>eu.fraho.libs</groupId>
+		<artifactId>swing-components</artifactId>
+		<version>0.1.0</version>
 	</dependency>
 ```
 
@@ -61,7 +66,7 @@ Usage:
 As usual, the JUnit Testcases act as examples. Furthermore, several Demo
 applications are bundled with the test cases, containing all gui widgets to
 play with.
-The best example (in my opinion) is the "Demo2" application. It shows all the gui elements and has an underlying FormModel.
+The best example (in my opinion) is the "Demo" application. It shows all the gui elements and has an underlying FormModel.
 
 Screenshots:
 ====

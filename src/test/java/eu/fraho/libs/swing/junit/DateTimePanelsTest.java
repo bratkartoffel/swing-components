@@ -6,7 +6,6 @@
  */
 package eu.fraho.libs.swing.junit;
 
-import eu.fraho.libs.swing.manual.DemoDateTime;
 import eu.fraho.libs.swing.widgets.WDatePanel;
 import eu.fraho.libs.swing.widgets.WDateTimePanel;
 import eu.fraho.libs.swing.widgets.WTimePanel;
@@ -32,11 +31,7 @@ import java.util.Locale;
 
 @Slf4j
 @SuppressWarnings("Duplicates")
-public class DemoDateTimeTest {
-    static {
-        Locale.setDefault(Locale.GERMANY);
-    }
-
+public class DateTimePanelsTest {
     @Getter
     private FrameFixture window;
 
@@ -47,8 +42,9 @@ public class DemoDateTimeTest {
 
     @Before
     public void setUp() {
+        Locale.setDefault(Locale.GERMANY);
         AbstractWComponent.clearCounters();
-        window = new FrameFixture(GuiActionRunner.execute(DemoDateTime::new));
+        window = new FrameFixture(GuiActionRunner.execute(DateTimePanels::new));
         window.show();
     }
 

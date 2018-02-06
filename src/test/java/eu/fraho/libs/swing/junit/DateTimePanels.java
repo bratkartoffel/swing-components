@@ -1,31 +1,31 @@
-package eu.fraho.libs.swing.manual;
+package eu.fraho.libs.swing.junit;
 
-import eu.fraho.libs.swing.manual.model.DemoModel;
+import eu.fraho.libs.swing.widgets.WDatePanel;
+import eu.fraho.libs.swing.widgets.WDateTimePanel;
+import eu.fraho.libs.swing.widgets.WTimePanel;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
+import eu.fraho.libs.swing.widgets.form.FormField;
+import eu.fraho.libs.swing.widgets.form.FormModel;
 import eu.fraho.libs.swing.widgets.form.WForm;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Locale;
 
 @Slf4j
 @SuppressWarnings("Duplicates")
-public class Demo extends JFrame {
-    static {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Throwable e) {
-            log.error("Unable to set l&f", e);
-        }
-    }
-
-    private WForm<DemoModel> form;
-    private DemoModel model = new DemoModel();
+public class DateTimePanels extends JFrame {
+    private WForm<Model> form;
+    private Model model = new Model();
     private JPanel pnlCenter = new JPanel();
 
-    public Demo() {
-        setSize(550, 500);
+    public DateTimePanels() {
+        setSize(550, 650);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setupCenter();
@@ -34,7 +34,7 @@ public class Demo extends JFrame {
     }
 
     public static void main(String[] args) {
-        new Demo().setVisible(true);
+        new DateTimePanels().setVisible(true);
     }
 
     private void setupCenter() {
@@ -67,7 +67,7 @@ public class Demo extends JFrame {
 
         JButton setLocaleAr = new JButton("locale ar");
         setLocaleAr.addActionListener(event -> changeLocale(Locale.forLanguageTag("ar-sa")));
-        setLocaleAr.setName("locale-ar");
+        setLocaleAr.setName("locale-fr");
 
         JButton setLocaleRu = new JButton("locale ru");
         setLocaleRu.addActionListener(event -> changeLocale(Locale.forLanguageTag("ru-ru")));
@@ -75,7 +75,7 @@ public class Demo extends JFrame {
 
         JButton setLocaleCn = new JButton("locale cn");
         setLocaleCn.addActionListener(event -> changeLocale(Locale.CHINA));
-        setLocaleCn.setName("locale-cn");
+        setLocaleCn.setName("locale-ru");
 
         JButton readonly = new JButton("readonly");
         readonly.addActionListener(event -> form.setReadonly(!form.isReadonly()));
@@ -114,5 +114,17 @@ public class Demo extends JFrame {
 
     private void dataChanged(DataChangedEvent dataChangedEvent) {
         log.info(dataChangedEvent.getSource().getName() + ": " + dataChangedEvent.toString());
+    }
+
+    @Data
+    public static class Model implements FormModel {
+        @FormField(caption = "WDatePanel", type = WDatePanel.class)
+        private LocalDate valDatePanel = LocalDate.of(2017, 4, 13);
+
+        @FormField(caption = "WTimePanel", type = WTimePanel.class)
+        private LocalTime valTimePanel = LocalTime.of(15, 3, 14);
+
+        @FormField(caption = "WDateTimePanel", type = WDateTimePanel.class, columns = 15)
+        private LocalDateTime valDateTimePanel = LocalDateTime.of(2014, 2, 13, 7, 14, 3);
     }
 }
