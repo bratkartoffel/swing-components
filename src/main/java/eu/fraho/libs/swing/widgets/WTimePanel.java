@@ -4,6 +4,10 @@ import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +20,8 @@ import java.util.Locale;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("unused")
+@Slf4j
 public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     // components
     private final JPanel pnlControls = new JPanel(new GridLayout(1, 4));
@@ -38,12 +44,24 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         this(null);
     }
 
-    public WTimePanel(LocalTime defval) {
+    public WTimePanel(@Nullable LocalTime defval) {
         super(defval);
 
         spnHour = new WSpinner<>(new SpinnerNumberModel(0, 0, 23, 1));
         spnMinute = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
         spnSecond = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
+
+        Dimension size = spnHour.getComponent().getPreferredSize();
+        size.width = 50;
+        spnHour.setPreferredSize(size);
+        spnHour.setColumns(2);
+        spnHour.setName("hour");
+        spnMinute.setPreferredSize(size);
+        spnMinute.setColumns(2);
+        spnMinute.setName("minute");
+        spnSecond.setPreferredSize(size);
+        spnSecond.setColumns(2);
+        spnSecond.setName("second");
 
         setSpinnerValue(defval);
 
@@ -63,7 +81,8 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     }
 
     @Override
-    protected void currentValueChanging(LocalTime newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable LocalTime newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         setSpinnerValue(newVal);
     }
 
@@ -73,7 +92,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     }
 
     @Override
-    public void setValue(LocalTime value) throws ChangeVetoException {
+    public void setValue(@Nullable LocalTime value) throws ChangeVetoException {
         try {
             massUpdateRunning = true;
             super.setValue(value);
@@ -117,7 +136,8 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     private void populateDetails() {
         lblNow.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent event) {
+            public void mouseClicked(@NotNull @NonNull MouseEvent event) {
+                log.debug("{}: Clicked on label with current time", getName());
                 if (!spnHour.isReadonly()) {
                     setValue(LocalTime.now().withNano(0));
                 }
@@ -144,13 +164,13 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         pnlDetails.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
     }
 
-    @Override
-    protected void setInDateTimePanel(boolean flag) {
-        super.setInDateTimePanel(flag);
-        pnlDetails.setVisible(!flag);
+    protected void setInDateTimePanel() {
+        super.setInDateTimePanel(true);
+        pnlDetails.setVisible(false);
     }
 
-    private void setSpinnerValue(LocalTime value) {
+    private void setSpinnerValue(@Nullable LocalTime value) {
+        log.debug("{}: Setting spinner values to ", getName(), value);
         if (value != null) {
             spnHour.setValue(value.getHour());
             spnMinute.setValue(value.getMinute());
@@ -162,14 +182,19 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         }
     }
 
-    private void spinnerChanged(DataChangedEvent event) {
+    private void spinnerChanged(@NotNull @NonNull @SuppressWarnings("unused") DataChangedEvent event) {
         if (!massUpdateRunning) {
-            setValue(LocalTime.of(spnHour.getValue(), spnMinute.getValue(), spnSecond.getValue()));
+            log.debug("{}: Spinner changed: {}", getName(), event);
+            Integer hour = spnHour.getValue();
+            Integer minute = spnMinute.getValue();
+            Integer second = spnSecond.getValue();
+            setValue(LocalTime.of(hour == null ? 0 : hour, minute == null ? 0 : minute, second == null ? 0 : second));
         }
     }
 
     @Override
     public void startClock() {
+        super.startClock();
         synchronized (this) {
             if (clock == null && !isInDateTimePanel()) {
                 clock = new ScheduledThreadPoolExecutor(1);
@@ -180,6 +205,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
 
     @Override
     public void stopClock() {
+        super.stopClock();
         synchronized (this) {
             if (clock != null) {
                 clock.shutdown();
@@ -190,6 +216,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
 
     @Override
     protected void toggleClock() {
+        super.toggleClock();
         synchronized (this) {
             if (clock == null) {
                 startClock();

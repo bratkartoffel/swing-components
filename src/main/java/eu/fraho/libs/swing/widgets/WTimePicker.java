@@ -5,41 +5,48 @@ import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import eu.fraho.libs.swing.widgets.datepicker.DateConverterHelper;
 import eu.fraho.libs.swing.widgets.form.FormField;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.text.DateFormat;
 import java.time.LocalTime;
 import java.util.Date;
-import java.util.Objects;
 
+@SuppressWarnings("unused")
+@Slf4j
 public class WTimePicker extends AbstractWPicker<LocalTime> {
     public WTimePicker() {
         this(null, FormField.DEFAULT_COLUMNS);
     }
 
     @SuppressWarnings("unused")
-    public WTimePicker(LocalTime defval) {
+    public WTimePicker(@Nullable LocalTime defval) {
         this(defval, FormField.DEFAULT_COLUMNS);
     }
 
-    public WTimePicker(LocalTime defval, int columns) {
+    public WTimePicker(@Nullable LocalTime defval, int columns) {
         super(DateFormat.getTimeInstance(), new WTimePanel(defval), defval, columns);
     }
 
     @Override
-    protected void currentValueChanging(LocalTime newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable LocalTime newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         getComponent().setValue(DateConverterHelper.toDate(newVal));
         pnlPopup.setValue(newVal);
     }
 
     @Override
-    public void setTheme(ColorTheme theme) {
-        super.setTheme(Objects.requireNonNull(theme, "theme"));
+    public void setTheme(@NotNull @NonNull ColorTheme theme) {
+        super.setTheme(theme);
         pnlPopup.setTheme(theme);
     }
 
     @Override
     protected void setValueFromEvent() {
+        log.debug("{}: Setting value from event", getName());
         SwingUtilities.invokeLater(() -> setValue(DateConverterHelper.toLocalTime((Date) getComponent().getValue())));
     }
 }

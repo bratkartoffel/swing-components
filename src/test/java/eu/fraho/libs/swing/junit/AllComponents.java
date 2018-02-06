@@ -31,8 +31,8 @@ public class AllComponents extends JFrame {
     }
 
     private WForm<Model> form;
-    private Model model = new Model();
-    private JPanel pnlCenter = new JPanel();
+    private final Model model = new Model();
+    private final JPanel pnlCenter = new JPanel();
 
     public AllComponents() {
         setSize(550, 600);

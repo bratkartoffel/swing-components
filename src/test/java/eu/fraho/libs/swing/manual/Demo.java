@@ -21,16 +21,16 @@ public class Demo extends JFrame {
     }
 
     private WForm<DemoModel> form;
-    private DemoModel model = new DemoModel();
-    private JPanel pnlCenter = new JPanel();
+    private final DemoModel model = new DemoModel();
+    private final JPanel pnlCenter = new JPanel();
 
     public Demo() {
-        setSize(550, 500);
+        setSize(850, 500);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setupCenter();
         setupButtons();
-        add(new JScrollPane(pnlCenter), BorderLayout.CENTER);
+        add(pnlCenter, BorderLayout.CENTER);
     }
 
     public static void main(String[] args) {
@@ -45,7 +45,7 @@ public class Demo extends JFrame {
             form.setVisible(false);
             pnlCenter.remove(form);
         }
-        form = new WForm<>(model);
+        form = new WForm<>(model, 2);
         form.addDataChangedListener(this::dataChanged);
         form.setReadonly(readonly);
         pnlCenter.setName("content");
@@ -91,7 +91,6 @@ public class Demo extends JFrame {
 
         JPanel pnlSouth = new JPanel();
         pnlSouth.setLayout(new FlowLayout());
-        pnlSouth.setPreferredSize(new Dimension(1, 80));
         pnlSouth.add(setLocaleDe);
         pnlSouth.add(setLocaleFr);
         pnlSouth.add(setLocaleUs);

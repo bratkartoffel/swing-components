@@ -5,6 +5,10 @@ import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +20,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("unused")
+@Slf4j
 public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
     private final WDatePanel pnlDate;
     private final WTimePanel pnlTime;
@@ -35,7 +40,7 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
         this(null);
     }
 
-    public WDateTimePanel(LocalDateTime defval) {
+    public WDateTimePanel(@Nullable LocalDateTime defval) {
         super(defval);
 
         if (defval != null) {
@@ -46,8 +51,8 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
             pnlTime = new WTimePanel();
         }
 
-        pnlDate.setInDateTimePanel(true);
-        pnlTime.setInDateTimePanel(true);
+        pnlDate.setInDateTimePanel();
+        pnlTime.setInDateTimePanel();
 
         pnlDate.addDataChangedListener(this::dateChanged);
         pnlTime.addDataChangedListener(this::timeChanged);
@@ -64,10 +69,12 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
         component.add(createButtons(), BorderLayout.SOUTH);
     }
 
+    @NotNull
     private JPanel createButtons() {
         lblNow.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent event) {
+            public void mouseClicked(@NotNull @NonNull MouseEvent event) {
+                log.debug("{}: Clicked on label with current date and time", getName());
                 if (!pnlDate.isReadonly()) {
                     setValue(LocalDateTime.now().withNano(0));
                 }
@@ -94,8 +101,8 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
     }
 
     @Override
-    protected void currentValueChanging(LocalDateTime newVal)
-            throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable LocalDateTime newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         LocalDate date = null;
         LocalTime time = LocalTime.MIDNIGHT;
         if (newVal != null) {
@@ -106,8 +113,9 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
         pnlDate.setValue(date);
     }
 
-    private void dateChanged(DataChangedEvent event) {
+    private void dateChanged(@NotNull @NonNull DataChangedEvent event) {
         if (!massUpdateRunning) {
+            log.debug("{}: Got changed date event '{}'", getName(), event);
             LocalDate date = (LocalDate) event.getNewValue();
             LocalTime time = pnlTime.getValue();
             setValue(parseAndBuild(date, time));
@@ -115,13 +123,14 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
     }
 
     @Override
+    @NotNull
     public ColorTheme getTheme() {
         return pnlDate.getTheme();
     }
 
     @Override
-    public void setTheme(ColorTheme theme) {
-        pnlDate.setTheme(Objects.requireNonNull(theme, "theme"));
+    public void setTheme(@NotNull @NonNull ColorTheme theme) {
+        pnlDate.setTheme(theme);
         pnlTime.setTheme(theme);
     }
 
@@ -132,14 +141,16 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
 
     @Override
     public void setReadonly(boolean readonly) {
+        super.setReadonly(readonly);
+
         pnlDate.setReadonly(readonly);
         pnlTime.setReadonly(readonly);
-
         btnOk.setEnabled(!readonly);
         btnClear.setEnabled(!readonly);
     }
 
-    private LocalDateTime parseAndBuild(LocalDate date, LocalTime time) {
+    @Nullable
+    private LocalDateTime parseAndBuild(@Nullable LocalDate date, @Nullable LocalTime time) {
         if (date == null && time != null) {
             // only time given
             return LocalDateTime.of(LocalDate.now(), time);
@@ -156,7 +167,7 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
     }
 
     @Override
-    public void setValue(LocalDateTime value) throws ChangeVetoException {
+    public void setValue(@Nullable LocalDateTime value) throws ChangeVetoException {
         try {
             massUpdateRunning = true;
             super.setValue(value);
@@ -177,6 +188,7 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
 
     @Override
     public void startClock() {
+        super.startClock();
         synchronized (this) {
             if (clock == null && !isInDateTimePanel()) {
                 clock = new ScheduledThreadPoolExecutor(1);
@@ -188,6 +200,7 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
 
     @Override
     public void stopClock() {
+        super.stopClock();
         synchronized (this) {
             if (clock != null) {
                 clock.shutdown();
@@ -196,8 +209,9 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
         }
     }
 
-    private void timeChanged(DataChangedEvent event) {
+    private void timeChanged(@NotNull @NonNull DataChangedEvent event) {
         if (!massUpdateRunning) {
+            log.debug("{}: Got changed time event '{}'", getName(), event);
             LocalDate date = pnlDate.getValue();
             LocalTime time = (LocalTime) event.getNewValue();
             setValue(parseAndBuild(date, time));
@@ -206,6 +220,7 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
 
     @Override
     protected void toggleClock() {
+        super.toggleClock();
         synchronized (this) {
             if (clock == null) {
                 startClock();

@@ -2,6 +2,7 @@ package eu.fraho.libs.swing.widgets.events;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.WComponent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EventListener;
 
@@ -20,5 +21,5 @@ public interface DataChangedListener extends EventListener {
      * @param event The specific event.
      * @throws ChangeVetoException May be thrown from the listener when the new value is invalid.
      */
-    void dataChanged(DataChangedEvent event) throws ChangeVetoException;
+    void dataChanged(@NotNull DataChangedEvent event) throws ChangeVetoException;
 }

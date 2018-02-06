@@ -7,6 +7,8 @@ import eu.fraho.libs.swing.widgets.events.DataChangedListener;
 import eu.fraho.libs.swing.widgets.form.FormField;
 import eu.fraho.libs.swing.widgets.form.FormModel;
 import eu.fraho.libs.swing.widgets.form.WForm;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.function.Consumer;
@@ -27,7 +29,7 @@ public interface WComponent<E> {
      *
      * @param listener The listener to add
      */
-    void addDataChangedListener(Consumer<DataChangedEvent> listener);
+    void addDataChangedListener(@NotNull Consumer<DataChangedEvent> listener);
 
     /**
      * Bind a model value to this component. When committing the changes in this
@@ -41,7 +43,7 @@ public interface WComponent<E> {
      * @throws ModelBindException If the model cannot be bound (e.g. invalid type, or inaccessible
      *                            field)
      */
-    void bindModel(FormModel model, Class<?> type, String field) throws ModelBindException;
+    void bindModel(@NotNull FormModel model, @NotNull Class<?> type, @NotNull String field) throws ModelBindException;
 
     /**
      * Commit any outstanding changes from this component and set the model value
@@ -55,11 +57,13 @@ public interface WComponent<E> {
     /**
      * @return The underlying swing component
      */
+    @NotNull
     JComponent getComponent();
 
     /**
      * @return The current value of this component
      */
+    @Nullable
     E getValue();
 
     /**
@@ -68,7 +72,7 @@ public interface WComponent<E> {
      * @param value The new value to set
      * @throws ChangeVetoException If any listener vetoes against the new value.
      */
-    void setValue(E value) throws ChangeVetoException;
+    void setValue(@Nullable E value) throws ChangeVetoException;
 
     /**
      * @return Has the current value changed to the last committed value?
@@ -92,7 +96,7 @@ public interface WComponent<E> {
      *
      * @param listener the listener to remove.
      */
-    void removeDataChangedListener(Consumer<DataChangedEvent> listener);
+    void removeDataChangedListener(@NotNull Consumer<DataChangedEvent> listener);
 
     /**
      * Rollback any user-made changes and set the value to the last committed
@@ -108,5 +112,5 @@ public interface WComponent<E> {
      *
      * @param anno The used annotation
      */
-    void setupByAnnotation(FormField anno);
+    void setupByAnnotation(@NotNull FormField anno);
 }

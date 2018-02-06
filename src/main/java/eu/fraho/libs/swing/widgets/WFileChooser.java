@@ -5,13 +5,15 @@ import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Optional;
 
+@Slf4j
+@SuppressWarnings("unused")
 public class WFileChooser extends AbstractWComponent<File, JTextField> {
     private final JButton btnDelete;
     private final JButton btnSearch;
@@ -24,11 +26,11 @@ public class WFileChooser extends AbstractWComponent<File, JTextField> {
         this(null, null);
     }
 
-    public WFileChooser(File defval) {
+    public WFileChooser(@Nullable File defval) {
         this(defval, null);
     }
 
-    public WFileChooser(File defval, JFileChooser chooser) {
+    public WFileChooser(@Nullable File defval, @Nullable JFileChooser chooser) {
         super(new JTextField(20), defval);
 
         this.chooser = Optional.ofNullable(chooser).orElse(new JFileChooser(defval));
@@ -36,12 +38,6 @@ public class WFileChooser extends AbstractWComponent<File, JTextField> {
         JTextField component = getComponent();
         component.setEditable(false);
         component.setText(defval == null ? "" : defval.getAbsolutePath());
-        component.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                showChooser();
-            }
-        });
 
         /* setup buttons */
         btnSearch = new JButton();
@@ -60,8 +56,10 @@ public class WFileChooser extends AbstractWComponent<File, JTextField> {
     }
 
     @Override
-    protected void currentValueChanging(File newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable File newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         getComponent().setText(newVal == null ? "" : newVal.getAbsolutePath());
+        getComponent().setSelectionStart(0);
     }
 
     @Override
@@ -71,11 +69,13 @@ public class WFileChooser extends AbstractWComponent<File, JTextField> {
 
     @Override
     public void setReadonly(boolean readonly) {
+        log.debug("{}: Setting readonly to {}", getName(), readonly);
         btnSearch.setEnabled(!readonly);
         btnDelete.setEnabled(!readonly);
     }
 
     public void showChooser() {
+        log.debug("{}: Showing chooser", getName());
         int result = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             setValue(chooser.getSelectedFile());

@@ -7,7 +7,9 @@
 package eu.fraho.libs.swing.junit;
 
 import eu.fraho.libs.swing.widgets.WDatePicker;
+import eu.fraho.libs.swing.widgets.WDateTimePicker;
 import eu.fraho.libs.swing.widgets.WFileChooser;
+import eu.fraho.libs.swing.widgets.WTimePicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
@@ -24,9 +26,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -322,6 +327,29 @@ public class AllComponentsTest {
 
         todayFixture.background().requireEqualTo(theme.bgGrid());
         todayFixture.foreground().requireEqualTo(theme.fgGridToday());
+
+        // test resizing hides the popup
+        window.panel("WDatePicker.popup").requireVisible();
+        window.resizeWidthTo(window.target().getWidth() + 1);
+        try {
+            window.panel("WDatePicker.popup");
+            Assert.fail("Popup is still in the component tree");
+        } catch (ComponentLookupException cle) {
+            // ok
+        }
+
+        // test moving hides the popup
+        window.panel("WDatePicker-0").button().click();
+        window.panel("WDatePicker.popup").requireVisible();
+        Point p = window.target().getLocationOnScreen();
+        p.x++;
+        window.moveTo(p);
+        try {
+            window.panel("WDatePicker.popup");
+            Assert.fail("Popup is still in the component tree");
+        } catch (ComponentLookupException cle) {
+            // ok
+        }
     }
 
     @Test
@@ -399,5 +427,179 @@ public class AllComponentsTest {
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "6");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "5");
         calendarFixture.requireCellValue(TableCell.row(0).column(2), "4");
+    }
+
+    @Test
+    public void testDateTimePicker() throws InterruptedException {
+        List<DataChangedEvent> events = new ArrayList<>();
+        WDateTimePicker target = window.panel("WDateTimePicker-0").targetCastedTo(WDateTimePicker.class);
+        target.addDataChangedListener(events::add);
+
+        LocalDateTime now;
+        do {
+            // this is quite ugly, but works somehow
+            // the popup only refreshes the displayed time once every second
+            // so if we open the popup at something like xx:yy:zz.999999
+            // then the "now" differs from the displayed value, thus resulting in an testfailure
+            // this loop waits until the nanosecond part is low enough for the following tests to pass
+            Thread.sleep(10);
+            now = LocalDateTime.now();
+        } while (now.getNano() > 100_000_000);
+        now = now.withNano(0);
+        // select today
+        window.panel("WDateTimePicker-0").button().click();
+        window.panel("WDateTimePicker.popup").label("WLabel-13.Component").requireText(now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
+        window.panel("WDateTimePicker.popup").label("WLabel-13.Component").click();
+        window.panel("WDateTimePicker.popup").button("ok").click();
+
+        Assert.assertEquals(1, events.size());
+        Assert.assertEquals(new DataChangedEvent(target, null, now, DataChangedEvent.ChangeType.CHANGED), events.get(0));
+
+        // set externally to 01.01.2017 04:13:22
+        target.setValue(LocalDateTime.of(2017, 1, 1, 4, 13, 22));
+        Assert.assertEquals(2, events.size());
+        Assert.assertEquals(new DataChangedEvent(target, now, LocalDateTime.of(2017, 1, 1, 4, 13, 22), DataChangedEvent.ChangeType.CHANGED), events.get(1));
+
+        // select second value in third row (10.01.2017)
+        window.panel("WDateTimePicker-0").button().click();
+        JTableFixture calendarFixture = window.panel("WDateTimePicker.popup").table("calendar");
+        calendarFixture.requireRowCount(6);
+        calendarFixture.requireColumnCount(7);
+        calendarFixture.selectCell(TableCell.row(2).column(1));
+        window.panel("WDateTimePicker.popup").button("ok").click();
+        Assert.assertEquals(3, events.size());
+        Assert.assertEquals(new DataChangedEvent(target, LocalDateTime.of(2017, 1, 1, 4, 13, 22),
+                LocalDateTime.of(2017, 1, 10, 4, 13, 22),
+                DataChangedEvent.ChangeType.CHANGED), events.get(2));
+
+        // set to 09:12:37 in popup
+        window.panel("WDateTimePicker-0").button().click();
+        window.panel("WDateTimePicker.popup").panel("hour").spinner().select(9);
+        window.panel("WDateTimePicker.popup").panel("minute").spinner().select(12);
+        window.panel("WDateTimePicker.popup").panel("second").spinner().select(37);
+        window.panel("WDateTimePicker.popup").button("ok").click();
+        Assert.assertEquals(4, events.size());
+        Assert.assertEquals(new DataChangedEvent(target, LocalDateTime.of(2017, 1, 10, 4, 13, 22),
+                LocalDateTime.of(2017, 1, 10, 9, 12, 37), DataChangedEvent.ChangeType.CHANGED), events.get(3));
+
+        // check first row values
+        window.panel("WDateTimePicker-0").button().click();
+        calendarFixture = window.panel("WDateTimePicker.popup").table("calendar");
+        calendarFixture.requireCellValue(TableCell.row(0).column(0), "26");
+        calendarFixture.requireCellValue(TableCell.row(0).column(1), "27");
+        calendarFixture.requireCellValue(TableCell.row(0).column(2), "28");
+
+        DefaultColorTheme theme = new DefaultColorTheme();
+        calendarFixture.cell(TableCell.row(0).column(0)).foreground().requireEqualTo(theme.fgGridOtherMonth());
+        calendarFixture.cell(TableCell.row(0).column(0)).background().requireEqualTo(theme.bgGrid());
+        calendarFixture.cell(TableCell.row(1).column(0)).foreground().requireEqualTo(theme.fgGridThisMonth());
+        calendarFixture.cell(TableCell.row(1).column(0)).background().requireEqualTo(theme.bgGrid());
+        calendarFixture.cell(TableCell.row(2).column(1)).foreground().requireEqualTo(theme.fgGridSelected());
+        calendarFixture.cell(TableCell.row(2).column(1)).background().requireEqualTo(theme.bgGridSelected());
+
+        // clear value
+        window.panel("WDateTimePicker.popup").button("clear").click();
+
+        // find today
+        JTableCellFixture todayFixture = calendarFixture.cell((table, cellReader) -> {
+            for (int row = 0; row < table.getRowCount(); row++) {
+                for (int column = 0; column < table.getColumnCount(); column++) {
+                    if (Objects.equals(cellReader.valueAt(table, row, column), String.valueOf(LocalDate.now().getDayOfMonth()))) {
+                        return TableCell.row(row).column(column);
+                    }
+                }
+            }
+            throw new ComponentLookupException("Unable to find todays cell");
+        });
+
+        todayFixture.background().requireEqualTo(theme.bgGrid());
+        todayFixture.foreground().requireEqualTo(theme.fgGridToday());
+
+        // test resizing hides the popup
+        window.panel("WDateTimePicker.popup").requireVisible();
+        window.resizeWidthTo(window.target().getWidth() + 1);
+        try {
+            window.panel("WDateTimePicker.popup");
+            Assert.fail("Popup is still in the component tree");
+        } catch (ComponentLookupException cle) {
+            // ok
+        }
+
+        // test moving hides the popup
+        window.panel("WDateTimePicker-0").button().click();
+        window.panel("WDateTimePicker.popup").requireVisible();
+        Point p = window.target().getLocationOnScreen();
+        p.x++;
+        window.moveTo(p);
+        try {
+            window.panel("WDateTimePicker.popup");
+            Assert.fail("Popup is still in the component tree");
+        } catch (ComponentLookupException cle) {
+            // ok
+        }
+    }
+
+    @Test
+    public void testTimePicker() throws InterruptedException {
+        List<DataChangedEvent> events = new ArrayList<>();
+        WTimePicker target = window.panel("WTimePicker-0").targetCastedTo(WTimePicker.class);
+        target.addDataChangedListener(events::add);
+
+        LocalTime now;
+        do {
+            // this is quite ugly, but works somehow
+            // the popup only refreshes the displayed time once every second
+            // so if we open the popup at something like xx:yy:zz.999999
+            // then the "now" differs from the displayed value, thus resulting in an testfailure
+            // this loop waits until the nanosecond part is low enough for the following tests to pass
+            Thread.sleep(10);
+            now = LocalTime.now();
+        } while (now.getNano() > 100_000_000);
+        now = now.withNano(0);
+        window.panel("WTimePicker-0").button().click();
+        window.panel("WTimePicker.popup").label("WLabel-24.Component").requireText(now.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        window.panel("WTimePicker.popup").label("WLabel-24.Component").click();
+        window.panel("WTimePicker.popup").button("ok").click();
+
+        Assert.assertEquals(1, events.size());
+        Assert.assertEquals(new DataChangedEvent(target, null, now, DataChangedEvent.ChangeType.CHANGED), events.get(0));
+
+        // set externally to 07:14:33
+        target.setValue(LocalTime.of(7, 14, 33));
+        Assert.assertEquals(2, events.size());
+        Assert.assertEquals(new DataChangedEvent(target, now, LocalTime.of(7, 14, 33), DataChangedEvent.ChangeType.CHANGED), events.get(1));
+
+        // set to 09:12:37 in popup
+        window.panel("WTimePicker-0").button().click();
+        window.panel("WTimePicker.popup").panel("hour").spinner().select(9);
+        window.panel("WTimePicker.popup").panel("minute").spinner().select(12);
+        window.panel("WTimePicker.popup").panel("second").spinner().select(37);
+        window.panel("WTimePicker.popup").button("ok").click();
+        Assert.assertEquals(3, events.size());
+        Assert.assertEquals(new DataChangedEvent(target, LocalTime.of(7, 14, 33), LocalTime.of(9, 12, 37), DataChangedEvent.ChangeType.CHANGED), events.get(2));
+
+        // test resizing hides the popup
+        window.panel("WTimePicker-0").button().click();
+        window.panel("WTimePicker.popup").requireVisible();
+        window.resizeWidthTo(window.target().getWidth() + 1);
+        try {
+            window.panel("WTimePicker.popup");
+            Assert.fail("Popup is still in the component tree");
+        } catch (ComponentLookupException cle) {
+            // ok
+        }
+
+        // test moving hides the popup
+        window.panel("WTimePicker-0").button().click();
+        window.panel("WTimePicker.popup").requireVisible();
+        Point p = window.target().getLocationOnScreen();
+        p.x++;
+        window.moveTo(p);
+        try {
+            window.panel("WTimePicker.popup");
+            Assert.fail("Popup is still in the component tree");
+        } catch (ComponentLookupException cle) {
+            // ok
+        }
     }
 }

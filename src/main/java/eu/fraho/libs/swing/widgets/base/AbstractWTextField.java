@@ -2,6 +2,10 @@ package eu.fraho.libs.swing.widgets.base;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.form.FormField;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.JFormattedTextField.AbstractFormatter;
@@ -10,30 +14,33 @@ import java.awt.event.FocusEvent;
 import java.text.Format;
 import java.util.Objects;
 
+@Slf4j
 public abstract class AbstractWTextField<T> extends AbstractWComponent<T, JFormattedTextField> {
-    public AbstractWTextField(AbstractFormatter format, T defval, int columns, boolean doSetComponentValue) {
-        this(new JFormattedTextField(Objects.requireNonNull(format, "format")), defval, columns, doSetComponentValue);
+    public AbstractWTextField(@NotNull @NonNull AbstractFormatter format, @Nullable T defval, int columns, boolean doSetComponentValue) {
+        this(new JFormattedTextField(format), defval, columns, doSetComponentValue);
     }
 
-    public AbstractWTextField(Format format, T defval, int columns, boolean doSetComponentValue) {
-        this(new JFormattedTextField(Objects.requireNonNull(format, "format")), defval, columns, doSetComponentValue);
+    public AbstractWTextField(@NotNull @NonNull Format format, @Nullable T defval, int columns, boolean doSetComponentValue) {
+        this(new JFormattedTextField(format), defval, columns, doSetComponentValue);
     }
 
-    protected AbstractWTextField(JFormattedTextField txtField, T defval, int columns, boolean doSetComponentValue) {
-        super(Objects.requireNonNull(txtField, "txtField"), defval);
+    protected AbstractWTextField(@NotNull @NonNull JFormattedTextField txtField, @Nullable T defval, int columns, boolean doSetComponentValue) {
+        super(txtField, defval);
         setup(defval, columns, doSetComponentValue);
     }
 
     @Override
-    protected void currentValueChanging(T newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable T newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         JFormattedTextField myComponent = getComponent();
         if (!Objects.equals(newVal, myComponent.getValue())) {
+            log.debug("{}: Setting new value", getName());
             myComponent.setValue(newVal);
             myComponent.setSelectionStart(myComponent.getText().length());
         }
     }
 
-    protected boolean isNullOrEmptyString(Object value) {
+    protected boolean isNullOrEmptyString(@Nullable Object value) {
         return value == null ||
                 (String.class.isAssignableFrom(value.getClass()) && ((String) value).isEmpty());
     }
@@ -48,7 +55,9 @@ public abstract class AbstractWTextField<T> extends AbstractWComponent<T, JForma
         getComponent().setEnabled(!readonly);
     }
 
-    private void setup(T defval, int columns, boolean doSetComponentValue) {
+    private void setup(@Nullable T defval, int columns, boolean doSetComponentValue) {
+        log.debug("{}: Setting up with value={}, columns={}, doSetComponentValue={}", getName(), defval, columns, doSetComponentValue);
+
         JFormattedTextField myComponent = getComponent();
         if (defval != null && doSetComponentValue) {
             myComponent.setValue(defval);
@@ -61,12 +70,14 @@ public abstract class AbstractWTextField<T> extends AbstractWComponent<T, JForma
         // Set the value when leaving the field
         myComponent.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusGained(FocusEvent event) {
+            public void focusGained(@NotNull FocusEvent event) {
+                log.debug("{}: Focus gained {}", AbstractWTextField.this.getName(), event);
                 SwingUtilities.invokeLater(() -> myComponent.setSelectionStart(myComponent.getText().length()));
             }
 
             @Override
-            public void focusLost(FocusEvent event) {
+            public void focusLost(@NotNull FocusEvent event) {
+                log.debug("{}: Focus lost {}", AbstractWTextField.this.getName(), event);
                 if (isNullOrEmptyString(myComponent.getText())) {
                     setValue(null);
                 } else {
@@ -78,12 +89,14 @@ public abstract class AbstractWTextField<T> extends AbstractWComponent<T, JForma
 
     @SuppressWarnings("unchecked")
     protected void setValueFromEvent() {
+        log.debug("{}: Setting value from event", getName());
         SwingUtilities.invokeLater(() -> setValue((T) getComponent().getValue()));
     }
 
     @Override
-    public void setupByAnnotation(FormField anno) {
+    public void setupByAnnotation(@NotNull @NonNull FormField anno) {
         super.setupByAnnotation(anno);
+        log.debug("{}: Setting up by annotation", getName());
         getComponent().setColumns(anno.columns());
     }
 }

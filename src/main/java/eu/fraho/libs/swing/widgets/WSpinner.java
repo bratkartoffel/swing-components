@@ -5,6 +5,10 @@ import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.form.FormField;
 import eu.fraho.libs.swing.widgets.spinner.BigDecimalNumberModel;
 import eu.fraho.libs.swing.widgets.spinner.LongNumberModel;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.JFormattedTextField.AbstractFormatterFactory;
@@ -12,42 +16,45 @@ import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.event.ChangeEvent;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Objects;
 import java.util.function.Function;
 
+@Slf4j
+@SuppressWarnings("unused")
 public class WSpinner<E extends Number> extends AbstractWComponent<E, JSpinner> {
     public WSpinner() {
         this(new SpinnerNumberModel(), 0);
     }
 
-    public WSpinner(Long defval) {
+    public WSpinner(@Nullable Long defval) {
         this(new LongNumberModel(defval, null, null, 1), defval);
     }
 
-    public WSpinner(BigDecimal defval) {
+    public WSpinner(@Nullable BigDecimal defval) {
         this(new BigDecimalNumberModel(defval, null, null, 0.01), defval);
     }
 
-    public WSpinner(SpinnerNumberModel model) {
+    public WSpinner(@NotNull @NonNull SpinnerNumberModel model) {
         this(model, model.getNumber());
     }
 
     @SuppressWarnings("unchecked")
-    public WSpinner(SpinnerNumberModel model, Number value) {
-        super(new JSpinner(Objects.requireNonNull(model, "model")), (E) value);
+    public WSpinner(@NotNull @NonNull SpinnerNumberModel model, @Nullable Number value) {
+        super(new JSpinner(model), (E) value);
         getComponent().addChangeListener(this::componentChanged);
     }
 
     @SuppressWarnings({"unchecked", "unused"})
-    private void componentChanged(ChangeEvent event) {
+    private void componentChanged(@NotNull @NonNull ChangeEvent event) {
         setValue((E) getComponent().getModel().getValue());
     }
 
     @Override
-    protected void currentValueChanging(E newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable E newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         getComponent().getModel().setValue(newVal);
     }
 
@@ -58,12 +65,13 @@ public class WSpinner<E extends Number> extends AbstractWComponent<E, JSpinner> 
 
     @Override
     public void setReadonly(boolean readonly) {
+        log.debug("{}: Setting readonly to {}", getName(), readonly);
         getComponent().setEnabled(!readonly);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void setupByAnnotation(FormField anno) {
+    public void setupByAnnotation(@NotNull @NonNull FormField anno) {
         super.setupByAnnotation(anno);
 
         Number val = getValue();
@@ -91,10 +99,15 @@ public class WSpinner<E extends Number> extends AbstractWComponent<E, JSpinner> 
         }
         step = (Number) parser.apply(anno.step());
 
+        log.debug("{}: Using min={}, max={}, step={}", getName(), min, max, step);
+
         // configure number format
         DefaultEditor editor = (DefaultEditor) getComponent().getEditor();
         JFormattedTextField field = editor.getTextField();
+        log.debug("{}: Setting columns {}", getName(), anno.columns());
+        field.setColumns(anno.columns());
 
+        Dimension size = getComponent().getPreferredSize();
         // handle spinner type and set use right model
         switch (anno.spinnerType()) {
             case BIGDECIMAL:
@@ -115,7 +128,14 @@ public class WSpinner<E extends Number> extends AbstractWComponent<E, JSpinner> 
                 throw new IllegalStateException("Unknown spinnertype: " + anno.spinnerType());
         }
 
-        // handle textfield iconWidth
-        field.setColumns(anno.columns());
+        // handle textfield width
+        log.debug("{}: Setting preferred size '{}'", getName(), size);
+        getComponent().setPreferredSize(size);
+    }
+
+    public void setColumns(int columns) {
+        log.debug("{}: Setting columns to {}", getName(), columns);
+        DefaultEditor editor = (DefaultEditor) getComponent().getEditor();
+        editor.getTextField().setColumns(columns);
     }
 }

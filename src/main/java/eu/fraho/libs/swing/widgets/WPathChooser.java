@@ -5,13 +5,15 @@ import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 import java.util.Optional;
 
+@Slf4j
+@SuppressWarnings("unused")
 public class WPathChooser extends AbstractWComponent<Path, JTextField> {
     private final JButton btnDelete;
     private final JButton btnSearch;
@@ -24,11 +26,11 @@ public class WPathChooser extends AbstractWComponent<Path, JTextField> {
         this(null, null);
     }
 
-    public WPathChooser(Path defval) {
+    public WPathChooser(@Nullable Path defval) {
         this(defval, null);
     }
 
-    public WPathChooser(Path defval, JFileChooser chooser) {
+    public WPathChooser(@Nullable Path defval, @Nullable JFileChooser chooser) {
         super(new JTextField(20), defval);
 
         this.chooser = Optional.ofNullable(chooser).orElse(new JFileChooser(defval == null ? null : defval.toFile()));
@@ -36,12 +38,6 @@ public class WPathChooser extends AbstractWComponent<Path, JTextField> {
         JTextField component = getComponent();
         component.setEditable(false);
         component.setText(defval == null ? "" : defval.toString());
-        component.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                showChooser();
-            }
-        });
 
         /* setup buttons */
         btnSearch = new JButton();
@@ -61,8 +57,10 @@ public class WPathChooser extends AbstractWComponent<Path, JTextField> {
     }
 
     @Override
-    protected void currentValueChanging(Path newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable Path newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         getComponent().setText(newVal == null ? "" : newVal.toString());
+        getComponent().setSelectionStart(0);
     }
 
     @Override
@@ -72,11 +70,13 @@ public class WPathChooser extends AbstractWComponent<Path, JTextField> {
 
     @Override
     public void setReadonly(boolean readonly) {
+        log.debug("{}: Setting readonly to {}", getName(), readonly);
         btnSearch.setEnabled(!readonly);
         btnDelete.setEnabled(!readonly);
     }
 
     public void showChooser() {
+        log.debug("{}: Showing chooser", getName());
         int result = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             setValue(chooser.getSelectedFile().toPath());

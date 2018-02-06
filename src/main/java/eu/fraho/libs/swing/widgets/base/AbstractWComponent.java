@@ -8,7 +8,10 @@ import eu.fraho.libs.swing.widgets.form.FormField;
 import eu.fraho.libs.swing.widgets.form.FormModel;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,11 +65,8 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
 
     private Method modelSetter = null;
 
-    public AbstractWComponent(C component, E currentValue) {
+    public AbstractWComponent(@NotNull @NonNull C component, @Nullable E currentValue) {
         super();
-
-        // check params
-        Objects.requireNonNull(component, "component");
 
         // get counter
         int counter = counters.computeIfAbsent(getClass(), k -> new AtomicInteger(0)).getAndIncrement();
@@ -87,10 +87,7 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
     }
 
     @Override
-    public void addDataChangedListener(Consumer<DataChangedEvent> listener) {
-        // check params
-        Objects.requireNonNull(listener, "listener");
-
+    public void addDataChangedListener(@NotNull @NonNull Consumer<DataChangedEvent> listener) {
         // add listener
         synchronized (eventHandlers) {
             eventHandlers.add(listener);
@@ -98,11 +95,8 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
     }
 
     @Override
-    public void bindModel(FormModel model, Class<?> type, String field) throws ModelBindException {
-        // check params
-        Objects.requireNonNull(model, "model");
-        Objects.requireNonNull(field, "field");
-
+    public void bindModel(@NotNull @NonNull FormModel model, @NotNull @NonNull Class<?> type, @NotNull @NonNull String field) throws ModelBindException {
+        log.debug("{}: Binding to {} {}.{}", getName(), type.getTypeName(), model.getClass().getTypeName(), field);
         // save model
         this.model = model;
         String name = "set" + Character.toUpperCase(field.charAt(0)) + field.substring(1);
@@ -115,18 +109,24 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
         } catch (NoSuchElementException | SecurityException | NoSuchMethodException mbe) {
             throw new ModelBindException("Error in call to " + model.getClass() + "." + name + "(" + type + ")", mbe);
         }
+
+        log.debug("{}: Using setter {}", getName(), modelSetter);
     }
 
     @Override
     public void commitChanges() throws ChangeVetoException {
         // don't do anything if nothing changed
         if (!hasChanged()) {
+            log.debug("{}: Ignoring commit, nothing changed", getName());
             return;
         }
+
+        log.debug("{}: Committing changes", getName());
 
         // if a bound model is present, save the value into the model
         Optional.ofNullable(modelSetter).ifPresent(setter -> {
             try {
+                log.debug("{}: Invoking setter with {}", getName(), currentValue);
                 setter.invoke(model, currentValue);
             } catch (ReflectiveOperationException iae) {
                 log.warn("Unable to commit changes to model {}.{}: {}", model.getClass(), setter.getName(), iae.getLocalizedMessage());
@@ -154,7 +154,9 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
         }
 
         // invoke listeners
-        invokeListeners(new DataChangedEvent(this, oldValue, savedValue, ChangeType.COMMIT));
+        if (!eventHandlers.isEmpty()) {
+            invokeListeners(new DataChangedEvent(this, oldValue, savedValue, ChangeType.COMMIT));
+        }
     }
 
     /**
@@ -165,20 +167,22 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
      * @param newVal The about to be set value
      * @throws ChangeVetoException If the new value is not valid and should be declined.
      */
-    protected abstract void currentValueChanging(E newVal) throws ChangeVetoException;
+    protected abstract void currentValueChanging(@Nullable E newVal) throws ChangeVetoException;
 
     @Override
+    @NotNull
     public final C getComponent() {
         return component;
     }
 
     @Override
+    @Nullable
     public E getValue() {
         return currentValue;
     }
 
     @Override
-    public void setValue(E value) throws ChangeVetoException {
+    public void setValue(@Nullable E value) throws ChangeVetoException {
         setValue(value, false);
     }
 
@@ -193,15 +197,14 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
      * @param event The event to broadcast.
      * @throws ChangeVetoException When one of the listeners vetoes against this event.
      */
-    protected final void invokeListeners(DataChangedEvent event) throws ChangeVetoException {
-        // check params
-        Objects.requireNonNull(event, "event");
-
+    protected final void invokeListeners(@NotNull @NonNull DataChangedEvent event) throws ChangeVetoException {
         // do not notify when nothing changed
         if (Objects.equals(event.getOldValue(), event.getNewValue())) {
-            log.debug("Ignore notify, nothing changed");
+            log.debug("{}: Ignore notify, nothing changed by {}", getName(), event);
             return;
         }
+        log.debug("{}: Notifying listeners about {}", getName(), event);
+
         // broadcast event
         synchronized (eventHandlers) {
             eventHandlers.forEach(listener -> listener.accept(event));
@@ -209,10 +212,7 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
     }
 
     @Override
-    public final void removeDataChangedListener(Consumer<DataChangedEvent> consumer) {
-        // check params
-        Objects.requireNonNull(consumer, "consumer");
-
+    public final void removeDataChangedListener(@NotNull @NonNull Consumer<DataChangedEvent> consumer) {
         // remove the listener
         synchronized (eventHandlers) {
             eventHandlers.remove(consumer);
@@ -232,11 +232,16 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
      */
     protected void rollbackChanges(boolean force) throws ChangeVetoException {
         if (!hasChanged()) {
+            log.debug("{}: Ignoring rollback, nothing changed", getName());
             return;
         }
 
+        log.debug("{}: Rolling back changes", getName());
+
         // save the old value for latter event
         E oldValue = currentValue;
+
+        // first notify that the value is about to be changed
         notifyNewValue(savedValue, force);
 
         // rollback value
@@ -246,7 +251,9 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
         valueRolledBack();
 
         // invoke listeners
-        invokeListeners(new DataChangedEvent(this, oldValue, currentValue, ChangeType.ROLLBACK));
+        if (!eventHandlers.isEmpty()) {
+            invokeListeners(new DataChangedEvent(this, oldValue, currentValue, ChangeType.ROLLBACK));
+        }
     }
 
     /**
@@ -256,12 +263,16 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
      * @param force    Ignore eventually raised {@link ChangeVetoException}s?
      * @throws ChangeVetoException If the new value is invalid.
      */
-    protected void setValue(E newValue, boolean force) throws ChangeVetoException {
+    protected void setValue(@Nullable E newValue, boolean force) throws ChangeVetoException {
         // if the given value won't change anything, break here and do nothing
         if (Objects.equals(currentValue, newValue)) {
+            log.debug("{}: Ignoring new value, didn't change", getName());
             return;
         }
 
+        log.debug("{}: Setting new value '{}'", getName(), newValue);
+
+        // first notify that the value is about to be changed
         notifyNewValue(newValue, force);
 
         // save the old value for event
@@ -272,20 +283,18 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
 
         try {
             // broadcast event that the value changed
-            invokeListeners(new DataChangedEvent(this, oldValue, newValue, ChangeType.CHANGED));
+            if (!eventHandlers.isEmpty()) {
+                invokeListeners(new DataChangedEvent(this, oldValue, newValue, ChangeType.CHANGED));
+            }
         } catch (ChangeVetoException cve) {
             if (!force) {
-                // respect veto
-                log.info("NOT changing value due to veto: {}", cve.getLocalizedMessage(), cve);
-
                 // reset value to old value
                 currentValue = oldValue;
-
                 try {
                     // broadcast the old value
                     currentValueChanging(oldValue);
                 } catch (ChangeVetoException cve2) {
-                    // ignore this time
+                    cve.addSuppressed(cve2);
                 }
 
                 // throw veto up
@@ -293,23 +302,22 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
             }
 
             // ignore veto, just log this case
-            log.info("Ignoring veto from changing value. ({})", cve.getLocalizedMessage(), cve);
+            log.info("{}: Ignoring veto and setting value nevertheless", getName(), cve);
         }
     }
 
-    private void notifyNewValue(E newValue, boolean force) {
+    private void notifyNewValue(@Nullable E newValue, boolean force) {
         try {
             // notify component that the value is about to change
             currentValueChanging(newValue);
         } catch (ChangeVetoException cve) {
             if (!force) {
                 // respect veto and throw up
-                log.info("NOT changing value due to veto: {}", cve.getLocalizedMessage(), cve);
                 throw cve;
             }
 
             // ignore veto, just log this case
-            log.info("Ignoring veto from changing value. ({})", cve.getLocalizedMessage(), cve);
+            log.info("{}: Ignoring veto and setting value nevertheless", getName(), cve);
         }
     }
 
@@ -321,7 +329,7 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
      */
     @SuppressWarnings("EmptyMethod")
     protected void valueCommitted() throws ChangeVetoException {
-        // default do nothing here
+        log.debug("{}: Value committed", getName());
     }
 
     /**
@@ -330,7 +338,7 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
      */
     @SuppressWarnings("EmptyMethod")
     protected void valueRolledBack() {
-        // default do nothing here
+        log.debug("{}: Value rolled back", getName());
     }
 
     @Override
@@ -340,11 +348,13 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
     }
 
     @Override
-    public void setupByAnnotation(FormField anno) {
+    public void setupByAnnotation(@NotNull @NonNull FormField anno) {
+        log.debug("{}: Setting up by annotation", getName());
         setReadonly(anno.readonly());
     }
 
     public static void clearCounters() {
+        log.debug("Clearing object counters");
         synchronized (counters) {
             counters.clear();
         }

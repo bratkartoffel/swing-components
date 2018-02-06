@@ -13,8 +13,8 @@ import java.util.Locale;
 @SuppressWarnings("Duplicates")
 public class DemoDateTime extends JFrame {
     private WForm<DemoDateTimeModel> form;
-    private DemoDateTimeModel model = new DemoDateTimeModel();
-    private JPanel pnlCenter = new JPanel();
+    private final DemoDateTimeModel model = new DemoDateTimeModel();
+    private final JPanel pnlCenter = new JPanel();
 
     public DemoDateTime() {
         setSize(550, 650);

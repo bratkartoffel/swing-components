@@ -2,26 +2,32 @@ package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.widgets.base.AbstractWPrecisionTextField;
 import eu.fraho.libs.swing.widgets.form.FormField;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
+@SuppressWarnings("unused")
+@Slf4j
 public class WCurrencyTextField extends AbstractWPrecisionTextField {
     public WCurrencyTextField() {
         this(null, FormField.DEFAULT_COLUMNS);
     }
 
-    public WCurrencyTextField(BigDecimal defval) {
+    public WCurrencyTextField(@Nullable BigDecimal defval) {
         this(defval, FormField.DEFAULT_COLUMNS);
     }
 
-    public WCurrencyTextField(BigDecimal defval, int columns) {
+    public WCurrencyTextField(@Nullable BigDecimal defval, int columns) {
         super(getFormat(), defval, columns, true);
         addCurrencyLabel();
     }
 
+    @NotNull
     private static DecimalFormat getFormat() {
         DecimalFormat nf = (DecimalFormat) NumberFormat.getCurrencyInstance();
         nf.setNegativeSuffix("");

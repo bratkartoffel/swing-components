@@ -6,6 +6,10 @@ import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent.ChangeType;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +17,10 @@ import java.awt.event.HierarchyBoundsListener;
 import java.awt.event.HierarchyEvent;
 import java.text.DateFormat;
 import java.time.temporal.Temporal;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
+@SuppressWarnings("unused")
 public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextField<T> {
     protected final AbstractWPickerPanel<T> pnlPopup;
     // components
@@ -23,10 +29,24 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
     @Getter
     private ColorTheme theme = new DefaultColorTheme();
     private Popup popup;
+    private AtomicBoolean firstShow = new AtomicBoolean(false);
 
-    public AbstractWPicker(DateFormat format, AbstractWPickerPanel<T> pnlPopup, T defval, int columns) {
-        super(Objects.requireNonNull(format, "format"), defval, columns, false);
-        Objects.requireNonNull(pnlPopup, "pnlPopup");
+    private HierarchyBoundsListener hierarchyBoundsListener = new HierarchyBoundsListener() {
+        @Override
+        public void ancestorMoved(@NotNull HierarchyEvent event) {
+            log.debug("{}: Ancestor moved", AbstractWPicker.this.getName());
+            hidePopup();
+        }
+
+        @Override
+        public void ancestorResized(@NotNull HierarchyEvent event) {
+            log.debug("{}: Ancestor resized", AbstractWPicker.this.getName());
+            hidePopup();
+        }
+    };
+
+    public AbstractWPicker(@NotNull @NonNull DateFormat format, @NotNull @NonNull AbstractWPickerPanel<T> pnlPopup, @Nullable T defval, int columns) {
+        super(format, defval, columns, false);
 
         getComponent().setValue(DateConverterHelper.toDate(defval));
 
@@ -44,26 +64,16 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
         add(btnPopup);
 
         addHierarchyListener(event -> hidePopup());
-        addHierarchyBoundsListener(new HierarchyBoundsListener() {
-            @Override
-            public void ancestorMoved(HierarchyEvent event) {
-                hidePopup();
-            }
-
-            @Override
-            public void ancestorResized(HierarchyEvent event) {
-                hidePopup();
-            }
-        });
     }
 
-    public void setTheme(ColorTheme theme) {
-        this.theme = Objects.requireNonNull(theme, "theme");
+    public void setTheme(@NotNull @NonNull ColorTheme theme) {
+        this.theme = theme;
         pnlPopup.setTheme(theme);
     }
 
     @SuppressWarnings("unchecked")
-    private void handlePopupEvent(DataChangedEvent event) {
+    private void handlePopupEvent(@NotNull @NonNull DataChangedEvent event) {
+        log.debug("{}: Got popup event {}", getName(), event);
         getComponent().setValue(DateConverterHelper.toDate((T) event.getNewValue()));
         if (!ChangeType.CHANGED.equals(event.getWhy())) {
             setValue((T) event.getNewValue());
@@ -73,9 +83,10 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
     public void hidePopup() {
         synchronized (this) {
             if (popup != null) {
+                log.debug("{}: Hiding popup", getName());
+                removeHierarchyBoundsListener(hierarchyBoundsListener);
                 popup.hide();
                 popup = null;
-                pnlPopup.setValue(getValue());
             }
         }
     }
@@ -87,6 +98,7 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
 
     @Override
     public void setReadonly(boolean readonly) {
+        log.debug("{}: Setting readonly to {}", getName(), readonly);
         btnPopup.setEnabled(!readonly);
         getComponent().setEnabled(!readonly);
         hidePopup();
@@ -96,8 +108,12 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
         synchronized (this) {
             if (popup == null) {
                 Point pos = getLocationOnScreen();
+                log.debug("{}: Showing popup at {}", getName(), pos);
+
+                addHierarchyBoundsListener(hierarchyBoundsListener);
                 popup = PopupFactory.getSharedInstance().getPopup(this, pnlPopup,
                         pos.x, pos.y + getHeight());
+                pnlPopup.setValue(getValue());
                 popup.show();
             }
         }
@@ -105,6 +121,7 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
 
     public void togglePopup() {
         synchronized (this) {
+            log.debug("{}: Toggling popup", getName());
             if (popup == null) {
                 showPopup();
             } else {

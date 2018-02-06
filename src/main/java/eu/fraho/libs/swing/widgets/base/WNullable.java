@@ -7,7 +7,7 @@
 package eu.fraho.libs.swing.widgets.base;
 
 @SuppressWarnings("unused")
-public interface Nullable {
+public interface WNullable {
     boolean isNullable();
 
     void setNullable(boolean flag);

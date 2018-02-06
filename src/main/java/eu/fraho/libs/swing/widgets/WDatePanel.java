@@ -5,6 +5,10 @@ import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableModel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableRenderer;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -22,6 +26,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 
+@Slf4j
 public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
     // TODO make configurable
     @SuppressWarnings("FieldCanBeLocal")
@@ -51,7 +56,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         this(null);
     }
 
-    public WDatePanel(LocalDate defval) {
+    public WDatePanel(@Nullable LocalDate defval) {
         super(defval);
 
         tblDaysModel = new CalendarTableModel(defval);
@@ -94,12 +99,14 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         component.setOpaque(false);
     }
 
-    private void changeValue(Period amount) {
+    private void changeValue(@NotNull @NonNull Period amount) {
+        log.debug("{}: Changing value by '{}'", getName(), amount);
         setValue(Optional.ofNullable(getValue()).orElseGet(LocalDate::now).plus(amount));
     }
 
     @Override
-    protected void currentValueChanging(LocalDate newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable LocalDate newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         tblDaysModel.setSelectedDate(newVal);
         tblDays.invalidate();
         tblDays.repaint();
@@ -108,7 +115,8 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         centerText.setValue(value.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + value.getYear());
     }
 
-    private void handleSelection(ListSelectionEvent event) {
+    private void handleSelection(@NotNull @NonNull ListSelectionEvent event) {
+        log.debug("{}: Got list selection event '{}'", getName(), event);
         if (event.getValueIsAdjusting() || tblDays.getSelectedRow() == -1) {
             return;
         }
@@ -153,7 +161,8 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         lblNow.setOpaque(false);
         lblNow.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent event) {
+            public void mouseClicked(@NotNull @NonNull MouseEvent event) {
+                log.debug("{}: Clicked on label with current date", getName());
                 if (lblNow.isEnabled()) {
                     setValue(LocalDate.now());
                 }
@@ -207,13 +216,12 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         pnlTable.add(scrlPane);
     }
 
-    @Override
-    protected void setInDateTimePanel(boolean flag) {
-        super.setInDateTimePanel(flag);
-        pnlDetails.setVisible(!flag);
+    protected void setInDateTimePanel() {
+        super.setInDateTimePanel(true);
+        pnlDetails.setVisible(false);
     }
 
-    private void setupControlButton(JButton btn) {
+    private void setupControlButton(@NotNull @NonNull JButton btn) {
         btn.setPreferredSize(new Dimension(24, 16));
         btn.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
     }
@@ -245,6 +253,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
 
     @Override
     public void commitChanges() throws ChangeVetoException {
+        log.debug("{}: Committing changes", getName());
         super.commitChanges();
         getParentPicker().ifPresent(AbstractWPicker::hidePopup);
     }

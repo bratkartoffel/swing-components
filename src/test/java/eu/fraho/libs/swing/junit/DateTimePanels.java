@@ -21,8 +21,8 @@ import java.util.Locale;
 @SuppressWarnings("Duplicates")
 public class DateTimePanels extends JFrame {
     private WForm<Model> form;
-    private Model model = new Model();
-    private JPanel pnlCenter = new JPanel();
+    private final Model model = new Model();
+    private final JPanel pnlCenter = new JPanel();
 
     public DateTimePanels() {
         setSize(550, 650);

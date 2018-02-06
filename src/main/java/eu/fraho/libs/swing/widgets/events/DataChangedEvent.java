@@ -4,11 +4,13 @@ import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.base.WComponent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.EventObject;
-import java.util.Objects;
 
 /**
  * This event is used by all {@link WComponent}s when the data changed. There
@@ -20,6 +22,7 @@ import java.util.Objects;
  *
  * @author Simon Frankenberger
  */
+@SuppressWarnings("DefaultAnnotationParam")
 @Getter
 @ToString
 @EqualsAndHashCode(exclude = "when", callSuper = false)
@@ -49,16 +52,16 @@ public class DataChangedEvent extends EventObject {
      * @param newVal The new value
      * @param why    The cause of this event
      */
-    public DataChangedEvent(AbstractWComponent<?, ?> source, Object oldVal, Object newVal,
-                            ChangeType why) {
+    public DataChangedEvent(@NotNull @NonNull AbstractWComponent<?, ?> source, @Nullable Object oldVal, @Nullable Object newVal, @NotNull @NonNull ChangeType why) {
         super(source);
         this.oldValue = oldVal;
         this.newValue = newVal;
-        this.why = Objects.requireNonNull(why, "why");
+        this.why = why;
         when = LocalDateTime.now();
     }
 
     @Override
+    @NotNull
     public AbstractWComponent<?, ?> getSource() {
         return (AbstractWComponent<?, ?>) super.getSource();
     }
