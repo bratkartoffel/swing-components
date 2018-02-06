@@ -4,7 +4,7 @@ swing-components
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/eu.fraho.libs/swing-components/badge.svg)](https://maven-badges.herokuapp.com/maven-central/eu.fraho.libs/swing-components)
 [![Build Status](https://travis-ci.org/bratkartoffel/swing-components.svg?branch=develop)](https://travis-ci.org/bratkartoffel/swing-components)
 [![Code Coverage](https://img.shields.io/codecov/c/github/bratkartoffel/swing-components/develop.svg)](https://codecov.io/github/bratkartoffel/swing-components?branch=develop)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3632c543331d4fe3b98c96a2964d43ae)](https://www.codacy.com/app/bratkartoffel/swing-components?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bratkartoffel/swing-components&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b6f49ded296343cfb27025731ed367c6)](https://www.codacy.com/app/bratkartoffel/swing-components?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bratkartoffel/swing-components&amp;utm_campaign=Badge_Grade)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://doge.mit-license.org)
 
 
