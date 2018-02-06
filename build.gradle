@@ -76,14 +76,15 @@ jacocoTestReport {
 }
 check.dependsOn jacocoTestReport
 
+test {
+	testLogging {
+		events "passed", "skipped", "failed"
+		exceptionFormat "full"
+	}
+}
+
 if (project.hasProperty('release')) {
     apply plugin: 'io.codearte.nexus-staging'
-
-    // abort on test failures on releasing
-    test {
-        ignoreFailures = false
-    }
-
     apply plugin: 'signing'
 
     // Signature of artifacts
