@@ -2,6 +2,7 @@ package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
+import eu.fraho.libs.swing.widgets.form.FormField;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -19,20 +20,20 @@ public class WTextArea extends AbstractWComponent<String, JTextArea> {
     }
 
     public WTextArea(@Nullable String defval) {
-        this(defval, 4, 15);
+        this(defval, FormField.DEFAULT_ROWS, FormField.DEFAULT_COLUMNS);
     }
 
     public WTextArea(@Nullable String defval, int rows, int columns) {
         super(new JTextArea(defval, rows, columns), defval);
 
-        JTextArea myComponent = getComponent();
+        JTextArea component = getComponent();
 
         // Set the value when leaving the field
-        myComponent.addFocusListener(new FocusAdapter() {
+        component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(@NotNull @NonNull FocusEvent event) {
                 log.debug("{}: Focus gained {}", WTextArea.this.getName(), event);
-                SwingUtilities.invokeLater(() -> myComponent.setSelectionStart(myComponent.getText().length()));
+                SwingUtilities.invokeLater(() -> component.setSelectionStart(component.getText().length()));
             }
 
             @Override
@@ -41,6 +42,11 @@ public class WTextArea extends AbstractWComponent<String, JTextArea> {
                 SwingUtilities.invokeLater(WTextArea.this::setValueFromEvent);
             }
         });
+
+        // add scrollbars
+        remove(component);
+        add(new JScrollPane(component));
+        getComponent().setOpaque(true);
     }
 
     @Override
@@ -58,6 +64,13 @@ public class WTextArea extends AbstractWComponent<String, JTextArea> {
     public void setReadonly(boolean readonly) {
         log.debug("{}: Setting readonly to {}", getName(), readonly);
         getComponent().setEnabled(!readonly);
+    }
+
+    @Override
+    public void setupByAnnotation(@NotNull FormField anno) {
+        super.setupByAnnotation(anno);
+        getComponent().setColumns(anno.columns());
+        getComponent().setRows(anno.rows());
     }
 
     private void setValueFromEvent() {

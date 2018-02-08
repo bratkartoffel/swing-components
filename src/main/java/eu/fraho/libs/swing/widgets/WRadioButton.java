@@ -35,6 +35,7 @@ public class WRadioButton<E> extends AbstractWComponent<Boolean, JRadioButton> {
     public WRadioButton(@Nullable E value, @Nullable Icon icon, @NotNull @NonNull Boolean selected) {
         super(new JRadioButton(String.valueOf(value), icon, selected), selected);
 
+        getComponent().setOpaque(false);
         getComponent().addItemListener(event -> setValue(event.getStateChange() == ItemEvent.SELECTED));
     }
 

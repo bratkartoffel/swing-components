@@ -19,11 +19,11 @@ import java.util.Date;
 @SuppressWarnings("unused")
 public class WDatePicker extends AbstractWPicker<LocalDate> {
     public WDatePicker() {
-        this(null, FormField.DEFAULT_COLUMNS);
+        this(null, 8);
     }
 
     public WDatePicker(@Nullable LocalDate defval) {
-        this(defval, FormField.DEFAULT_COLUMNS);
+        this(defval, 8);
     }
 
     public WDatePicker(@Nullable LocalDate defval, int columns) {

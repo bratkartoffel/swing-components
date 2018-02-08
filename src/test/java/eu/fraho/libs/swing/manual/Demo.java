@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Slf4j
 @SuppressWarnings("Duplicates")
@@ -20,21 +23,35 @@ public class Demo extends JFrame {
         }
     }
 
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Demo demo = new Demo();
+            demo.pack();
+            demo.setVisible(true);
+//            demo.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        });
+    }
+
     private WForm<DemoModel> form;
-    private final DemoModel model = new DemoModel();
+    private final DemoModel model;
     private final JPanel pnlCenter = new JPanel();
 
     public Demo() {
-        setSize(850, 500);
+        this(new DemoModel());
+    }
+
+    public Demo(DemoModel model) {
+        this.model = model;
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setupCenter();
         setupButtons();
         add(pnlCenter, BorderLayout.CENTER);
-    }
-
-    public static void main(String[] args) {
-        new Demo().setVisible(true);
+        setLocationByPlatform(true);
+        setSize(new Dimension(800, 600));
+        setTitle("swing-components demo application");
+        form.setOpaque(false);
+//        pnlCenter.setBackground(new Color(100, 100, 100));
     }
 
     private void setupCenter() {
@@ -89,6 +106,10 @@ public class Demo extends JFrame {
         commit.addActionListener(event -> form.commitChanges());
         commit.setName("commit");
 
+        JButton changeLaf = new JButton("change L&F");
+        changeLaf.addActionListener(event -> changeLayout());
+        changeLaf.setName("changeLaf");
+
         JPanel pnlSouth = new JPanel();
         pnlSouth.setLayout(new FlowLayout());
         pnlSouth.add(setLocaleDe);
@@ -100,6 +121,7 @@ public class Demo extends JFrame {
         pnlSouth.add(readonly);
         pnlSouth.add(rollback);
         pnlSouth.add(commit);
+        pnlSouth.add(changeLaf);
         pnlSouth.setName("buttons");
         add(pnlSouth, BorderLayout.SOUTH);
     }
@@ -109,6 +131,36 @@ public class Demo extends JFrame {
         Locale.setDefault(locale);
 
         setupCenter();
+    }
+
+    private void changeLayout() {
+        form.commitChanges();
+        UIManager.LookAndFeelInfo[] installed = UIManager.getInstalledLookAndFeels();
+
+        Optional<String> laf = IntStream.range(0, installed.length)
+                .filter(i -> Objects.equals(UIManager.getLookAndFeel().getName(), installed[i].getName()))
+                .map(i -> ++i % installed.length)
+                .mapToObj(i -> installed[i])
+                .map(UIManager.LookAndFeelInfo::getClassName)
+                .findAny();
+
+        if (laf.isPresent()) {
+            try {
+                UIManager.setLookAndFeel(laf.get());
+            } catch (Throwable e) {
+                log.error("Unable to set l&f", e);
+            }
+        }
+
+        log.info("Using layout: {}", UIManager.getLookAndFeel().getClass().getName());
+        SwingUtilities.invokeLater(() -> {
+            Demo demo = new Demo(model);
+            demo.pack();
+            demo.setLocation(getLocation());
+            demo.setVisible(true);
+            demo.setExtendedState(getExtendedState());
+            dispose();
+        });
     }
 
     private void dataChanged(DataChangedEvent dataChangedEvent) {

@@ -24,8 +24,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     // components
-    private final JPanel pnlControls = new JPanel(new GridLayout(1, 4));
-    private final JPanel pnlDetails = new JPanel(new BorderLayout());
+    private final JPanel pnlControls = new JPanel(new GridLayout(1, 3));
+    private final JPanel pnlDetails = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 3));
 
     private boolean massUpdateRunning = false;
 
@@ -70,6 +70,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         spnSecond.addDataChangedListener(this::spinnerChanged);
 
         lblNow = new WLabel("--:--:--");
+        lblNow.setName("now");
         dtf = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
 
         populateControls();
@@ -78,6 +79,9 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         JPanel component = getComponent();
         component.add(pnlControls, BorderLayout.CENTER);
         component.add(pnlDetails, BorderLayout.SOUTH);
+        setOpaque(false);
+
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     }
 
     @Override
@@ -124,44 +128,63 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     }
 
     private void populateControls() {
+        pnlControls.setOpaque(false);
+
         pnlControls.add(spnHour);
         pnlControls.add(spnMinute);
         pnlControls.add(spnSecond);
-        pnlControls.setOpaque(false);
 
         pnlControls.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         pnlControls.setBackground(getTheme().bgTopPanel());
+    }
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+
+        if (pnlControls != null) {
+            pnlDetails.setBackground(bg);
+            btnClear.getParent().setBackground(bg);
+        }
+    }
+
+    @Override
+    public void setOpaque(boolean isOpaque) {
+        super.setOpaque(isOpaque);
+        if (pnlControls != null) {
+            pnlDetails.setOpaque(isOpaque);
+            ((JComponent) btnClear.getParent()).setOpaque(isOpaque);
+        }
     }
 
     private void populateDetails() {
         lblNow.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(@NotNull @NonNull MouseEvent event) {
-                log.debug("{}: Clicked on label with current time", getName());
                 if (!spnHour.isReadonly()) {
+                    log.debug("{}: Clicked on label with current time", getName());
                     setValue(LocalTime.now().withNano(0));
                 }
             }
         });
         lblNow.setForeground(getTheme().fgTodaySelector());
 
-        JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
-
         btnClear.addActionListener(event -> setValue(null));
         btnClear.setName("clear");
         btnClear.setText("\u2715");
+        btnClear.setToolTipText("Clear");
 
         btnOk.addActionListener(event -> commitChanges());
         btnOk.setName("ok");
         btnOk.setText("\u2713");
+        btnOk.setToolTipText("Ok");
 
-        pnlButtons.add(btnClear);
-        pnlButtons.add(btnOk);
+        setupControlButton(btnClear);
+        setupControlButton(btnOk);
 
-        pnlDetails.add(lblNow, BorderLayout.LINE_START);
-        pnlDetails.add(pnlButtons, BorderLayout.LINE_END);
-
-        pnlDetails.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        pnlDetails.add(lblNow);
+        pnlDetails.add(btnClear);
+        pnlDetails.add(btnOk);
     }
 
     protected void setInDateTimePanel() {

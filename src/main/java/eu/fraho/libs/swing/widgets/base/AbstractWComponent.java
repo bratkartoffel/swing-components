@@ -77,12 +77,13 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
         this.savedValue = currentValue;
         setName(getClass().getSimpleName() + "-" + counter);
         component.setName(getName() + ".Component");
+        setOpaque(false);
 
         // initialize event handlers
         eventHandlers = new ArrayList<>();
 
         // setup swing layout
-        setLayout(new FlowLayout(FlowLayout.LEFT, 3, 0));
+        setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
         add(component);
     }
 
@@ -170,7 +171,7 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
     protected abstract void currentValueChanging(@Nullable E newVal) throws ChangeVetoException;
 
     @Override
-    @NotNull
+    @NonNull
     public final C getComponent() {
         return component;
     }
@@ -351,6 +352,22 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
     public void setupByAnnotation(@NotNull @NonNull FormField anno) {
         log.debug("{}: Setting up by annotation", getName());
         setReadonly(anno.readonly());
+    }
+
+    @Override
+    public void setOpaque(boolean isOpaque) {
+        super.setOpaque(isOpaque);
+        if (component != null && component instanceof JPanel) { // happens on initialization of this JPanel
+            component.setOpaque(isOpaque);
+        }
+    }
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+        if (component != null && component instanceof JPanel) { // happens on initialization of this JPanel
+            component.setBackground(bg);
+        }
     }
 
     public static void clearCounters() {

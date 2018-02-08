@@ -19,12 +19,12 @@ import java.util.Date;
 @Slf4j
 public class WTimePicker extends AbstractWPicker<LocalTime> {
     public WTimePicker() {
-        this(null, FormField.DEFAULT_COLUMNS);
+        this(null, 8);
     }
 
     @SuppressWarnings("unused")
     public WTimePicker(@Nullable LocalTime defval) {
-        this(defval, FormField.DEFAULT_COLUMNS);
+        this(defval, 8);
     }
 
     public WTimePicker(@Nullable LocalTime defval, int columns) {

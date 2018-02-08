@@ -29,18 +29,18 @@ public class WPasswordField extends AbstractWComponent<String, JPasswordField> {
     public WPasswordField(@Nullable String defval, int columns) {
         super(new JPasswordField(columns), defval);
 
-        JPasswordField myComponent = getComponent();
-        myComponent.setEchoChar('\u2022');
+        JPasswordField component = getComponent();
+        component.setEchoChar('\u2022');
 
         // Set the value when pressing enter
-        myComponent.addActionListener(evt -> setValueFromEvent());
+        component.addActionListener(evt -> setValueFromEvent());
 
         // Set the value when leaving the field
-        myComponent.addFocusListener(new FocusAdapter() {
+        component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(@NotNull @NonNull FocusEvent event) {
                 log.debug("{}: Focus gained {}", WPasswordField.this.getName(), event);
-                SwingUtilities.invokeLater(() -> myComponent.setSelectionStart(myComponent.getPassword().length));
+                SwingUtilities.invokeLater(() -> component.setSelectionStart(component.getPassword().length));
             }
 
             @Override
@@ -51,12 +51,12 @@ public class WPasswordField extends AbstractWComponent<String, JPasswordField> {
         });
 
         // Feature: First click to focus this element -> all text gets selected
-        myComponent.addMouseListener(new MouseAdapter() {
+        component.addMouseListener(new MouseAdapter() {
             private final AtomicBoolean selectAll = new AtomicBoolean(false);
 
             @Override
             public void mousePressed(@NotNull @NonNull MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON1 && !myComponent.hasFocus()) {
+                if (event.getButton() == MouseEvent.BUTTON1 && !component.hasFocus()) {
                     if (selectAll.compareAndSet(false, true)) {
                         log.debug("{}: Setting flag to select all", WPasswordField.this.getName());
                     }
@@ -67,7 +67,7 @@ public class WPasswordField extends AbstractWComponent<String, JPasswordField> {
             public void mouseReleased(@NotNull @NonNull MouseEvent event) {
                 if (selectAll.compareAndSet(true, false)) {
                     log.debug("{}: Selecting all", WPasswordField.this.getName());
-                    SwingUtilities.invokeLater(myComponent::selectAll);
+                    SwingUtilities.invokeLater(component::selectAll);
                 }
             }
         });

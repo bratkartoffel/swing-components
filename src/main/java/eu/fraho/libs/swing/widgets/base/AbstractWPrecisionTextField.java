@@ -48,7 +48,10 @@ public abstract class AbstractWPrecisionTextField extends AbstractWTextField<Big
 
     @Override
     public void setupByAnnotation(@NotNull @NonNull FormField anno) {
+        // do not set columns from annotation
+        int columns = getComponent().getColumns();
         super.setupByAnnotation(anno);
+        getComponent().setColumns(columns);
         log.debug("{}: Setting up by annotation", getName());
         setPrecision(anno.minPrecision(), anno.maxPrecision());
     }

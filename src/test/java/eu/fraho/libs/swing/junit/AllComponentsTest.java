@@ -6,10 +6,7 @@
  */
 package eu.fraho.libs.swing.junit;
 
-import eu.fraho.libs.swing.widgets.WDatePicker;
-import eu.fraho.libs.swing.widgets.WDateTimePicker;
-import eu.fraho.libs.swing.widgets.WFileChooser;
-import eu.fraho.libs.swing.widgets.WTimePicker;
+import eu.fraho.libs.swing.widgets.*;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
@@ -120,6 +117,8 @@ public class AllComponentsTest {
         window.panel("WTimePicker-0").textBox().requireDisabled();
         window.panel("WTimePicker-0").button().requireDisabled();
         window.panel("WStringTextField-1").textBox().requireDisabled();
+        window.panel("WSwitchBox-0").label("off").requireDisabled();
+        window.panel("WSwitchBox-0").label("on").requireDisabled();
 
         // set writable again
         window.button("readonly").click();
@@ -147,6 +146,8 @@ public class AllComponentsTest {
         window.panel("WTextArea-0").textBox().requireEnabled();
         window.panel("WTimePicker-0").textBox().requireEnabled();
         window.panel("WTimePicker-0").button().requireEnabled();
+        window.panel("WSwitchBox-0").label("off").requireEnabled();
+        window.panel("WSwitchBox-0").label("on").requireEnabled();
         // should stay readonly!
         window.panel("WStringTextField-1").textBox().requireDisabled();
     }
@@ -159,8 +160,8 @@ public class AllComponentsTest {
 
         // select today
         openPopup("WDatePicker-0");
-        window.panel("WDatePicker.popup").label("WLabel-8.Component").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-        window.panel("WDatePicker.popup").label("WLabel-8.Component").click();
+        window.panel("WDatePicker.popup").panel("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        window.panel("WDatePicker.popup").panel("today").label().click();
         window.panel("WDatePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
@@ -247,8 +248,8 @@ public class AllComponentsTest {
 
         // select today
         openPopup("WDatePicker-1");
-        window.panel("WDatePicker.popup").label("WLabel-34.Component").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
-        window.panel("WDatePicker.popup").label("WLabel-34.Component").click();
+        window.panel("WDatePicker.popup").panel("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
+        window.panel("WDatePicker.popup").panel("today").label().click();
         window.panel("WDatePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
@@ -286,8 +287,8 @@ public class AllComponentsTest {
 
         // select today
         openPopup("WDatePicker-1");
-        window.panel("WDatePicker.popup").label("WLabel-34.Component").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        window.panel("WDatePicker.popup").label("WLabel-34.Component").click();
+        window.panel("WDatePicker.popup").panel("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        window.panel("WDatePicker.popup").panel("today").label().click();
         window.panel("WDatePicker.popup").button("ok").click();
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, LocalDate.now(), DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -334,8 +335,8 @@ public class AllComponentsTest {
         now = now.withNano(0);
         // select today
         openPopup("WDateTimePicker-0");
-        window.panel("WDateTimePicker.popup").label("WLabel-13.Component").requireText(now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
-        window.panel("WDateTimePicker.popup").label("WLabel-13.Component").click();
+        window.panel("WDateTimePicker.popup").panel("now").label().requireText(now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
+        window.panel("WDateTimePicker.popup").panel("now").label().click();
         window.panel("WDateTimePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
@@ -443,8 +444,8 @@ public class AllComponentsTest {
         } while (now.getNano() > 100_000_000);
         now = now.withNano(0);
         openPopup("WTimePicker-0");
-        window.panel("WTimePicker.popup").label("WLabel-24.Component").requireText(now.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-        window.panel("WTimePicker.popup").label("WLabel-24.Component").click();
+        window.panel("WTimePicker.popup").panel("now").label().requireText(now.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        window.panel("WTimePicker.popup").panel("now").label().click();
         window.panel("WTimePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
@@ -506,6 +507,7 @@ public class AllComponentsTest {
         window.panel("WStringTextField-0").textBox().setText("bar");
         window.panel("WTextArea-0").textBox().setText("foo\nxxx");
         window.panel("WTimePicker-0").textBox().setText("04:05:06");
+        window.panel("WSwitchBox-0").label("on").click();
     }
 
     private void requireValues1German() {
@@ -525,6 +527,12 @@ public class AllComponentsTest {
         window.panel("WStringTextField-0").textBox().requireText("bar");
         window.panel("WTextArea-0").textBox().requireText("foo\nxxx");
         window.panel("WTimePicker-0").textBox().requireText("04:05:06");
+        window.panel("WSwitchBox-0").label("on").background().requireEqualTo(
+                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
+        );
+        window.panel("WSwitchBox-0").label("off").background().requireNotEqualTo(
+                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
+        );
     }
 
     private void setAllValues1US() {
@@ -544,6 +552,7 @@ public class AllComponentsTest {
         window.panel("WStringTextField-0").textBox().setText("bar");
         window.panel("WTextArea-0").textBox().setText("foo\nxxx");
         window.panel("WTimePicker-0").textBox().setText("4:05:06 AM");
+        window.panel("WSwitchBox-0").label("on").click();
     }
 
     private void requireValues1US() {
@@ -563,6 +572,12 @@ public class AllComponentsTest {
         window.panel("WStringTextField-0").textBox().requireText("bar");
         window.panel("WTextArea-0").textBox().requireText("foo\nxxx");
         window.panel("WTimePicker-0").textBox().requireText("4:05:06 AM");
+        window.panel("WSwitchBox-0").label("on").background().requireEqualTo(
+                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
+        );
+        window.panel("WSwitchBox-0").label("off").background().requireNotEqualTo(
+                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
+        );
     }
 
     private void requireEmptyValues() {
@@ -582,6 +597,12 @@ public class AllComponentsTest {
         window.panel("WStringTextField-0").textBox().requireText("");
         window.panel("WTextArea-0").textBox().requireText("");
         window.panel("WTimePicker-0").textBox().requireText("");
+        window.panel("WSwitchBox-0").label("on").background().requireNotEqualTo(
+                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
+        );
+        window.panel("WSwitchBox-0").label("off").background().requireEqualTo(
+                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
+        );
     }
 
     private void setAllValues2German() {
@@ -601,6 +622,7 @@ public class AllComponentsTest {
         window.panel("WStringTextField-0").textBox().setText("baz");
         window.panel("WTextArea-0").textBox().setText("foo\nabc");
         window.panel("WTimePicker-0").textBox().setText("07:14:06");
+        window.panel("WSwitchBox-0").label("off").click();
     }
 
     private void openPopup(String name) throws InterruptedException {

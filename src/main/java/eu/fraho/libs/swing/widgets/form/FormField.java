@@ -19,7 +19,8 @@ import java.util.Locale;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface FormField {
-    int DEFAULT_COLUMNS = 10;
+    int DEFAULT_COLUMNS = 20;
+    int DEFAULT_ROWS = 6;
 
     /**
      * @return The caption of the field, displayed as a label in front of the
@@ -28,16 +29,24 @@ public @interface FormField {
     String caption();
 
     /**
-     * Used for {@link WSpinner} only.<br>
-     * Parsed as a number of type {@link #spinnerType()} using {@link Locale#US} .
+     * Used for {@link WSpinner} and {@link WSwitchBox} only.<br>
+     * The usage of this field depends on the widget:
+     * <ul>
+     * <li>WSpinner: Parsed as a number of type {@link #spinnerType()} using {@link Locale#US}.</li>
+     * <li>WSwitchBox: Determines the text of the 'on' button</li>
+     * </ul>
      *
      * @return The maximum selectable value.
      */
     String max() default "";
 
     /**
-     * Used for {@link WSpinner} only.<br>
-     * Parsed as a number of type {@link #spinnerType()} using {@link Locale#US} .
+     * Used for {@link WSpinner} and {@link WSwitchBox} only.<br>
+     * The usage of this field depends on the widget:
+     * <ul>
+     * <li>WSpinner: Parsed as a number of type {@link #spinnerType()} using {@link Locale#US}.</li>
+     * <li>WSwitchBox: Determines the text of the 'off' button</li>
+     * </ul>
      *
      * @return The minimum selectable value.
      */
@@ -95,9 +104,16 @@ public @interface FormField {
     /**
      * Used for all {@link AbstractWTextField} and {@link WSpinner} only.<br>
      *
-     * @return The iconWidth of the component, defined as columns of text.
+     * @return The width of the component, defined as columns of text.
      */
     int columns() default DEFAULT_COLUMNS;
+
+    /**
+     * Used for {@link WTextArea} only.<br>
+     *
+     * @return The height of the component, defined as lines of text.
+     */
+    int rows() default DEFAULT_ROWS;
 
     enum SpinnerType {
         LONG,

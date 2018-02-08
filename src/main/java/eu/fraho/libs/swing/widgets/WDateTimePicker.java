@@ -16,11 +16,11 @@ import java.util.Date;
 @SuppressWarnings("unused")
 public class WDateTimePicker extends AbstractWPicker<LocalDateTime> {
     public WDateTimePicker() {
-        this(null, FormField.DEFAULT_COLUMNS + 5);
+        this(null, 16);
     }
 
     public WDateTimePicker(@Nullable LocalDateTime defval) {
-        this(defval, FormField.DEFAULT_COLUMNS + 5);
+        this(defval, 16);
     }
 
     public WDateTimePicker(@Nullable LocalDateTime defval, int columns) {

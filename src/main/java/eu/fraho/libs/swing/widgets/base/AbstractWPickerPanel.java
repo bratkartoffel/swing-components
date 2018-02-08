@@ -34,7 +34,7 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
 
         addHierarchyListener(event -> {
             log.debug("{}: Hierarchy changed {}", getName(), event);
-            if ((event.getChangeFlags() & HierarchyEvent.DISPLAYABILITY_CHANGED) == HierarchyEvent.DISPLAYABILITY_CHANGED) {
+            if ((event.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) == HierarchyEvent.SHOWING_CHANGED) {
                 toggleClock();
             }
         });
@@ -42,6 +42,11 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
 
     public void setTheme(@NotNull @NonNull ColorTheme theme) {
         this.theme = theme;
+    }
+
+    protected void setupControlButton(@NotNull @NonNull JButton btn) {
+        btn.setMargin(new Insets(0, 0, 0, 0));
+        btn.setPreferredSize(new Dimension(36, 28));
     }
 
     @Override

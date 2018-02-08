@@ -200,5 +200,8 @@ public class AllComponents extends JFrame {
 
         @FormField(caption = "WStringTextField[readonly]", type = WStringTextField.class, readonly = true)
         private String valReadonly = "foobar";
+
+        @FormField(caption = "WSwitchBox", type = WSwitchBox.class, min = "no", max = "yes")
+        private Boolean valSwitchBox = null;
     }
 }

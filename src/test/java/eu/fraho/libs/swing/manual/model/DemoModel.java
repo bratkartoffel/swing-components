@@ -26,8 +26,8 @@ public class DemoModel implements FormModel {
     @FormField(caption = "WCheckBox", type = WCheckBox.class)
     private Boolean valBoolean = null;
 
-    @FormField(caption = "WCurrencyTextField", type = WCurrencyTextField.class, maxPrecision = 2)
-    private BigDecimal valCurrency = null;
+    @FormField(caption = "WSwitchBox", type = WSwitchBox.class, min = "nein", max = "ja")
+    private Boolean valBoolean2 = true;
 
 
     @FormField(caption = "WDatePicker", type = WDatePicker.class)
@@ -78,6 +78,9 @@ public class DemoModel implements FormModel {
     @FormField(caption = "WLongTextField", type = WLongTextField.class)
     private Long valLong = null;
 
+
+    @FormField(caption = "WCurrencyTextField", type = WCurrencyTextField.class, maxPrecision = 2)
+    private BigDecimal valCurrency = null;
 
     @FormField(caption = "WStringTextField[readonly]", type = WStringTextField.class, readonly = true)
     private String valReadonly = "foobar";

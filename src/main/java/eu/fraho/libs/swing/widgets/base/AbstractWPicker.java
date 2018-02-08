@@ -5,6 +5,7 @@ import eu.fraho.libs.swing.widgets.datepicker.DateConverterHelper;
 import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent.ChangeType;
+import eu.fraho.libs.swing.widgets.form.FormField;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +53,7 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
 
         this.pnlPopup = pnlPopup;
         pnlPopup.setParentPicker(this);
-        pnlPopup.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        pnlPopup.setBorder(BorderFactory.createRaisedBevelBorder());
         pnlPopup.addDataChangedListener(this::handlePopupEvent);
         pnlPopup.setName(getClass().getSimpleName() + ".popup");
 
@@ -78,6 +79,14 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
         if (!ChangeType.CHANGED.equals(event.getWhy())) {
             setValue((T) event.getNewValue());
         }
+    }
+
+    @Override
+    public void setupByAnnotation(@NotNull FormField anno) {
+        // do not set columns from annotation
+        int columns = getComponent().getColumns();
+        super.setupByAnnotation(anno);
+        getComponent().setColumns(columns);
     }
 
     public void hidePopup() {
@@ -127,6 +136,14 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
             } else {
                 hidePopup();
             }
+        }
+    }
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+        if (pnlPopup != null) {
+            pnlPopup.setBackground(bg);
         }
     }
 }

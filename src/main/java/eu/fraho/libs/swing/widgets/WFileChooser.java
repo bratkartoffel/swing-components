@@ -2,6 +2,7 @@ package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
+import eu.fraho.libs.swing.widgets.form.FormField;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.util.Optional;
 
@@ -31,7 +33,7 @@ public class WFileChooser extends AbstractWComponent<File, JTextField> {
     }
 
     public WFileChooser(@Nullable File defval, @Nullable JFileChooser chooser) {
-        super(new JTextField(20), defval);
+        super(new JTextField(FormField.DEFAULT_COLUMNS), defval);
 
         this.chooser = Optional.ofNullable(chooser).orElse(new JFileChooser(defval));
 

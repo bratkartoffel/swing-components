@@ -25,6 +25,7 @@ public class WCheckBox extends AbstractWComponent<Boolean, JCheckBox> {
     public WCheckBox(@Nullable String text, @Nullable Icon icon, @Nullable Boolean selected) {
         super(new JCheckBox(text, icon, selected == null ? false : selected), selected);
 
+        getComponent().setOpaque(false);
         getComponent().addActionListener(event -> setValue(getComponent().isSelected()));
     }
 

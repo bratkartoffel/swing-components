@@ -7,6 +7,7 @@ import eu.fraho.libs.swing.widgets.events.DataChangedListener;
 import eu.fraho.libs.swing.widgets.form.FormField;
 import eu.fraho.libs.swing.widgets.form.FormModel;
 import eu.fraho.libs.swing.widgets.form.WForm;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +58,7 @@ public interface WComponent<E> {
     /**
      * @return The underlying swing component
      */
-    @NotNull
+    @NonNull
     JComponent getComponent();
 
     /**
