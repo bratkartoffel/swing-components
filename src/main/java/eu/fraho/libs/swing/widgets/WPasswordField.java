@@ -40,35 +40,17 @@ public class WPasswordField extends AbstractWComponent<String, JPasswordField> {
             @Override
             public void focusGained(@NotNull @NonNull FocusEvent event) {
                 log.debug("{}: Focus gained {}", WPasswordField.this.getName(), event);
-                SwingUtilities.invokeLater(() -> component.setSelectionStart(component.getPassword().length));
+                SwingUtilities.invokeLater(() -> {
+                    int length = getComponent().getPassword().length;
+                    getComponent().setSelectionStart(length);
+                    getComponent().setSelectionEnd(length);
+                });
             }
 
             @Override
             public void focusLost(@NotNull @NonNull FocusEvent event) {
                 log.debug("{}: Focus lost {}", WPasswordField.this.getName(), event);
                 setValueFromEvent();
-            }
-        });
-
-        // Feature: First click to focus this element -> all text gets selected
-        component.addMouseListener(new MouseAdapter() {
-            private final AtomicBoolean selectAll = new AtomicBoolean(false);
-
-            @Override
-            public void mousePressed(@NotNull @NonNull MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON1 && !component.hasFocus()) {
-                    if (selectAll.compareAndSet(false, true)) {
-                        log.debug("{}: Setting flag to select all", WPasswordField.this.getName());
-                    }
-                }
-            }
-
-            @Override
-            public void mouseReleased(@NotNull @NonNull MouseEvent event) {
-                if (selectAll.compareAndSet(true, false)) {
-                    log.debug("{}: Selecting all", WPasswordField.this.getName());
-                    SwingUtilities.invokeLater(component::selectAll);
-                }
             }
         });
     }
@@ -96,7 +78,7 @@ public class WPasswordField extends AbstractWComponent<String, JPasswordField> {
         if (component.getPassword().length == 0) {
             setValue(null);
         } else {
-            SwingUtilities.invokeLater(() -> setValue(new String(component.getPassword())));
+            SwingUtilities.invokeLater(() -> setValue(new String(getComponent().getPassword())));
         }
     }
 }

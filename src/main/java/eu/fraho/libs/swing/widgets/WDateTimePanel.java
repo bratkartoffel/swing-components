@@ -5,6 +5,8 @@ import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +22,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -34,9 +34,9 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
     private final JButton btnClear = new JButton();
     private final JButton btnOk = new JButton();
     private boolean massUpdateRunning = false;
+    @Getter(AccessLevel.PROTECTED)
     private final WLabel lblNow;
     private final DateTimeFormatter dtf;
-    private ScheduledThreadPoolExecutor clock = null;
 
     public WDateTimePanel() {
         this(null);
@@ -89,6 +89,8 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
             }
         });
         lblNow.setForeground(getTheme().fgTodaySelector());
+        lblNow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        lblNow.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         btnClear.addActionListener(event -> setValue(null));
         btnClear.setName("clear");
@@ -100,11 +102,11 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
         btnOk.setText("\u2713");
         btnOk.setToolTipText("Ok");
 
-        setupControlButton(btnClear);
-        setupControlButton(btnOk);
+        JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        pnlSouth.add(lblNow);
+        pnlSouth.add(btnClear);
 
-        pnlDetails.add(lblNow);
-        pnlDetails.add(btnClear);
+        pnlDetails.add(pnlSouth);
         pnlDetails.add(btnOk);
     }
 
@@ -216,26 +218,8 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
     }
 
     @Override
-    public void startClock() {
-        super.startClock();
-        synchronized (this) {
-            if (clock == null && !isInDateTimePanel()) {
-                clock = new ScheduledThreadPoolExecutor(1);
-                clock.scheduleAtFixedRate(
-                        () -> lblNow.setValue(dtf.format(LocalDateTime.now())), 0, 1, TimeUnit.SECONDS);
-            }
-        }
-    }
-
-    @Override
-    public void stopClock() {
-        super.stopClock();
-        synchronized (this) {
-            if (clock != null) {
-                clock.shutdown();
-                clock = null;
-            }
-        }
+    protected String getNow() {
+        return dtf.format(LocalDateTime.now());
     }
 
     private void timeChanged(@NotNull @NonNull DataChangedEvent event) {
@@ -245,23 +229,5 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
             LocalTime time = (LocalTime) event.getNewValue();
             setValue(parseAndBuild(date, time));
         }
-    }
-
-    @Override
-    protected void toggleClock() {
-        super.toggleClock();
-        synchronized (this) {
-            if (clock == null) {
-                startClock();
-            } else {
-                stopClock();
-            }
-        }
-    }
-
-    @Override
-    public void commitChanges() throws ChangeVetoException {
-        super.commitChanges();
-        getParentPicker().ifPresent(AbstractWPicker::hidePopup);
     }
 }

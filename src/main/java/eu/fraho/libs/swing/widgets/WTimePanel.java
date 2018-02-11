@@ -4,6 +4,8 @@ import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -35,6 +36,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
 
     private final JButton btnClear = new JButton();
     private final JButton btnOk = new JButton();
+    @Getter(AccessLevel.PROTECTED)
     private final WLabel lblNow;
     private final DateTimeFormatter dtf;
     // components which depend on current value
@@ -51,15 +53,15 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         spnMinute = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
         spnSecond = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
 
-        Dimension size = spnHour.getComponent().getPreferredSize();
-        size.width = 50;
-        spnHour.setPreferredSize(size);
+//        Dimension size = spnHour.getComponent().getPreferredSize();
+//        size.width = 50;
+//        spnHour.setPreferredSize(size);
         spnHour.setColumns(2);
         spnHour.setName("hour");
-        spnMinute.setPreferredSize(size);
+//        spnMinute.setPreferredSize(size);
         spnMinute.setColumns(2);
         spnMinute.setName("minute");
-        spnSecond.setPreferredSize(size);
+//        spnSecond.setPreferredSize(size);
         spnSecond.setColumns(2);
         spnSecond.setName("second");
 
@@ -80,7 +82,6 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         component.add(pnlControls, BorderLayout.CENTER);
         component.add(pnlDetails, BorderLayout.SOUTH);
         setOpaque(false);
-
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     }
 
@@ -168,6 +169,8 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
             }
         });
         lblNow.setForeground(getTheme().fgTodaySelector());
+        lblNow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        lblNow.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         btnClear.addActionListener(event -> setValue(null));
         btnClear.setName("clear");
@@ -182,8 +185,14 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         setupControlButton(btnClear);
         setupControlButton(btnOk);
 
-        pnlDetails.add(lblNow);
-        pnlDetails.add(btnClear);
+        JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        pnlSouth.add(lblNow);
+        pnlSouth.add(btnClear);
+        Dimension size = pnlSouth.getPreferredSize();
+        size.width += 35;
+        pnlSouth.setPreferredSize(size);
+
+        pnlDetails.add(pnlSouth);
         pnlDetails.add(btnOk);
     }
 
@@ -216,42 +225,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     }
 
     @Override
-    public void startClock() {
-        super.startClock();
-        synchronized (this) {
-            if (clock == null && !isInDateTimePanel()) {
-                clock = new ScheduledThreadPoolExecutor(1);
-                clock.scheduleAtFixedRate(() -> lblNow.setValue(dtf.format(LocalTime.now())), 0, 1, TimeUnit.SECONDS);
-            }
-        }
-    }
-
-    @Override
-    public void stopClock() {
-        super.stopClock();
-        synchronized (this) {
-            if (clock != null) {
-                clock.shutdown();
-                clock = null;
-            }
-        }
-    }
-
-    @Override
-    protected void toggleClock() {
-        super.toggleClock();
-        synchronized (this) {
-            if (clock == null) {
-                startClock();
-            } else {
-                stopClock();
-            }
-        }
-    }
-
-    @Override
-    public void commitChanges() throws ChangeVetoException {
-        super.commitChanges();
-        getParentPicker().ifPresent(AbstractWPicker::hidePopup);
+    protected String getNow() {
+        return dtf.format(LocalTime.now());
     }
 }

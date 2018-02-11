@@ -32,11 +32,11 @@ public abstract class AbstractWTextField<T> extends AbstractWComponent<T, JForma
     @Override
     protected void currentValueChanging(@Nullable T newVal) throws ChangeVetoException {
         log.debug("{}: Got value changing event to '{}'", getName(), newVal);
-        JFormattedTextField myComponent = getComponent();
-        if (!Objects.equals(newVal, myComponent.getValue())) {
+        JFormattedTextField component = getComponent();
+        if (!Objects.equals(newVal, component.getValue())) {
             log.debug("{}: Setting new value", getName());
-            myComponent.setValue(newVal);
-            myComponent.setSelectionStart(myComponent.getText().length());
+            component.setValue(newVal);
+            component.setSelectionStart(component.getText().length());
         }
     }
 
@@ -58,27 +58,31 @@ public abstract class AbstractWTextField<T> extends AbstractWComponent<T, JForma
     private void setup(@Nullable T defval, int columns, boolean doSetComponentValue) {
         log.debug("{}: Setting up with value={}, columns={}, doSetComponentValue={}", getName(), defval, columns, doSetComponentValue);
 
-        JFormattedTextField myComponent = getComponent();
+        JFormattedTextField component = getComponent();
         if (defval != null && doSetComponentValue) {
-            myComponent.setValue(defval);
+            component.setValue(defval);
         }
-        myComponent.setColumns(columns);
+        component.setColumns(columns);
 
         // Set the value when pressing enter
-        myComponent.addActionListener(evt -> setValueFromEvent());
+        component.addActionListener(evt -> setValueFromEvent());
 
         // Set the value when leaving the field
-        myComponent.addFocusListener(new FocusAdapter() {
+        component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(@NotNull FocusEvent event) {
                 log.debug("{}: Focus gained {}", AbstractWTextField.this.getName(), event);
-                SwingUtilities.invokeLater(() -> myComponent.setSelectionStart(myComponent.getText().length()));
+                SwingUtilities.invokeLater(() -> {
+                    int length = getComponent().getText().length();
+                    getComponent().setSelectionStart(length);
+                    getComponent().setSelectionEnd(length);
+                });
             }
 
             @Override
             public void focusLost(@NotNull FocusEvent event) {
                 log.debug("{}: Focus lost {}", AbstractWTextField.this.getName(), event);
-                if (isNullOrEmptyString(myComponent.getText())) {
+                if (isNullOrEmptyString(getComponent().getText())) {
                     setValue(null);
                 } else {
                     setValueFromEvent();

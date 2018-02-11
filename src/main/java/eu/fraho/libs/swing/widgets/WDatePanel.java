@@ -5,6 +5,8 @@ import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableModel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableRenderer;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +51,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
     private final JTable tblDays;
     private final CalendarTableModel tblDaysModel;
     private final WLabel centerText;
+    @Getter(AccessLevel.PROTECTED)
     private final WLabel lblNow;
 
     public WDatePanel() {
@@ -62,7 +65,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         tblDays = new JTable(tblDaysModel);
         centerText = new WLabel();
         centerText.setName("header");
-        lblNow = new WLabel(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+        lblNow = new WLabel("----/--/--");
         lblNow.setName("today");
 
         btnPrevYear.addActionListener(event -> changeValue(Period.of(-1, 0, 0)));
@@ -191,6 +194,8 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
             }
         });
         lblNow.setForeground(getTheme().fgTodaySelector());
+        lblNow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        lblNow.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         btnClear.addActionListener(event -> setValue(null));
         btnClear.setName("clear");
@@ -205,8 +210,11 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         setupControlButton(btnClear);
         setupControlButton(btnOk);
 
-        pnlDetails.add(lblNow);
-        pnlDetails.add(btnClear);
+        JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        pnlSouth.add(lblNow);
+        pnlSouth.add(btnClear);
+
+        pnlDetails.add(pnlSouth);
         pnlDetails.add(btnOk);
     }
 
@@ -273,9 +281,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
     }
 
     @Override
-    public void commitChanges() throws ChangeVetoException {
-        log.debug("{}: Committing changes", getName());
-        super.commitChanges();
-        getParentPicker().ifPresent(AbstractWPicker::hidePopup);
+    protected String getNow() {
+        return LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
     }
 }

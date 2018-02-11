@@ -33,7 +33,11 @@ public class WTextArea extends AbstractWComponent<String, JTextArea> {
             @Override
             public void focusGained(@NotNull @NonNull FocusEvent event) {
                 log.debug("{}: Focus gained {}", WTextArea.this.getName(), event);
-                SwingUtilities.invokeLater(() -> component.setSelectionStart(component.getText().length()));
+                SwingUtilities.invokeLater(() -> {
+                    int length = getComponent().getText().length();
+                    getComponent().setSelectionStart(length);
+                    getComponent().setSelectionEnd(length);
+                });
             }
 
             @Override

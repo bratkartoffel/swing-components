@@ -43,7 +43,6 @@ public class WRadioGroup<E> extends AbstractWComponent<E, JPanel> {
         super(new JPanel(new FlowLayout()), value);
         Objects.requireNonNull(items, "items");
 
-        JPanel component = getComponent();
         group = new ButtonGroup();
 
         // build elements
@@ -58,7 +57,7 @@ public class WRadioGroup<E> extends AbstractWComponent<E, JPanel> {
                 setValue(componentMap.get(button));
             });
 
-            component.add(button);
+            getComponent().add(button);
             componentMap.put(button, elem);
             group.add(button.getComponent());
         });
