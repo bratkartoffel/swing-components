@@ -4,6 +4,7 @@ import eu.fraho.libs.swing.manual.model.DemoModel;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import eu.fraho.libs.swing.widgets.form.WForm;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,7 +52,6 @@ public class Demo extends JFrame {
         setSize(new Dimension(800, 600));
         setTitle("swing-components demo application");
         form.setOpaque(false);
-//        pnlCenter.setBackground(new Color(100, 100, 100));
     }
 
     private void setupCenter() {
@@ -126,7 +126,7 @@ public class Demo extends JFrame {
         add(pnlSouth, BorderLayout.SOUTH);
     }
 
-    private void changeLocale(Locale locale) {
+    private void changeLocale(@NotNull Locale locale) {
         setLocale(locale);
         Locale.setDefault(locale);
 
@@ -144,13 +144,13 @@ public class Demo extends JFrame {
                 .map(UIManager.LookAndFeelInfo::getClassName)
                 .findAny();
 
-        if (laf.isPresent()) {
+        laf.ifPresent(s -> {
             try {
-                UIManager.setLookAndFeel(laf.get());
+                UIManager.setLookAndFeel(s);
             } catch (Throwable e) {
                 log.error("Unable to set l&f", e);
             }
-        }
+        });
 
         log.info("Using layout: {}", UIManager.getLookAndFeel().getClass().getName());
         SwingUtilities.invokeLater(() -> {

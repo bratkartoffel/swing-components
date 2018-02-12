@@ -1,6 +1,7 @@
 package eu.fraho.libs.swing.widgets.datepicker;
 
 import eu.fraho.libs.swing.widgets.WDatePanel;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -13,6 +14,7 @@ import java.awt.*;
  */
 public class DefaultColorTheme implements ColorTheme {
 
+    @NotNull
     @Override
     public Color bgDisabled() {
         return new Color(235, 235, 235);
@@ -28,11 +30,13 @@ public class DefaultColorTheme implements ColorTheme {
         return Color.LIGHT_GRAY;
     }
 
+    @NotNull
     @Override
     public Color bgGridSelected() {
         return new Color(10, 36, 106);
     }
 
+    @NotNull
     @Override
     public Color bgGridTodaySelected() {
         return new Color(10, 36, 106);
@@ -43,6 +47,7 @@ public class DefaultColorTheme implements ColorTheme {
         return SystemColor.activeCaption;
     }
 
+    @NotNull
     @Override
     public Color fgGridHeader() {
         return new Color(10, 36, 106);

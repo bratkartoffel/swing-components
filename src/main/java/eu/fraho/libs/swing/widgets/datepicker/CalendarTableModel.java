@@ -53,6 +53,7 @@ public class CalendarTableModel extends AbstractTableModel {
     /**
      * the seleced date
      */
+    @Nullable
     @Getter
     private LocalDate selectedDate;
 

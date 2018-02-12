@@ -1,7 +1,6 @@
 package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
-import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableModel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableRenderer;
@@ -48,9 +47,13 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
     private final JButton btnOk = new JButton();
 
     // components which depend on current value
+    @NotNull
     private final JTable tblDays;
+    @Nullable
     private final CalendarTableModel tblDaysModel;
+    @NotNull
     private final WLabel centerText;
+    @NotNull
     @Getter(AccessLevel.PROTECTED)
     private final WLabel lblNow;
 
@@ -117,27 +120,6 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
 
         LocalDate value = Optional.ofNullable(newVal).orElseGet(LocalDate::now);
         centerText.setValue(value.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + value.getYear());
-    }
-
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-
-        if (pnlControls != null) {
-            pnlDetails.setBackground(bg);
-            pnlTable.setBackground(bg);
-            btnClear.getParent().setBackground(bg);
-        }
-    }
-
-    @Override
-    public void setOpaque(boolean isOpaque) {
-        super.setOpaque(isOpaque);
-        if (pnlControls != null) {
-            pnlDetails.setOpaque(isOpaque);
-            pnlTable.setOpaque(isOpaque);
-            ((JComponent) btnClear.getParent()).setOpaque(isOpaque);
-        }
     }
 
     private void handleSelection(@NotNull @NonNull ListSelectionEvent event) {
@@ -213,9 +195,11 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         pnlSouth.add(lblNow);
         pnlSouth.add(btnClear);
+        pnlSouth.setOpaque(false);
 
         pnlDetails.add(pnlSouth);
         pnlDetails.add(btnOk);
+        pnlDetails.setOpaque(false);
     }
 
     private void populateTable() {
@@ -280,6 +264,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         lblNow.setEnabled(!readonly);
     }
 
+    @NotNull
     @Override
     protected String getNow() {
         return LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));

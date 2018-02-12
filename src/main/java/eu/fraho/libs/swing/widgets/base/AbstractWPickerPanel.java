@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 @Slf4j
 @SuppressWarnings("unused")
 public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractWComponent<T, JPanel> {
+    @NotNull
     @Getter
     private ColorTheme theme = new DefaultColorTheme();
 
@@ -31,9 +32,11 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
     @Setter(AccessLevel.PROTECTED)
     private boolean inDateTimePanel = false;
 
+    @Nullable
     @Setter(AccessLevel.PROTECTED)
     private AbstractWPicker<T> parentPicker = null;
 
+    @Nullable
     private ScheduledThreadPoolExecutor clock = null;
 
     public AbstractWPickerPanel(@Nullable T defval) {
@@ -102,7 +105,7 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
 
     protected abstract WLabel getLblNow();
 
-    protected void scheduleUpdateNowLabel(Supplier<String> callback) {
+    protected void scheduleUpdateNowLabel(@NotNull Supplier<String> callback) {
         clock.scheduleAtFixedRate(() -> {
             getLblNow().setValue(callback.get());
             if (!isShowing()) {

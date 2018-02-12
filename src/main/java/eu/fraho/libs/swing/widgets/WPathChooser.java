@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -15,7 +16,9 @@ import java.util.Optional;
 @Slf4j
 @SuppressWarnings("unused")
 public class WPathChooser extends AbstractWComponent<Path, JTextField> {
+    @NotNull
     private final JButton btnDelete;
+    @NotNull
     private final JButton btnSearch;
     @Getter
     @Setter

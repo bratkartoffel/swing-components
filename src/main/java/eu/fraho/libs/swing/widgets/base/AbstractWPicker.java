@@ -23,16 +23,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 @SuppressWarnings("unused")
 public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextField<T> {
+    @NotNull
     protected final AbstractWPickerPanel<T> pnlPopup;
     // components
+    @NotNull
     private final JButton btnPopup;
     // the color theme to use
+    @NotNull
     @Getter
     private ColorTheme theme = new DefaultColorTheme();
+    @Nullable
     private Popup popup;
+    @NotNull
     private AtomicBoolean firstShow = new AtomicBoolean(false);
 
-    private HierarchyBoundsListener hierarchyBoundsListener = new HierarchyBoundsListener() {
+    @NotNull
+    private final HierarchyBoundsListener hierarchyBoundsListener = new HierarchyBoundsListener() {
         @Override
         public void ancestorMoved(@NotNull HierarchyEvent event) {
             log.debug("{}: Ancestor moved", AbstractWPicker.this.getName());
@@ -123,6 +129,7 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
                 popup = PopupFactory.getSharedInstance().getPopup(this, pnlPopup,
                         pos.x, pos.y + getHeight());
                 pnlPopup.setValue(getValue());
+                assert popup != null;
                 popup.show();
             }
         }
@@ -136,14 +143,6 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
             } else {
                 hidePopup();
             }
-        }
-    }
-
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-        if (pnlPopup != null) {
-            pnlPopup.setBackground(bg);
         }
     }
 }

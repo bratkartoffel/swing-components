@@ -14,6 +14,7 @@ import java.util.*;
 @SuppressWarnings("unused")
 @Slf4j
 public class WComboBox<E> extends AbstractWComponent<E, JComboBox<E>> implements WNullable {
+    @NotNull
     private final DefaultComboBoxModel<E> model;
     private boolean nullable = false;
 

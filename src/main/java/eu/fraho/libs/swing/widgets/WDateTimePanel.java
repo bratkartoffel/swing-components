@@ -1,7 +1,6 @@
 package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
-import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
@@ -26,7 +25,9 @@ import java.util.Locale;
 @SuppressWarnings("unused")
 @Slf4j
 public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
+    @NotNull
     private final WDatePanel pnlDate;
+    @NotNull
     private final WTimePanel pnlTime;
 
     private final JPanel pnlDetails = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 3));
@@ -34,8 +35,10 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
     private final JButton btnClear = new JButton();
     private final JButton btnOk = new JButton();
     private boolean massUpdateRunning = false;
+    @NotNull
     @Getter(AccessLevel.PROTECTED)
     private final WLabel lblNow;
+    @NotNull
     private final DateTimeFormatter dtf;
 
     public WDateTimePanel() {
@@ -103,11 +106,13 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
         btnOk.setToolTipText("Ok");
 
         JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        pnlSouth.setOpaque(false);
         pnlSouth.add(lblNow);
         pnlSouth.add(btnClear);
 
         pnlDetails.add(pnlSouth);
         pnlDetails.add(btnOk);
+        pnlDetails.setOpaque(false);
     }
 
     @Override
@@ -129,27 +134,6 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
             LocalDate date = (LocalDate) event.getNewValue();
             LocalTime time = pnlTime.getValue();
             setValue(parseAndBuild(date, time));
-        }
-    }
-
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-
-        if (pnlDetails != null) {
-            pnlDate.setBackground(bg);
-            pnlTime.setBackground(bg);
-            btnClear.getParent().setBackground(bg);
-        }
-    }
-
-    @Override
-    public void setOpaque(boolean isOpaque) {
-        super.setOpaque(isOpaque);
-        if (pnlDetails != null) {
-            pnlDate.setOpaque(isOpaque);
-            pnlTime.setOpaque(isOpaque);
-            ((JPanel) btnClear.getParent()).setOpaque(isOpaque);
         }
     }
 
@@ -217,6 +201,7 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
         }
     }
 
+    @NotNull
     @Override
     protected String getNow() {
         return dtf.format(LocalDateTime.now());

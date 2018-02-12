@@ -3,7 +3,6 @@ package eu.fraho.libs.swing.widgets;
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.datepicker.DateConverterHelper;
-import eu.fraho.libs.swing.widgets.form.FormField;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 

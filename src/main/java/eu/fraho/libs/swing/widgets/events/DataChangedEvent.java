@@ -30,18 +30,22 @@ public class DataChangedEvent extends EventObject {
     /**
      * when was this event created
      */
+    @NotNull
     private final LocalDateTime when;
     /**
      * whats the cause of this event
      */
+    @NotNull
     private final ChangeType why;
     /**
      * the old value, before this event was raised
      */
+    @Nullable
     private final Object newValue;
     /**
      * the new value, after this event will be raised
      */
+    @Nullable
     private final Object oldValue;
 
     /**

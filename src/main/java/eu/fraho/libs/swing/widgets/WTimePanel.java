@@ -1,7 +1,6 @@
 package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
-import eu.fraho.libs.swing.widgets.base.AbstractWPicker;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import lombok.AccessLevel;
@@ -30,16 +29,22 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
 
     private boolean massUpdateRunning = false;
 
+    @NotNull
     private final WSpinner<Integer> spnHour;
+    @NotNull
     private final WSpinner<Integer> spnMinute;
+    @NotNull
     private final WSpinner<Integer> spnSecond;
 
     private final JButton btnClear = new JButton();
     private final JButton btnOk = new JButton();
+    @NotNull
     @Getter(AccessLevel.PROTECTED)
     private final WLabel lblNow;
+    @NotNull
     private final DateTimeFormatter dtf;
     // components which depend on current value
+    @Nullable
     private ScheduledThreadPoolExecutor clock = null;
 
     public WTimePanel() {
@@ -53,15 +58,10 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         spnMinute = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
         spnSecond = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
 
-//        Dimension size = spnHour.getComponent().getPreferredSize();
-//        size.width = 50;
-//        spnHour.setPreferredSize(size);
         spnHour.setColumns(2);
         spnHour.setName("hour");
-//        spnMinute.setPreferredSize(size);
         spnMinute.setColumns(2);
         spnMinute.setName("minute");
-//        spnSecond.setPreferredSize(size);
         spnSecond.setColumns(2);
         spnSecond.setName("second");
 
@@ -139,25 +139,6 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         pnlControls.setBackground(getTheme().bgTopPanel());
     }
 
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-
-        if (pnlControls != null) {
-            pnlDetails.setBackground(bg);
-            btnClear.getParent().setBackground(bg);
-        }
-    }
-
-    @Override
-    public void setOpaque(boolean isOpaque) {
-        super.setOpaque(isOpaque);
-        if (pnlControls != null) {
-            pnlDetails.setOpaque(isOpaque);
-            ((JComponent) btnClear.getParent()).setOpaque(isOpaque);
-        }
-    }
-
     private void populateDetails() {
         lblNow.addMouseListener(new MouseAdapter() {
             @Override
@@ -191,9 +172,11 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         Dimension size = pnlSouth.getPreferredSize();
         size.width += 35;
         pnlSouth.setPreferredSize(size);
+        pnlSouth.setOpaque(false);
 
         pnlDetails.add(pnlSouth);
         pnlDetails.add(btnOk);
+        pnlDetails.setOpaque(false);
     }
 
     protected void setInDateTimePanel() {
@@ -224,6 +207,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         }
     }
 
+    @NotNull
     @Override
     protected String getNow() {
         return dtf.format(LocalTime.now());

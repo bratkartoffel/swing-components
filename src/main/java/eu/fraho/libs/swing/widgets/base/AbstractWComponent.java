@@ -40,29 +40,35 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
     /**
      * the underlying swing component
      */
+    @NotNull
     private final C component;
 
     /**
      * a list with all DataChangedListeners
      */
+    @NotNull
     private final List<Consumer<DataChangedEvent>> eventHandlers;
 
     /**
      * the current value of this object
      */
+    @Nullable
     private E currentValue;
 
     /**
      * the saved (commited) value of this object
      */
+    @Nullable
     @Getter(AccessLevel.MODULE)
     private E savedValue;
 
     /**
      * the bound model field, if present
      */
+    @Nullable
     private FormModel model = null;
 
+    @Nullable
     private Method modelSetter = null;
 
     public AbstractWComponent(@NotNull @NonNull C component, @Nullable E currentValue) {
@@ -107,7 +113,7 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
             if (!Modifier.isPublic(modelSetter.getModifiers())) {
                 throw new ModelBindException("Setter '" + name + "' has to be public!");
             }
-        } catch (NoSuchElementException | SecurityException | NoSuchMethodException mbe) {
+        } catch (@NotNull NoSuchElementException | SecurityException | NoSuchMethodException mbe) {
             throw new ModelBindException("Error in call to " + model.getClass() + "." + name + "(" + type + ")", mbe);
         }
 
@@ -170,6 +176,7 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel
      */
     protected abstract void currentValueChanging(@Nullable E newVal) throws ChangeVetoException;
 
+    @NotNull
     @Override
     @NonNull
     public final C getComponent() {

@@ -3,6 +3,7 @@ package eu.fraho.libs.swing.widgets.form;
 import eu.fraho.libs.swing.widgets.*;
 import eu.fraho.libs.swing.widgets.base.AbstractWTextField;
 import eu.fraho.libs.swing.widgets.base.WComponent;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,7 +27,7 @@ public @interface FormField {
      * @return The caption of the field, displayed as a label in front of the
      * component.
      */
-    String caption();
+    @NotNull String caption();
 
     /**
      * Used for {@link WSpinner} and {@link WSwitchBox} only.<br>
@@ -38,7 +39,7 @@ public @interface FormField {
      *
      * @return The maximum selectable value.
      */
-    String max() default "";
+    @NotNull String max() default "";
 
     /**
      * Used for {@link WSpinner} and {@link WSwitchBox} only.<br>
@@ -50,7 +51,7 @@ public @interface FormField {
      *
      * @return The minimum selectable value.
      */
-    String min() default "";
+    @NotNull String min() default "";
 
     /**
      * Used for {@link WList}, {@link WComboBox} and {@link WRadioGroup} only.<br>
@@ -69,7 +70,7 @@ public @interface FormField {
      *
      * @return The type of the spinner
      */
-    SpinnerType spinnerType() default SpinnerType.LONG;
+    @NotNull SpinnerType spinnerType() default SpinnerType.LONG;
 
     /**
      * Used for {@link WSpinner} only.<br>
@@ -77,12 +78,12 @@ public @interface FormField {
      *
      * @return The step size to use for the next and previous value buttons.
      */
-    String step() default "1";
+    @NotNull String step() default "1";
 
     /**
      * @return Which component should be used to display this value?
      */
-    @SuppressWarnings("rawtypes")
+    @NotNull @SuppressWarnings("rawtypes")
     Class<? extends WComponent> type();
 
     /**

@@ -10,9 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @SuppressWarnings("unused")
@@ -31,6 +28,9 @@ public class WPasswordField extends AbstractWComponent<String, JPasswordField> {
 
         JPasswordField component = getComponent();
         component.setEchoChar('\u2022');
+        if (defval != null) {
+            component.setText(defval);
+        }
 
         // Set the value when pressing enter
         component.addActionListener(evt -> setValueFromEvent());

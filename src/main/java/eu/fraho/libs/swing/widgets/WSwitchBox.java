@@ -22,11 +22,13 @@ import java.awt.geom.Line2D;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "DefaultAnnotationParam"})
 @EqualsAndHashCode(callSuper = false)
 public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
-    private JLabel on;
-    private JLabel off;
+    @NotNull
+    private final JLabel on;
+    @NotNull
+    private final JLabel off;
 
     @Getter
     private Color offColor = new Color(0.9f, 0f, 0f, 0.5f);
@@ -37,8 +39,10 @@ public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
     @Getter
     private Color borderColor = Color.GRAY;
 
-    private AtomicBoolean onPressed = new AtomicBoolean(false);
-    private AtomicBoolean offPressed = new AtomicBoolean(false);
+    @NotNull
+    private final AtomicBoolean onPressed = new AtomicBoolean(false);
+    @NotNull
+    private final AtomicBoolean offPressed = new AtomicBoolean(false);
 
     public WSwitchBox(Boolean value) {
         this("false", "true", value);
@@ -64,7 +68,7 @@ public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
         off.setName("off");
         off.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e) {
+            public void mouseReleased(@NotNull MouseEvent e) {
                 if (getComponent().isEnabled() && getComponent().contains(e.getPoint())) {
                     log.debug("{}: Mouse released at off button", getName());
                     offPressed.set(false);
@@ -94,7 +98,7 @@ public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
         on.setName("on");
         on.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e) {
+            public void mouseReleased(@NotNull MouseEvent e) {
                 if (getComponent().isEnabled() && getComponent().contains(e.getPoint())) {
                     log.debug("{}: Mouse released at on button", getName());
                     onPressed.set(false);
@@ -196,6 +200,7 @@ public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
         setColors(getValue());
     }
 
+    @SuppressWarnings("DefaultAnnotationParam")
     @Data
     @EqualsAndHashCode(callSuper = false)
     @AllArgsConstructor

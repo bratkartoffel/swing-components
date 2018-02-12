@@ -4,6 +4,7 @@ import eu.fraho.libs.swing.manual.model.DemoDateTimeModel;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import eu.fraho.libs.swing.widgets.form.WForm;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,7 +51,6 @@ public class DemoDateTime extends JFrame {
         form.setReadonly(readonly);
         pnlCenter.setName("content");
         pnlCenter.add(form);
-        pnlCenter.setBackground(new Color(100, 100, 100));
     }
 
     private void setupButtons() {
@@ -122,13 +122,13 @@ public class DemoDateTime extends JFrame {
                 .map(UIManager.LookAndFeelInfo::getClassName)
                 .findAny();
 
-        if (laf.isPresent()) {
+        laf.ifPresent(s -> {
             try {
-                UIManager.setLookAndFeel(laf.get());
+                UIManager.setLookAndFeel(s);
             } catch (Throwable e) {
                 log.error("Unable to set l&f", e);
             }
-        }
+        });
 
         log.info("Using layout: {}", UIManager.getLookAndFeel().getClass().getName());
         SwingUtilities.invokeLater(() -> {
@@ -141,7 +141,7 @@ public class DemoDateTime extends JFrame {
         });
     }
 
-    private void changeLocale(Locale locale) {
+    private void changeLocale(@NotNull Locale locale) {
         setLocale(locale);
         Locale.setDefault(locale);
 

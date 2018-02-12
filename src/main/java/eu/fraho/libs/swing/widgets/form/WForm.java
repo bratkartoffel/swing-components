@@ -172,7 +172,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> {
         log.debug("{}: Setting new value ", getName(), newVal);
         try {
             rebuild(newVal);
-        } catch (ModelBindException | FormCreateException mbe) {
+        } catch (@NotNull ModelBindException | FormCreateException mbe) {
             throw new ChangeVetoException("Invalid model.", mbe);
         }
     }
@@ -212,7 +212,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> {
         try {
             log.debug("{}: Getting value from model with {}", getName(), getter);
             return getter.invoke(model);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (@NotNull IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new FormCreateException("Unable to fetch new value for field '" + field + " in model '" + model.getClass() + "::" + model + "'.", e);
         }
     }
@@ -277,6 +277,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> {
 
     @Value
     private static class FieldInfo {
+        @NotNull
         private WComponent<?> component;
         private boolean annotationReadonly;
     }

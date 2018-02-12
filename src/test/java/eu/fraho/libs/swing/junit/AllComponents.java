@@ -8,6 +8,8 @@ import eu.fraho.libs.swing.widgets.form.WForm;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -115,7 +117,7 @@ public class AllComponents extends JFrame {
         add(pnlSouth, BorderLayout.SOUTH);
     }
 
-    private void changeLocale(Locale locale) {
+    private void changeLocale(@NotNull Locale locale) {
         setLocale(locale);
         Locale.setDefault(locale);
 
@@ -147,60 +149,79 @@ public class AllComponents extends JFrame {
 
     @Data
     public static class Model implements FormModel {
+        @Nullable
         @FormField(caption = "WBigDecimalTextField", type = WBigDecimalTextField.class, maxPrecision = 18, columns = 15)
         private BigDecimal valBigDecimal = null;
 
+        @Nullable
         @FormField(caption = "WBigIntegerTextField", type = WBigIntegerTextField.class)
         private BigInteger valBigInteger = null;
 
+        @Nullable
         @FormField(caption = "WCheckBox", type = WCheckBox.class)
         private Boolean valBoolean = null;
 
+        @Nullable
         @FormField(caption = "WComboBox", type = WComboBox.class, nullable = true)
         private MyEnum valEnum = null;
 
+        @Nullable
         @FormField(caption = "WCurrencyTextField", type = WCurrencyTextField.class, maxPrecision = 2)
         private BigDecimal valCurrency = null;
 
+        @Nullable
         @FormField(caption = "WDatePicker", type = WDatePicker.class)
         private LocalDate valDatePicker = null;
 
+        @Nullable
         @FormField(caption = "WDateTimePicker", type = WDateTimePicker.class, columns = 15)
         private LocalDateTime valDateTimePicker = null;
 
+        @Nullable
         @FormField(caption = "WFileChooser", type = WFileChooser.class)
         private File valFile = null;
 
+        @Nullable
         @FormField(caption = "WList", type = WList.class, nullable = true)
         private MyEnum valEnumList = null;
 
+        @Nullable
         @FormField(caption = "WLongTextField", type = WLongTextField.class)
         private Long valLong = null;
 
+        @Nullable
         @FormField(caption = "WPasswordField", type = WPasswordField.class)
         private String valPassword = null;
 
+        @Nullable
         @FormField(caption = "WRadioGroup", type = WRadioGroup.class)
         private MyEnum valEnumGroup = null;
 
+        @Nullable
         @FormField(caption = "WSpinner<Long>", type = WSpinner.class, spinnerType = FormField.SpinnerType.LONG, columns = 5)
         private Long valIntSpinner = null;
 
+        @Nullable
         @FormField(caption = "WSpinner<BigDecimal>", type = WSpinner.class, spinnerType = FormField.SpinnerType.BIGDECIMAL, columns = 8, step = "0.01", maxPrecision = 5)
         private BigDecimal valBdSpinner = null;
 
+        @Nullable
         @FormField(caption = "WStringTextField", type = WStringTextField.class)
         private String valTextField = null;
 
+        @Nullable
         @FormField(caption = "WTextArea", type = WTextArea.class)
         private String valTextArea = null;
 
+        @Nullable
         @FormField(caption = "WTimePicker", type = WTimePicker.class)
         private LocalTime valTimePicker = null;
 
+        @NotNull
         @FormField(caption = "WStringTextField[readonly]", type = WStringTextField.class, readonly = true)
         private String valReadonly = "foobar";
 
+        @Nullable
         @FormField(caption = "WSwitchBox", type = WSwitchBox.class, min = "no", max = "yes")
         private Boolean valSwitchBox = null;
     }

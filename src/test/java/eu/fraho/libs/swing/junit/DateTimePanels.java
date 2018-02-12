@@ -9,6 +9,7 @@ import eu.fraho.libs.swing.widgets.form.FormModel;
 import eu.fraho.libs.swing.widgets.form.WForm;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -105,7 +106,7 @@ public class DateTimePanels extends JFrame {
         add(pnlSouth, BorderLayout.SOUTH);
     }
 
-    private void changeLocale(Locale locale) {
+    private void changeLocale(@NotNull Locale locale) {
         setLocale(locale);
         Locale.setDefault(locale);
 
@@ -118,12 +119,14 @@ public class DateTimePanels extends JFrame {
 
     @Data
     public static class Model implements FormModel {
+        @NotNull
         @FormField(caption = "WDatePanel", type = WDatePanel.class)
         private LocalDate valDatePanel = LocalDate.of(2017, 4, 13);
 
         @FormField(caption = "WTimePanel", type = WTimePanel.class)
         private LocalTime valTimePanel = LocalTime.of(15, 3, 14);
 
+        @NotNull
         @FormField(caption = "WDateTimePanel", type = WDateTimePanel.class, columns = 15)
         private LocalDateTime valDateTimePanel = LocalDateTime.of(2014, 2, 13, 7, 14, 3);
     }

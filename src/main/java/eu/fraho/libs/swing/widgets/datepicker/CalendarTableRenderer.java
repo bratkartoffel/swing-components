@@ -2,7 +2,6 @@ package eu.fraho.libs.swing.widgets.datepicker;
 
 import eu.fraho.libs.swing.widgets.WDatePanel;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -22,6 +21,7 @@ public class CalendarTableRenderer extends DefaultTableCellRenderer {
     /**
      * the underlying ColorTheme
      */
+    @NotNull
     private final ColorTheme theme;
 
     /**

@@ -82,7 +82,7 @@ final class FormElementFactory {
             }
 
             return instance;
-        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException iae) {
+        } catch (@NotNull IllegalArgumentException | ReflectiveOperationException | SecurityException iae) {
             throw new FormCreateException("Error creating form element " + field.getName(), iae);
         }
     }
