@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.exception.ComponentLookupException;
 import org.assertj.swing.fixture.FrameFixture;
-import org.assertj.swing.fixture.JPanelFixture;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -61,7 +60,7 @@ public class DateTimePanelsTest {
     public void testReadonly() {
         // set readonly
         window.button("readonly").click();
-        JPanelFixture datePanel = window.panel("WDatePanel-0");
+        WComponentFixture<WDatePanel> datePanel = window.with(WComponentFixtureExtension.withName("WDatePanel-0", WDatePanel.class));
         datePanel.button("prevYear").requireDisabled();
         datePanel.button("prevMonth").requireDisabled();
         datePanel.button("nextMonth").requireDisabled();
@@ -70,14 +69,14 @@ public class DateTimePanelsTest {
         datePanel.button("clear").requireDisabled();
         datePanel.button("ok").requireDisabled();
 
-        JPanelFixture timePanel = window.panel("WTimePanel-0");
+        WComponentFixture<WTimePanel> timePanel = window.with(WComponentFixtureExtension.withName("WTimePanel-0", WTimePanel.class));
         timePanel.spinner("WSpinner-0.Component").requireDisabled();
         timePanel.spinner("WSpinner-1.Component").requireDisabled();
         timePanel.spinner("WSpinner-2.Component").requireDisabled();
         timePanel.button("clear").requireDisabled();
         timePanel.button("ok").requireDisabled();
 
-        JPanelFixture dateTimePanel = window.panel("WDateTimePanel-0");
+        WComponentFixture<WDateTimePanel> dateTimePanel = window.with(WComponentFixtureExtension.withName("WDateTimePanel-0", WDateTimePanel.class));
         dateTimePanel.button("prevYear").requireDisabled();
         dateTimePanel.button("prevMonth").requireDisabled();
         dateTimePanel.button("nextMonth").requireDisabled();
@@ -120,8 +119,8 @@ public class DateTimePanelsTest {
     @Test
     public void testDatePanel() {
         List<DataChangedEvent> events = new ArrayList<>();
-        JPanelFixture fixture = window.panel("WDatePanel-0");
-        WDatePanel target = fixture.targetCastedTo(WDatePanel.class);
+        WComponentFixture<WDatePanel> fixture = window.with(WComponentFixtureExtension.withName("WDatePanel-0", WDatePanel.class));
+        WDatePanel target = fixture.target();
         target.addDataChangedListener(events::add);
 
         // test switch months / years
@@ -207,8 +206,8 @@ public class DateTimePanelsTest {
     @Test
     public void testTimePanel() {
         List<DataChangedEvent> events = new ArrayList<>();
-        JPanelFixture fixture = window.panel("WTimePanel-0");
-        WTimePanel target = fixture.targetCastedTo(WTimePanel.class);
+        WComponentFixture<WTimePanel> fixture = window.with(WComponentFixtureExtension.withName("WTimePanel-0", WTimePanel.class));
+        WTimePanel target = fixture.target();
         target.addDataChangedListener(events::add);
 
         // test setting values
@@ -294,8 +293,8 @@ public class DateTimePanelsTest {
     @Test
     public void testDateTimePanel() {
         List<DataChangedEvent> events = new ArrayList<>();
-        JPanelFixture fixture = window.panel("WDateTimePanel-0");
-        WDateTimePanel target = fixture.targetCastedTo(WDateTimePanel.class);
+        WComponentFixture<WDateTimePanel> fixture = window.with(WComponentFixtureExtension.withName("WDateTimePanel-0", WDateTimePanel.class));
+        WDateTimePanel target = fixture.target();
         target.addDataChangedListener(events::add);
 
         // test switch months / years

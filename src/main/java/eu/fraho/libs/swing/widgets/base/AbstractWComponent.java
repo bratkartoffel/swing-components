@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  * @author Frankenberger Simon
  */
 @Slf4j
-public abstract class AbstractWComponent<E, C extends JComponent> extends JPanel implements WComponent<E> {
+public abstract class AbstractWComponent<E, C extends JComponent> extends JComponent implements WComponent<E> {
     /**
      * map with all elements and counters
      */

@@ -82,7 +82,7 @@ public class AllComponentsTest {
     @Test
     public void dumpStructure() {
         try {
-            window.panel("doesntExist");
+            find("doesntExist");
         } catch (ComponentLookupException cle) {
             log.info("Swing structure", cle);
         }
@@ -92,77 +92,78 @@ public class AllComponentsTest {
     public void testReadonly() {
         // set readonly
         window.button("readonly").click();
-        window.panel("WBigDecimalTextField-0").textBox().requireDisabled();
-        window.panel("WBigIntegerTextField-0").textBox().requireDisabled();
-        window.panel("WCheckBox-0").checkBox().requireDisabled();
-        window.panel("WComboBox-0").comboBox().requireDisabled();
-        window.panel("WCurrencyTextField-0").textBox().requireDisabled();
-        window.panel("WDatePicker-0").textBox().requireDisabled();
-        window.panel("WDatePicker-0").button().requireDisabled();
-        window.panel("WDateTimePicker-0").textBox().requireDisabled();
-        window.panel("WDateTimePicker-0").button().requireDisabled();
-        window.panel("WFileChooser-0").button("search").requireDisabled();
-        window.panel("WFileChooser-0").button("delete").requireDisabled();
-        window.panel("WList-0").list().requireDisabled();
-        window.panel("WLongTextField-0").textBox().requireDisabled();
-        window.panel("WPasswordField-0").textBox().requireDisabled();
-        window.panel("WRadioGroup-0").panel("WRadioButton-0").radioButton().requireDisabled();
-        window.panel("WRadioGroup-0").panel("WRadioButton-1").radioButton().requireDisabled();
-        window.panel("WRadioGroup-0").panel("WRadioButton-2").radioButton().requireDisabled();
-        window.panel("WRadioGroup-0").panel("WRadioButton-3").radioButton().requireDisabled();
-        window.panel("WSpinner-3").spinner().requireDisabled();
-        window.panel("WSpinner-4").spinner().requireDisabled();
-        window.panel("WStringTextField-0").textBox().requireDisabled();
-        window.panel("WTextArea-0").textBox().requireDisabled();
-        window.panel("WTimePicker-0").textBox().requireDisabled();
-        window.panel("WTimePicker-0").button().requireDisabled();
-        window.panel("WStringTextField-1").textBox().requireDisabled();
-        window.panel("WSwitchBox-0").label("off").requireDisabled();
-        window.panel("WSwitchBox-0").label("on").requireDisabled();
+        find("WBigDecimalTextField-0").textBox().requireDisabled();
+        find("WBigIntegerTextField-0").textBox().requireDisabled();
+        find("WCheckBox-0").checkBox().requireDisabled();
+        find("WComboBox-0").comboBox().requireDisabled();
+        find("WCurrencyTextField-0").textBox().requireDisabled();
+        find("WDatePicker-0").textBox().requireDisabled();
+        find("WDatePicker-0").button().requireDisabled();
+        find("WDateTimePicker-0").textBox().requireDisabled();
+        find("WDateTimePicker-0").button().requireDisabled();
+        find("WFileChooser-0").button("search").requireDisabled();
+        find("WFileChooser-0").button("delete").requireDisabled();
+        find("WList-0").list().requireDisabled();
+        find("WLongTextField-0").textBox().requireDisabled();
+        find("WPasswordField-0").textBox().requireDisabled();
+        find("WRadioButton-0").radioButton().requireDisabled();
+        find("WRadioButton-1").radioButton().requireDisabled();
+        find("WRadioButton-2").radioButton().requireDisabled();
+        find("WRadioButton-3").radioButton().requireDisabled();
+        find("WSpinner-3").spinner().requireDisabled();
+        find("WSpinner-4").spinner().requireDisabled();
+        find("WStringTextField-0").textBox().requireDisabled();
+        find("WTextArea-0").textBox().requireDisabled();
+        find("WTimePicker-0").textBox().requireDisabled();
+        find("WTimePicker-0").button().requireDisabled();
+        find("WStringTextField-1").textBox().requireDisabled();
+        find("WSwitchBox-0").label("off").requireDisabled();
+        find("WSwitchBox-0").label("on").requireDisabled();
 
         // set writable again
         window.button("readonly").click();
-        window.panel("WBigDecimalTextField-0").textBox().requireEnabled();
-        window.panel("WBigIntegerTextField-0").textBox().requireEnabled();
-        window.panel("WCheckBox-0").checkBox().requireEnabled();
-        window.panel("WComboBox-0").comboBox().requireEnabled();
-        window.panel("WCurrencyTextField-0").textBox().requireEnabled();
-        window.panel("WDatePicker-0").textBox().requireEnabled();
-        window.panel("WDatePicker-0").button().requireEnabled();
-        window.panel("WDateTimePicker-0").textBox().requireEnabled();
-        window.panel("WDateTimePicker-0").button().requireEnabled();
-        window.panel("WFileChooser-0").button("search").requireEnabled();
-        window.panel("WFileChooser-0").button("delete").requireEnabled();
-        window.panel("WList-0").list().requireEnabled();
-        window.panel("WLongTextField-0").textBox().requireEnabled();
-        window.panel("WPasswordField-0").textBox().requireEnabled();
-        window.panel("WRadioGroup-0").panel("WRadioButton-0").radioButton().requireEnabled();
-        window.panel("WRadioGroup-0").panel("WRadioButton-1").radioButton().requireEnabled();
-        window.panel("WRadioGroup-0").panel("WRadioButton-2").radioButton().requireEnabled();
-        window.panel("WRadioGroup-0").panel("WRadioButton-3").radioButton().requireEnabled();
-        window.panel("WSpinner-3").spinner().requireEnabled();
-        window.panel("WSpinner-4").spinner().requireEnabled();
-        window.panel("WStringTextField-0").textBox().requireEnabled();
-        window.panel("WTextArea-0").textBox().requireEnabled();
-        window.panel("WTimePicker-0").textBox().requireEnabled();
-        window.panel("WTimePicker-0").button().requireEnabled();
-        window.panel("WSwitchBox-0").label("off").requireEnabled();
-        window.panel("WSwitchBox-0").label("on").requireEnabled();
+        find("WBigDecimalTextField-0").textBox().requireEnabled();
+        find("WBigIntegerTextField-0").textBox().requireEnabled();
+        find("WCheckBox-0").checkBox().requireEnabled();
+        find("WComboBox-0").comboBox().requireEnabled();
+        find("WCurrencyTextField-0").textBox().requireEnabled();
+        find("WDatePicker-0").textBox().requireEnabled();
+        find("WDatePicker-0").button().requireEnabled();
+        find("WDateTimePicker-0").textBox().requireEnabled();
+        find("WDateTimePicker-0").button().requireEnabled();
+        find("WFileChooser-0").button("search").requireEnabled();
+        find("WFileChooser-0").button("delete").requireEnabled();
+        find("WList-0").list().requireEnabled();
+        find("WLongTextField-0").textBox().requireEnabled();
+        find("WPasswordField-0").textBox().requireEnabled();
+        find("WRadioButton-0").radioButton().requireEnabled();
+        find("WRadioButton-1").radioButton().requireEnabled();
+        find("WRadioButton-2").radioButton().requireEnabled();
+        find("WRadioButton-3").radioButton().requireEnabled();
+        find("WSpinner-3").spinner().requireEnabled();
+        find("WSpinner-4").spinner().requireEnabled();
+        find("WStringTextField-0").textBox().requireEnabled();
+        find("WTextArea-0").textBox().requireEnabled();
+        find("WTimePicker-0").textBox().requireEnabled();
+        find("WTimePicker-0").button().requireEnabled();
+        find("WSwitchBox-0").label("off").requireEnabled();
+        find("WSwitchBox-0").label("on").requireEnabled();
         // should stay readonly!
-        window.panel("WStringTextField-1").textBox().requireDisabled();
+        find("WStringTextField-1").textBox().requireDisabled();
     }
 
     @Test
     public void testDatePickerGerman() throws InterruptedException {
         List<DataChangedEvent> events = new ArrayList<>();
-        WDatePicker target = window.panel("WDatePicker-0").targetCastedTo(WDatePicker.class);
+        WComponentFixture<WDatePicker> fixture = find("WDatePicker-0");
+        WDatePicker target = fixture.target();
         target.addDataChangedListener(events::add);
 
         // select today
         openPopup("WDatePicker-0");
-        window.panel("WDatePicker.popup").panel("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-        window.panel("WDatePicker.popup").panel("today").label().click();
-        window.panel("WDatePicker.popup").button("ok").click();
+        find("WDatePicker.popup").wComponent("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        find("WDatePicker.popup").wComponent("today").label().click();
+        find("WDatePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, LocalDate.now(), DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -174,17 +175,17 @@ public class AllComponentsTest {
 
         // select second value in third row (10.01.2017)
         openPopup("WDatePicker-0");
-        JTableFixture calendarFixture = window.panel("WDatePicker.popup").table("calendar");
+        JTableFixture calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireRowCount(6);
         calendarFixture.requireColumnCount(7);
         calendarFixture.selectCell(TableCell.row(2).column(1));
-        window.panel("WDatePicker.popup").button("ok").click();
+        find("WDatePicker.popup").button("ok").click();
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 10), DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // check first row values
         openPopup("WDatePicker-0");
-        calendarFixture = window.panel("WDatePicker.popup").table("calendar");
+        calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "26");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "27");
         calendarFixture.requireCellValue(TableCell.row(0).column(2), "28");
@@ -198,7 +199,7 @@ public class AllComponentsTest {
         calendarFixture.cell(TableCell.row(2).column(1)).background().requireEqualTo(theme.bgGridSelected());
 
         // clear value
-        window.panel("WDatePicker.popup").button("clear").click();
+        find("WDatePicker.popup").button("clear").click();
 
         // find today
         JTableCellFixture todayFixture = calendarFixture.cell((table, cellReader) -> {
@@ -216,10 +217,10 @@ public class AllComponentsTest {
         todayFixture.foreground().requireEqualTo(theme.fgGridToday());
 
         // test resizing hides the popup
-        window.panel("WDatePicker.popup").requireVisible();
+        find("WDatePicker.popup").requireVisible();
         window.resizeWidthTo(window.target().getWidth() + 1);
         try {
-            window.panel("WDatePicker.popup");
+            find("WDatePicker.popup");
             Assert.fail("Popup is still in the component tree");
         } catch (ComponentLookupException cle) {
             // ok
@@ -227,12 +228,12 @@ public class AllComponentsTest {
 
         // test moving hides the popup
         openPopup("WDatePicker-0");
-        window.panel("WDatePicker.popup").requireVisible();
+        find("WDatePicker.popup").requireVisible();
         Point p = window.target().getLocationOnScreen();
         p.x++;
         window.moveTo(p);
         try {
-            window.panel("WDatePicker.popup");
+            find("WDatePicker.popup");
             Assert.fail("Popup is still in the component tree");
         } catch (ComponentLookupException cle) {
             // ok
@@ -243,14 +244,15 @@ public class AllComponentsTest {
     public void testDatePickerUs() throws InterruptedException {
         window.button("locale-us").click();
         List<DataChangedEvent> events = new ArrayList<>();
-        WDatePicker target = window.panel("WDatePicker-1").targetCastedTo(WDatePicker.class);
+        WComponentFixture<WDatePicker> fixture = find("WDatePicker-1");
+        WDatePicker target = fixture.target();
         target.addDataChangedListener(events::add);
 
         // select today
         openPopup("WDatePicker-1");
-        window.panel("WDatePicker.popup").panel("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
-        window.panel("WDatePicker.popup").panel("today").label().click();
-        window.panel("WDatePicker.popup").button("ok").click();
+        find("WDatePicker.popup").wComponent("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
+        find("WDatePicker.popup").wComponent("today").label().click();
+        find("WDatePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, LocalDate.now(), DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -262,17 +264,17 @@ public class AllComponentsTest {
 
         // select second value in third row (10.01.2017)
         openPopup("WDatePicker-1");
-        JTableFixture calendarFixture = window.panel("WDatePicker.popup").table("calendar");
+        JTableFixture calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireRowCount(6);
         calendarFixture.requireColumnCount(7);
         calendarFixture.selectCell(TableCell.row(2).column(2));
-        window.panel("WDatePicker.popup").button("ok").click();
+        find("WDatePicker.popup").button("ok").click();
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 10), DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // check first row values
         openPopup("WDatePicker-1");
-        calendarFixture = window.panel("WDatePicker.popup").table("calendar");
+        calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "25");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "26");
         calendarFixture.requireCellValue(TableCell.row(0).column(2), "27");
@@ -282,14 +284,15 @@ public class AllComponentsTest {
     public void testDatePickerAr() throws InterruptedException {
         window.button("locale-ar").click();
         List<DataChangedEvent> events = new ArrayList<>();
-        WDatePicker target = window.panel("WDatePicker-1").targetCastedTo(WDatePicker.class);
+        WComponentFixture<WDatePicker> fixture = find("WDatePicker-1");
+        WDatePicker target = fixture.target();
         target.addDataChangedListener(events::add);
 
         // select today
         openPopup("WDatePicker-1");
-        window.panel("WDatePicker.popup").panel("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        window.panel("WDatePicker.popup").panel("today").label().click();
-        window.panel("WDatePicker.popup").button("ok").click();
+        find("WDatePicker.popup").wComponent("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        find("WDatePicker.popup").wComponent("today").label().click();
+        find("WDatePicker.popup").button("ok").click();
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, LocalDate.now(), DataChangedEvent.ChangeType.CHANGED), events.get(0));
 
@@ -300,17 +303,17 @@ public class AllComponentsTest {
 
         // select second value in third row (10.01.2017)
         openPopup("WDatePicker-1");
-        JTableFixture calendarFixture = window.panel("WDatePicker.popup").table("calendar");
+        JTableFixture calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireRowCount(6);
         calendarFixture.requireColumnCount(7);
         calendarFixture.selectCell(TableCell.row(1).column(3));
-        window.panel("WDatePicker.popup").button("ok").click();
+        find("WDatePicker.popup").button("ok").click();
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 10), DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // check first row values
         openPopup("WDatePicker-1");
-        calendarFixture = window.panel("WDatePicker.popup").table("calendar");
+        calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "6");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "5");
         calendarFixture.requireCellValue(TableCell.row(0).column(2), "4");
@@ -319,7 +322,8 @@ public class AllComponentsTest {
     @Test
     public void testDateTimePicker() throws InterruptedException {
         List<DataChangedEvent> events = new ArrayList<>();
-        WDateTimePicker target = window.panel("WDateTimePicker-0").targetCastedTo(WDateTimePicker.class);
+        WComponentFixture<WDateTimePicker> fixture = find("WDateTimePicker-0");
+        WDateTimePicker target = fixture.target();
         target.addDataChangedListener(events::add);
 
         LocalDateTime now;
@@ -335,9 +339,9 @@ public class AllComponentsTest {
         now = now.withNano(0);
         // select today
         openPopup("WDateTimePicker-0");
-        window.panel("WDateTimePicker.popup").panel("now").label().requireText(now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
-        window.panel("WDateTimePicker.popup").panel("now").label().click();
-        window.panel("WDateTimePicker.popup").button("ok").click();
+        find("WDateTimePicker.popup").wComponent("now").label().requireText(now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
+        find("WDateTimePicker.popup").wComponent("now").label().click();
+        find("WDateTimePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, now, DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -349,11 +353,11 @@ public class AllComponentsTest {
 
         // select second value in third row (10.01.2017)
         openPopup("WDateTimePicker-0");
-        JTableFixture calendarFixture = window.panel("WDateTimePicker.popup").table("calendar");
+        JTableFixture calendarFixture = find("WDateTimePicker.popup").table("calendar");
         calendarFixture.requireRowCount(6);
         calendarFixture.requireColumnCount(7);
         calendarFixture.selectCell(TableCell.row(2).column(1));
-        window.panel("WDateTimePicker.popup").button("ok").click();
+        find("WDateTimePicker.popup").button("ok").click();
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDateTime.of(2017, 1, 1, 4, 13, 22),
                 LocalDateTime.of(2017, 1, 10, 4, 13, 22),
@@ -361,17 +365,17 @@ public class AllComponentsTest {
 
         // set to 09:12:37 in popup
         openPopup("WDateTimePicker-0");
-        window.panel("WDateTimePicker.popup").panel("hour").spinner().select(9);
-        window.panel("WDateTimePicker.popup").panel("minute").spinner().select(12);
-        window.panel("WDateTimePicker.popup").panel("second").spinner().select(37);
-        window.panel("WDateTimePicker.popup").button("ok").click();
+        find("WDateTimePicker.popup").wComponent("hour").spinner().select(9);
+        find("WDateTimePicker.popup").wComponent("minute").spinner().select(12);
+        find("WDateTimePicker.popup").wComponent("second").spinner().select(37);
+        find("WDateTimePicker.popup").button("ok").click();
         Assert.assertEquals(4, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDateTime.of(2017, 1, 10, 4, 13, 22),
                 LocalDateTime.of(2017, 1, 10, 9, 12, 37), DataChangedEvent.ChangeType.CHANGED), events.get(3));
 
         // check first row values
         openPopup("WDateTimePicker-0");
-        calendarFixture = window.panel("WDateTimePicker.popup").table("calendar");
+        calendarFixture = find("WDateTimePicker.popup").table("calendar");
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "26");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "27");
         calendarFixture.requireCellValue(TableCell.row(0).column(2), "28");
@@ -385,7 +389,7 @@ public class AllComponentsTest {
         calendarFixture.cell(TableCell.row(2).column(1)).background().requireEqualTo(theme.bgGridSelected());
 
         // clear value
-        window.panel("WDateTimePicker.popup").button("clear").click();
+        find("WDateTimePicker.popup").button("clear").click();
 
         // find today
         JTableCellFixture todayFixture = calendarFixture.cell((table, cellReader) -> {
@@ -403,10 +407,10 @@ public class AllComponentsTest {
         todayFixture.foreground().requireEqualTo(theme.fgGridToday());
 
         // test resizing hides the popup
-        window.panel("WDateTimePicker.popup").requireVisible();
+        find("WDateTimePicker.popup").requireVisible();
         window.resizeWidthTo(window.target().getWidth() + 1);
         try {
-            window.panel("WDateTimePicker.popup");
+            find("WDateTimePicker.popup");
             Assert.fail("Popup is still in the component tree");
         } catch (ComponentLookupException cle) {
             // ok
@@ -414,12 +418,12 @@ public class AllComponentsTest {
 
         // test moving hides the popup
         openPopup("WDateTimePicker-0");
-        window.panel("WDateTimePicker.popup").requireVisible();
+        find("WDateTimePicker.popup").requireVisible();
         Point p = window.target().getLocationOnScreen();
         p.x++;
         window.moveTo(p);
         try {
-            window.panel("WDateTimePicker.popup");
+            find("WDateTimePicker.popup");
             Assert.fail("Popup is still in the component tree");
         } catch (ComponentLookupException cle) {
             // ok
@@ -429,7 +433,8 @@ public class AllComponentsTest {
     @Test
     public void testTimePicker() throws InterruptedException {
         List<DataChangedEvent> events = new ArrayList<>();
-        WTimePicker target = window.panel("WTimePicker-0").targetCastedTo(WTimePicker.class);
+        WComponentFixture<WTimePicker> fixture = find("WTimePicker-0");
+        WTimePicker target = fixture.target();
         target.addDataChangedListener(events::add);
 
         LocalTime now;
@@ -444,9 +449,9 @@ public class AllComponentsTest {
         } while (now.getNano() > 100_000_000);
         now = now.withNano(0);
         openPopup("WTimePicker-0");
-        window.panel("WTimePicker.popup").panel("now").label().requireText(now.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-        window.panel("WTimePicker.popup").panel("now").label().click();
-        window.panel("WTimePicker.popup").button("ok").click();
+        find("WTimePicker.popup").wComponent("now").label().requireText(now.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        find("WTimePicker.popup").wComponent("now").label().click();
+        find("WTimePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, now, DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -458,19 +463,19 @@ public class AllComponentsTest {
 
         // set to 09:12:37 in popup
         openPopup("WTimePicker-0");
-        window.panel("WTimePicker.popup").panel("hour").spinner().select(9);
-        window.panel("WTimePicker.popup").panel("minute").spinner().select(12);
-        window.panel("WTimePicker.popup").panel("second").spinner().select(37);
-        window.panel("WTimePicker.popup").button("ok").click();
+        find("WTimePicker.popup").wComponent("hour").spinner().select(9);
+        find("WTimePicker.popup").wComponent("minute").spinner().select(12);
+        find("WTimePicker.popup").wComponent("second").spinner().select(37);
+        find("WTimePicker.popup").button("ok").click();
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalTime.of(7, 14, 33), LocalTime.of(9, 12, 37), DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // test resizing hides the popup
         openPopup("WTimePicker-0");
-        window.panel("WTimePicker.popup").requireVisible();
+        find("WTimePicker.popup").requireVisible();
         window.resizeWidthTo(window.target().getWidth() + 1);
         try {
-            window.panel("WTimePicker.popup");
+            find("WTimePicker.popup");
             Assert.fail("Popup is still in the component tree");
         } catch (ComponentLookupException cle) {
             // ok
@@ -478,12 +483,12 @@ public class AllComponentsTest {
 
         // test moving hides the popup
         openPopup("WTimePicker-0");
-        window.panel("WTimePicker.popup").requireVisible();
+        find("WTimePicker.popup").requireVisible();
         Point p = window.target().getLocationOnScreen();
         p.x++;
         window.moveTo(p);
         try {
-            window.panel("WTimePicker.popup");
+            find("WTimePicker.popup");
             Assert.fail("Popup is still in the component tree");
         } catch (ComponentLookupException cle) {
             // ok
@@ -491,142 +496,146 @@ public class AllComponentsTest {
     }
 
     private void setAllValues1German() {
-        window.panel("WBigDecimalTextField-0").textBox().setText("1,23");
-        window.panel("WCheckBox-0").checkBox().check(true);
-        window.panel("WComboBox-0").comboBox().selectItem(1);
-        window.panel("WCurrencyTextField-0").textBox().setText("4,56");
-        window.panel("WDatePicker-0").textBox().setText("01.01.2018");
-        window.panel("WDateTimePicker-0").textBox().setText("02.03.2017 14:15:16");
-        window.panel("WFileChooser-0").targetCastedTo(WFileChooser.class).setValue(new File(getClass().getResource("/junit.txt").getFile()));
-        window.panel("WList-0").list().selectItem(1);
-        window.panel("WLongTextField-0").textBox().setText("5");
-        window.panel("WPasswordField-0").textBox().setText("foo");
-        window.panel("WRadioGroup-0").panel("WRadioButton-1").radioButton().check(true);
-        window.panel("WSpinner-3").spinner().select(4L);
-        window.panel("WSpinner-4").spinner().select(new BigDecimal("12.3456"));
-        window.panel("WStringTextField-0").textBox().setText("bar");
-        window.panel("WTextArea-0").textBox().setText("foo\nxxx");
-        window.panel("WTimePicker-0").textBox().setText("04:05:06");
-        window.panel("WSwitchBox-0").label("on").click();
+        find("WBigDecimalTextField-0").textBox().setText("1,23");
+        find("WCheckBox-0").checkBox().check(true);
+        find("WComboBox-0").comboBox().selectItem(1);
+        find("WCurrencyTextField-0").textBox().setText("4,56");
+        find("WDatePicker-0").textBox().setText("01.01.2018");
+        find("WDateTimePicker-0").textBox().setText("02.03.2017 14:15:16");
+        find("WFileChooser-0").targetCastedTo(WFileChooser.class).setValue(new File(getClass().getResource("/junit.txt").getFile()));
+        find("WList-0").list().selectItem(1);
+        find("WLongTextField-0").textBox().setText("5");
+        find("WPasswordField-0").textBox().setText("foo");
+        find("WRadioButton-1").radioButton().check(true);
+        find("WSpinner-3").spinner().select(4L);
+        find("WSpinner-4").spinner().select(new BigDecimal("12.3456"));
+        find("WStringTextField-0").textBox().setText("bar");
+        find("WTextArea-0").textBox().setText("foo\nxxx");
+        find("WTimePicker-0").textBox().setText("04:05:06");
+        find("WSwitchBox-0").label("on").click();
     }
 
     private void requireValues1German() {
-        window.panel("WBigDecimalTextField-0").textBox().requireText("1,23");
-        window.panel("WCheckBox-0").checkBox().requireSelected(true);
-        window.panel("WComboBox-0").comboBox().requireSelection(1);
-        window.panel("WCurrencyTextField-0").textBox().requireText("4,56");
-        window.panel("WDatePicker-0").textBox().requireText("01.01.2018");
-        window.panel("WDateTimePicker-0").textBox().requireText("02.03.2017 14:15:16");
-        window.panel("WFileChooser-0").textBox().requireText(new File(getClass().getResource("/junit.txt").getFile()).getAbsolutePath());
-        window.panel("WList-0").list().requireSelection(1);
-        window.panel("WLongTextField-0").textBox().requireText("5");
-        window.panel("WPasswordField-0").textBox().requireText("foo");
-        window.panel("WRadioGroup-0").panel("WRadioButton-1").radioButton().requireSelected(true);
-        window.panel("WSpinner-3").spinner().requireValue(4L);
-        window.panel("WSpinner-4").spinner().requireValue(new BigDecimal("12.3456"));
-        window.panel("WStringTextField-0").textBox().requireText("bar");
-        window.panel("WTextArea-0").textBox().requireText("foo\nxxx");
-        window.panel("WTimePicker-0").textBox().requireText("04:05:06");
-        window.panel("WSwitchBox-0").label("on").background().requireEqualTo(
-                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
+        find("WBigDecimalTextField-0").textBox().requireText("1,23");
+        find("WCheckBox-0").checkBox().requireSelected(true);
+        find("WComboBox-0").comboBox().requireSelection(1);
+        find("WCurrencyTextField-0").textBox().requireText("4,56");
+        find("WDatePicker-0").textBox().requireText("01.01.2018");
+        find("WDateTimePicker-0").textBox().requireText("02.03.2017 14:15:16");
+        find("WFileChooser-0").textBox().requireText(new File(getClass().getResource("/junit.txt").getFile()).getAbsolutePath());
+        find("WList-0").list().requireSelection(1);
+        find("WLongTextField-0").textBox().requireText("5");
+        find("WPasswordField-0").textBox().requireText("foo");
+        find("WRadioButton-1").radioButton().requireSelected(true);
+        find("WSpinner-3").spinner().requireValue(4L);
+        find("WSpinner-4").spinner().requireValue(new BigDecimal("12.3456"));
+        find("WStringTextField-0").textBox().requireText("bar");
+        find("WTextArea-0").textBox().requireText("foo\nxxx");
+        find("WTimePicker-0").textBox().requireText("04:05:06");
+        find("WSwitchBox-0").label("on").background().requireEqualTo(
+                find("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
         );
-        window.panel("WSwitchBox-0").label("off").background().requireNotEqualTo(
-                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
+        find("WSwitchBox-0").label("off").background().requireNotEqualTo(
+                find("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
         );
     }
 
     private void setAllValues1US() {
-        window.panel("WBigDecimalTextField-0").textBox().setText("1.23");
-        window.panel("WCheckBox-0").checkBox().check(true);
-        window.panel("WComboBox-0").comboBox().selectItem(1);
-        window.panel("WCurrencyTextField-0").textBox().setText("4.56");
-        window.panel("WDatePicker-0").textBox().setText("Jan 1, 2018");
-        window.panel("WDateTimePicker-0").textBox().setText("Mar 2, 2017 2:15:16 PM");
-        window.panel("WFileChooser-0").targetCastedTo(WFileChooser.class).setValue(new File(getClass().getResource("/junit.txt").getFile()));
-        window.panel("WList-0").list().selectItem(1);
-        window.panel("WLongTextField-0").textBox().setText("5");
-        window.panel("WPasswordField-0").textBox().setText("foo");
-        window.panel("WRadioGroup-0").panel("WRadioButton-1").radioButton().check(true);
-        window.panel("WSpinner-3").spinner().select(4L);
-        window.panel("WSpinner-4").spinner().select(new BigDecimal("12.3456"));
-        window.panel("WStringTextField-0").textBox().setText("bar");
-        window.panel("WTextArea-0").textBox().setText("foo\nxxx");
-        window.panel("WTimePicker-0").textBox().setText("4:05:06 AM");
-        window.panel("WSwitchBox-0").label("on").click();
+        find("WBigDecimalTextField-0").textBox().setText("1.23");
+        find("WCheckBox-0").checkBox().check(true);
+        find("WComboBox-0").comboBox().selectItem(1);
+        find("WCurrencyTextField-0").textBox().setText("4.56");
+        find("WDatePicker-0").textBox().setText("Jan 1, 2018");
+        find("WDateTimePicker-0").textBox().setText("Mar 2, 2017 2:15:16 PM");
+        find("WFileChooser-0").targetCastedTo(WFileChooser.class).setValue(new File(getClass().getResource("/junit.txt").getFile()));
+        find("WList-0").list().selectItem(1);
+        find("WLongTextField-0").textBox().setText("5");
+        find("WPasswordField-0").textBox().setText("foo");
+        find("WRadioButton-1").radioButton().check(true);
+        find("WSpinner-3").spinner().select(4L);
+        find("WSpinner-4").spinner().select(new BigDecimal("12.3456"));
+        find("WStringTextField-0").textBox().setText("bar");
+        find("WTextArea-0").textBox().setText("foo\nxxx");
+        find("WTimePicker-0").textBox().setText("4:05:06 AM");
+        find("WSwitchBox-0").label("on").click();
     }
 
     private void requireValues1US() {
-        window.panel("WBigDecimalTextField-0").textBox().requireText("1.23");
-        window.panel("WCheckBox-0").checkBox().requireSelected(true);
-        window.panel("WComboBox-0").comboBox().requireSelection(1);
-        window.panel("WCurrencyTextField-0").textBox().requireText("4.56");
-        window.panel("WDatePicker-0").textBox().requireText("Jan 1, 2018");
-        window.panel("WDateTimePicker-0").textBox().requireText("Mar 2, 2017 2:15:16 PM");
-        window.panel("WFileChooser-0").textBox().requireText(new File(getClass().getResource("/junit.txt").getFile()).getAbsolutePath());
-        window.panel("WList-0").list().requireSelection(1);
-        window.panel("WLongTextField-0").textBox().requireText("5");
-        window.panel("WPasswordField-0").textBox().requireText("foo");
-        window.panel("WRadioGroup-0").panel("WRadioButton-1").radioButton().requireSelected(true);
-        window.panel("WSpinner-3").spinner().requireValue(4L);
-        window.panel("WSpinner-4").spinner().requireValue(new BigDecimal("12.3456"));
-        window.panel("WStringTextField-0").textBox().requireText("bar");
-        window.panel("WTextArea-0").textBox().requireText("foo\nxxx");
-        window.panel("WTimePicker-0").textBox().requireText("4:05:06 AM");
-        window.panel("WSwitchBox-0").label("on").background().requireEqualTo(
-                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
+        find("WBigDecimalTextField-0").textBox().requireText("1.23");
+        find("WCheckBox-0").checkBox().requireSelected(true);
+        find("WComboBox-0").comboBox().requireSelection(1);
+        find("WCurrencyTextField-0").textBox().requireText("4.56");
+        find("WDatePicker-0").textBox().requireText("Jan 1, 2018");
+        find("WDateTimePicker-0").textBox().requireText("Mar 2, 2017 2:15:16 PM");
+        find("WFileChooser-0").textBox().requireText(new File(getClass().getResource("/junit.txt").getFile()).getAbsolutePath());
+        find("WList-0").list().requireSelection(1);
+        find("WLongTextField-0").textBox().requireText("5");
+        find("WPasswordField-0").textBox().requireText("foo");
+        find("WRadioButton-1").radioButton().requireSelected(true);
+        find("WSpinner-3").spinner().requireValue(4L);
+        find("WSpinner-4").spinner().requireValue(new BigDecimal("12.3456"));
+        find("WStringTextField-0").textBox().requireText("bar");
+        find("WTextArea-0").textBox().requireText("foo\nxxx");
+        find("WTimePicker-0").textBox().requireText("4:05:06 AM");
+        find("WSwitchBox-0").label("on").background().requireEqualTo(
+                find("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
         );
-        window.panel("WSwitchBox-0").label("off").background().requireNotEqualTo(
-                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
+        find("WSwitchBox-0").label("off").background().requireNotEqualTo(
+                find("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
         );
     }
 
     private void requireEmptyValues() {
-        window.panel("WBigDecimalTextField-0").textBox().requireText("");
-        window.panel("WCheckBox-0").checkBox().requireNotSelected();
-        window.panel("WComboBox-0").comboBox().requireNoSelection();
-        window.panel("WCurrencyTextField-0").textBox().requireText("");
-        window.panel("WDatePicker-0").textBox().requireText("");
-        window.panel("WDateTimePicker-0").textBox().requireText("");
-        window.panel("WFileChooser-0").textBox().requireText("");
-        window.panel("WList-0").list().requireSelection(0);
-        window.panel("WLongTextField-0").textBox().requireText("");
-        window.panel("WPasswordField-0").textBox().requireText("");
-        window.panel("WRadioGroup-0").panel("WRadioButton-1").radioButton().requireNotSelected();
-        window.panel("WSpinner-3").spinner().requireValue(0L);
-        window.panel("WSpinner-4").spinner().requireValue(BigDecimal.ZERO);
-        window.panel("WStringTextField-0").textBox().requireText("");
-        window.panel("WTextArea-0").textBox().requireText("");
-        window.panel("WTimePicker-0").textBox().requireText("");
-        window.panel("WSwitchBox-0").label("on").background().requireNotEqualTo(
-                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
+        find("WBigDecimalTextField-0").textBox().requireText("");
+        find("WCheckBox-0").checkBox().requireNotSelected();
+        find("WComboBox-0").comboBox().requireNoSelection();
+        find("WCurrencyTextField-0").textBox().requireText("");
+        find("WDatePicker-0").textBox().requireText("");
+        find("WDateTimePicker-0").textBox().requireText("");
+        find("WFileChooser-0").textBox().requireText("");
+        find("WList-0").list().requireSelection(0);
+        find("WLongTextField-0").textBox().requireText("");
+        find("WPasswordField-0").textBox().requireText("");
+        find("WRadioButton-1").radioButton().requireNotSelected();
+        find("WSpinner-3").spinner().requireValue(0L);
+        find("WSpinner-4").spinner().requireValue(BigDecimal.ZERO);
+        find("WStringTextField-0").textBox().requireText("");
+        find("WTextArea-0").textBox().requireText("");
+        find("WTimePicker-0").textBox().requireText("");
+        find("WSwitchBox-0").label("on").background().requireNotEqualTo(
+                find("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOnColor()
         );
-        window.panel("WSwitchBox-0").label("off").background().requireEqualTo(
-                window.panel("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
+        find("WSwitchBox-0").label("off").background().requireEqualTo(
+                find("WSwitchBox-0").targetCastedTo(WSwitchBox.class).getOffColor()
         );
     }
 
     private void setAllValues2German() {
-        window.panel("WBigDecimalTextField-0").textBox().setText("1,24");
-        window.panel("WCheckBox-0").checkBox().check(false);
-        window.panel("WComboBox-0").comboBox().selectItem(2);
-        window.panel("WCurrencyTextField-0").textBox().setText("4,11");
-        window.panel("WDatePicker-0").textBox().setText("01.02.2018");
-        window.panel("WDateTimePicker-0").textBox().setText("02.04.2017 17:15:16");
-        window.panel("WFileChooser-0").targetCastedTo(WFileChooser.class).setValue(new File(getClass().getResource("/junit2.txt").getFile()));
-        window.panel("WList-0").list().selectItem(2);
-        window.panel("WLongTextField-0").textBox().setText("45");
-        window.panel("WPasswordField-0").textBox().setText("baz");
-        window.panel("WRadioGroup-0").panel("WRadioButton-2").radioButton().check(true);
-        window.panel("WSpinner-3").spinner().select(7L);
-        window.panel("WSpinner-4").spinner().select(new BigDecimal("12.0456"));
-        window.panel("WStringTextField-0").textBox().setText("baz");
-        window.panel("WTextArea-0").textBox().setText("foo\nabc");
-        window.panel("WTimePicker-0").textBox().setText("07:14:06");
-        window.panel("WSwitchBox-0").label("off").click();
+        find("WBigDecimalTextField-0").textBox().setText("1,24");
+        find("WCheckBox-0").checkBox().check(false);
+        find("WComboBox-0").comboBox().selectItem(2);
+        find("WCurrencyTextField-0").textBox().setText("4,11");
+        find("WDatePicker-0").textBox().setText("01.02.2018");
+        find("WDateTimePicker-0").textBox().setText("02.04.2017 17:15:16");
+        find("WFileChooser-0").targetCastedTo(WFileChooser.class).setValue(new File(getClass().getResource("/junit2.txt").getFile()));
+        find("WList-0").list().selectItem(2);
+        find("WLongTextField-0").textBox().setText("45");
+        find("WPasswordField-0").textBox().setText("baz");
+        find("WRadioButton-2").radioButton().check(true);
+        find("WSpinner-3").spinner().select(7L);
+        find("WSpinner-4").spinner().select(new BigDecimal("12.0456"));
+        find("WStringTextField-0").textBox().setText("baz");
+        find("WTextArea-0").textBox().setText("foo\nabc");
+        find("WTimePicker-0").textBox().setText("07:14:06");
+        find("WSwitchBox-0").label("off").click();
     }
 
     private void openPopup(String name) throws InterruptedException {
-        window.panel(name).button().click();
+        find(name).button("showPopup").click();
         Thread.sleep(50); // give the popup some time to show up
+    }
+
+    private <X extends AbstractWComponent> WComponentFixture<X> find(String name) {
+        return window.with(WComponentFixtureExtension.withName(name));
     }
 }
