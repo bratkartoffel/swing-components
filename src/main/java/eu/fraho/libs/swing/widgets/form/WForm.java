@@ -44,7 +44,6 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> {
 
     public WForm(@NotNull @NonNull T model, int columns) throws FormCreateException {
         super(new JPanel(new GridBagLayout()), model);
-
         this.columns = columns;
         try {
             log.debug("{}: Building form for model {}", getName(), model);

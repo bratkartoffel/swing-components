@@ -6,6 +6,8 @@
  */
 package eu.fraho.libs.swing.junit;
 
+import eu.fraho.libs.swing.junit.assertj.WComponentFixture;
+import eu.fraho.libs.swing.junit.assertj.WComponentFixtureExtension;
 import eu.fraho.libs.swing.widgets.*;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;

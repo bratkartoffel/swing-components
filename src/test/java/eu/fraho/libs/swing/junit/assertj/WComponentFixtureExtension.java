@@ -1,4 +1,4 @@
-package eu.fraho.libs.swing.junit;
+package eu.fraho.libs.swing.junit.assertj;
 
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import org.assertj.swing.core.Robot;

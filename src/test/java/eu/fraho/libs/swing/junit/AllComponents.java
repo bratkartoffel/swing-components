@@ -37,12 +37,12 @@ public class AllComponents extends JFrame {
     private final JPanel pnlCenter = new JPanel();
 
     public AllComponents() {
-        setSize(550, 600);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setupCenter();
         setupButtons();
-        add(new JScrollPane(pnlCenter), BorderLayout.CENTER);
+        add(pnlCenter, BorderLayout.CENTER);
+        pack();
     }
 
     public static void main(String[] args) {

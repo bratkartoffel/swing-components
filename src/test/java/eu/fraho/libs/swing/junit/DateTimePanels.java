@@ -26,12 +26,12 @@ public class DateTimePanels extends JFrame {
     private final JPanel pnlCenter = new JPanel();
 
     public DateTimePanels() {
-        setSize(550, 650);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setupCenter();
         setupButtons();
-        add(new JScrollPane(pnlCenter), BorderLayout.CENTER);
+        add(pnlCenter, BorderLayout.CENTER);
+        pack();
     }
 
     public static void main(String[] args) {

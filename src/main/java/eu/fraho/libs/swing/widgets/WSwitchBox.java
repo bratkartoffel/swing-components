@@ -31,10 +31,10 @@ public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
     private final JLabel off;
 
     @Getter
-    private Color offColor = new Color(0.9f, 0f, 0f, 0.5f);
+    private Color offColor = new Color(0.8f, 0f, 0f);
 
     @Getter
-    private Color onColor = new Color(0f, 0.9f, 0f, 0.5f);
+    private Color onColor = new Color(0f, 0.7f, 0f);
 
     @Getter
     private Color borderColor = Color.GRAY;
@@ -231,7 +231,7 @@ public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
 
                 // determine marker
                 markerPos = new Rectangle(width - 10, 0, 10, height);
-                markerCol = WSwitchBox.this.offColor.darker().darker();
+                markerCol = WSwitchBox.this.offColor.darker();
                 markerDraw = value != Boolean.TRUE;
 
                 // determine borders
@@ -243,7 +243,7 @@ public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
 
                 // determine marker
                 markerPos = new Rectangle(0, 0, 10, height);
-                markerCol = WSwitchBox.this.onColor.darker().darker();
+                markerCol = WSwitchBox.this.onColor.darker();
                 markerDraw = value == Boolean.TRUE;
 
                 // determine borders

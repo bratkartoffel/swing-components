@@ -49,9 +49,8 @@ public class Demo extends JFrame {
         setupButtons();
         add(pnlCenter, BorderLayout.CENTER);
         setLocationByPlatform(true);
-        setSize(new Dimension(800, 600));
         setTitle("swing-components demo application");
-        form.setOpaque(false);
+        pack();
     }
 
     private void setupCenter() {
@@ -65,8 +64,11 @@ public class Demo extends JFrame {
         form = new WForm<>(model, 2);
         form.addDataChangedListener(this::dataChanged);
         form.setReadonly(readonly);
+        form.setBackground(Color.RED);
+        form.setOpaque(true);
         pnlCenter.setName("content");
         pnlCenter.add(form);
+        pnlCenter.setOpaque(false);
     }
 
     private void setupButtons() {
@@ -111,6 +113,7 @@ public class Demo extends JFrame {
         changeLaf.setName("changeLaf");
 
         JPanel pnlSouth = new JPanel();
+        pnlSouth.setOpaque(false);
         pnlSouth.setLayout(new FlowLayout());
         pnlSouth.add(setLocaleDe);
         pnlSouth.add(setLocaleFr);
