@@ -1,7 +1,9 @@
 package eu.fraho.libs.swing.widgets.datepicker;
 
 import eu.fraho.libs.swing.widgets.WDatePanel;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -17,12 +19,14 @@ import java.util.Objects;
  *
  * @author Simon Frankenberger
  */
-public class CalendarTableRenderer extends DefaultTableCellRenderer {
+@Slf4j
+public class CalendarTableRenderer extends DefaultTableCellRenderer implements ThemeSupport {
     /**
      * the underlying ColorTheme
      */
     @NotNull
-    private final ColorTheme theme;
+    @Getter
+    private ColorTheme theme;
 
     /**
      * Create a new renderer using the given theme.
@@ -98,5 +102,10 @@ public class CalendarTableRenderer extends DefaultTableCellRenderer {
 
         // all done, return the cell
         return label;
+    }
+
+    public void setTheme(@NotNull @NonNull ColorTheme theme) {
+        log.debug("{}: Changing theme to {}", getName(), theme.getClass());
+        this.theme = theme;
     }
 }

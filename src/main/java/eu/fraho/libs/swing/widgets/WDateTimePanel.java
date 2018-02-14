@@ -103,6 +103,7 @@ public class WDateTimePanel extends AbstractWPickerPanel<LocalDateTime> {
     @Override
     public void setTheme(@NotNull @NonNull ColorTheme theme) {
         super.setTheme(theme);
+        log.debug("{}: Changing theme to {}", getName(), theme.getClass());
         pnlDate.setTheme(theme);
         pnlTime.setTheme(theme);
     }

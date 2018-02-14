@@ -358,7 +358,7 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JCompo
     @Override
     public void setupByAnnotation(@NotNull @NonNull FormField anno) {
         log.debug("{}: Setting up by annotation", getName());
-        setReadonly(anno.readonly());
+        // nothing to do here
     }
 
     @SuppressWarnings("ConstantConditions")

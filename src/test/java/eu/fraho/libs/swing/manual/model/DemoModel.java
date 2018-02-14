@@ -1,5 +1,6 @@
 package eu.fraho.libs.swing.manual.model;
 
+import eu.fraho.libs.swing.AlternativeColorTheme;
 import eu.fraho.libs.swing.widgets.*;
 import eu.fraho.libs.swing.widgets.form.FormField;
 import eu.fraho.libs.swing.widgets.form.FormModel;

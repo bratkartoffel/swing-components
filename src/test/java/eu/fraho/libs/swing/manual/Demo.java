@@ -1,6 +1,8 @@
 package eu.fraho.libs.swing.manual;
 
+import eu.fraho.libs.swing.AlternativeColorTheme;
 import eu.fraho.libs.swing.manual.model.DemoModel;
+import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import eu.fraho.libs.swing.widgets.form.WForm;
 import lombok.extern.slf4j.Slf4j;
@@ -110,6 +112,10 @@ public class Demo extends JFrame {
         changeLaf.addActionListener(event -> changeLayout());
         changeLaf.setName("changeLaf");
 
+        JButton changeTheme = new JButton("change theme");
+        changeTheme.addActionListener(event -> changeTheme());
+        changeTheme.setName("changeTheme");
+
         JPanel pnlSouth = new JPanel();
         pnlSouth.setOpaque(false);
         pnlSouth.setLayout(new FlowLayout());
@@ -123,8 +129,17 @@ public class Demo extends JFrame {
         pnlSouth.add(rollback);
         pnlSouth.add(commit);
         pnlSouth.add(changeLaf);
+        pnlSouth.add(changeTheme);
         pnlSouth.setName("buttons");
         add(pnlSouth, BorderLayout.SOUTH);
+    }
+
+    private void changeTheme() {
+        if (form.getTheme() instanceof AlternativeColorTheme) {
+            form.setTheme(new DefaultColorTheme());
+        } else {
+            form.setTheme(new AlternativeColorTheme());
+        }
     }
 
     private void changeLocale(@NotNull Locale locale) {

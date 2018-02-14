@@ -9,8 +9,12 @@ import eu.fraho.libs.swing.widgets.WPathChooser;
 import eu.fraho.libs.swing.widgets.WTextArea;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.base.WComponent;
+import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
+import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
+import eu.fraho.libs.swing.widgets.datepicker.ThemeSupport;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -30,13 +34,15 @@ import java.util.stream.Stream;
 
 @Slf4j
 @SuppressWarnings("unused")
-public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> {
+public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> implements ThemeSupport {
     private final AtomicBoolean modelChangeRunning = new AtomicBoolean(false);
     private final Map<String, FieldInfo> components = new HashMap<>();
     @Getter
     private int columns;
     @Getter
     private boolean readonly = false;
+    @Getter
+    private ColorTheme theme = new DefaultColorTheme();
 
     public WForm(@NotNull @NonNull T model) throws FormCreateException {
         this(model, 1);
@@ -51,6 +57,17 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> {
         } catch (ModelBindException mbe) {
             throw new FormCreateException(mbe);
         }
+    }
+
+    public void setTheme(ColorTheme theme) {
+        log.debug("{}: Changing theme to {}", getName(), theme.getClass());
+        this.theme = theme;
+
+        components.entrySet().stream()
+                .map(e -> e.getValue().getComponent())
+                .filter(ThemeSupport.class::isInstance)
+                .map(ThemeSupport.class::cast)
+                .forEach(e -> e.setTheme(theme));
     }
 
     @NotNull

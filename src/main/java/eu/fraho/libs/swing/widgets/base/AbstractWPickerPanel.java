@@ -3,6 +3,7 @@ package eu.fraho.libs.swing.widgets.base;
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
+import eu.fraho.libs.swing.widgets.datepicker.ThemeSupport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractWComponent<T, JPanel> {
+public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractWComponent<T, JPanel> implements ThemeSupport {
     @NotNull
     @Getter
     private ColorTheme theme = new DefaultColorTheme();
@@ -53,7 +54,7 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
 
         lblNow.setName("now");
         lblNow.setOpaque(false);
-        lblNow.setForeground(getTheme().fgTodaySelector());
+        lblNow.setForeground(theme.fgTodaySelector());
         lblNow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         lblNow.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -66,10 +67,6 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
         btnOk.setName("ok");
         btnOk.setToolTipText("Ok");
         setupControlButton(btnOk);
-    }
-
-    public void setTheme(@NotNull @NonNull ColorTheme theme) {
-        this.theme = theme;
     }
 
     protected void setupControlButton(@NotNull @NonNull JButton btn) {
@@ -87,6 +84,12 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
         log.debug("{}: Setting readonly to {}", getName(), readonly);
         btnOk.setEnabled(!readonly);
         btnClear.setEnabled(!readonly);
+    }
+
+    public void setTheme(@NotNull @NonNull ColorTheme theme) {
+        log.debug("{}: Changing theme to {}", getName(), theme.getClass());
+        this.theme = theme;
+        lblNow.setForeground(theme.fgTodaySelector());
     }
 
     protected abstract String getNow();

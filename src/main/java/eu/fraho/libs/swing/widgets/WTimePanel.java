@@ -2,6 +2,7 @@ package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
+import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -123,6 +124,14 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         spnSecond.setReadonly(readonly);
 
         lblNow.setEnabled(!readonly);
+    }
+
+    @Override
+    public void setTheme(@NotNull ColorTheme theme) {
+        super.setTheme(theme);
+
+        log.debug("{}: Changing theme to {}", getName(), theme.getClass());
+        pnlControls.setBackground(getTheme().bgTopPanel());
     }
 
     protected void setInDateTimePanel() {

@@ -37,12 +37,6 @@ public class WDatePicker extends AbstractWPicker<LocalDate> {
     }
 
     @Override
-    public void setTheme(@NotNull @NonNull ColorTheme theme) {
-        super.setTheme(theme);
-        pnlPopup.setTheme(theme);
-    }
-
-    @Override
     protected void setValueFromEvent() {
         SwingUtilities.invokeLater(() -> setValue(DateConverterHelper.toLocalDate((Date) getComponent().getValue())));
     }

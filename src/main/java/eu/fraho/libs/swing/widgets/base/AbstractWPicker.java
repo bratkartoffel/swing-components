@@ -3,6 +3,7 @@ package eu.fraho.libs.swing.widgets.base;
 import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import eu.fraho.libs.swing.widgets.datepicker.DateConverterHelper;
 import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
+import eu.fraho.libs.swing.widgets.datepicker.ThemeSupport;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent.ChangeType;
 import eu.fraho.libs.swing.widgets.form.FormField;
@@ -22,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @SuppressWarnings("unused")
-public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextField<T> {
+public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextField<T> implements ThemeSupport {
     @NotNull
     protected final AbstractWPickerPanel<T> pnlPopup;
     // components
@@ -74,6 +75,7 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
     }
 
     public void setTheme(@NotNull @NonNull ColorTheme theme) {
+        log.debug("{}: Changing theme to {}", getName(), theme.getClass());
         this.theme = theme;
         pnlPopup.setTheme(theme);
     }

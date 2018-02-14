@@ -3,6 +3,8 @@ package eu.fraho.libs.swing.widgets.form;
 import eu.fraho.libs.swing.widgets.*;
 import eu.fraho.libs.swing.widgets.base.AbstractWTextField;
 import eu.fraho.libs.swing.widgets.base.WComponent;
+import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
+import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
@@ -24,8 +26,7 @@ public @interface FormField {
     int DEFAULT_ROWS = 6;
 
     /**
-     * @return The caption of the field, displayed as a label in front of the
-     * component.
+     * @return The caption of the field, displayed as a label in front of the component.
      */
     @NotNull String caption();
 
@@ -87,16 +88,21 @@ public @interface FormField {
     Class<? extends WComponent> type();
 
     /**
-     * Used for {@link WBigDecimalTextField}, {@link WCurrencyTextField} and
-     * {@link WSpinner} only.<br>
+     * Used for {@link WDatePicker}, {@link WTimePicker} and {@link WDateTimePicker} only.<br>
+     *
+     * @return The theme to use
+     */
+    Class<? extends ColorTheme> theme() default DefaultColorTheme.class;
+
+    /**
+     * Used for {@link WBigDecimalTextField}, {@link WCurrencyTextField} and {@link WSpinner} only.<br>
      *
      * @return The minimum shown fractional digits.
      */
     int minPrecision() default 2;
 
     /**
-     * Used for {@link WBigDecimalTextField}, {@link WCurrencyTextField} and
-     * {@link WSpinner} only.<br>
+     * Used for {@link WBigDecimalTextField}, {@link WCurrencyTextField} and {@link WSpinner} only.<br>
      *
      * @return The maximum shown fractional digits.
      */

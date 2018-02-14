@@ -4,6 +4,8 @@ import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableModel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableRenderer;
+import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
+import eu.fraho.libs.swing.widgets.datepicker.ThemeSupport;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +29,7 @@ import java.util.Optional;
 @Slf4j
 public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
     private final JPanel pnlControls = new JPanel(new BorderLayout(0, 0));
+    private final JPanel pnlCenter = new JPanel(new FlowLayout(FlowLayout.CENTER));
     private final JPanel pnlTable = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     private final JPanel pnlDetails = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 3));
 
@@ -121,10 +124,8 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         centerText.setName("header");
         centerText.setOpaque(false);
 
-        JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        center.add(centerText);
-        center.setOpaque(false);
-        center.setForeground(getTheme().fgMonthSelector());
+        pnlCenter.add(centerText);
+        pnlCenter.setOpaque(false);
 
         JPanel next = new JPanel(new GridLayout(1, 2, 5, 0));
         next.add(btnNextMonth);
@@ -132,11 +133,24 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         next.setOpaque(false);
 
         pnlControls.add(prev, BorderLayout.WEST);
-        pnlControls.add(center, BorderLayout.CENTER);
+        pnlControls.add(pnlCenter, BorderLayout.CENTER);
         pnlControls.add(next, BorderLayout.EAST);
-
         pnlControls.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        pnlControls.setBackground(getTheme().bgTopPanel());
+    }
+
+    @Override
+    public void setTheme(@NotNull ColorTheme theme) {
+        super.setTheme(theme);
+
+        log.debug("{}: Changing theme to {}", getName(), theme.getClass());
+        pnlCenter.setForeground(theme.fgMonthSelector());
+        pnlControls.setBackground(theme.bgTopPanel());
+        ((ThemeSupport) tblDays.getDefaultRenderer(LocalDate.class)).setTheme(theme);
+        tblDays.invalidate();
+        tblDays.repaint();
+
+        tblDays.getTableHeader().invalidate();
+        tblDays.getTableHeader().repaint();
     }
 
     private void populateDetails() {

@@ -1,8 +1,9 @@
 package eu.fraho.libs.swing.widgets.form;
 
 import eu.fraho.libs.swing.exceptions.FormCreateException;
-import eu.fraho.libs.swing.widgets.base.WNullable;
 import eu.fraho.libs.swing.widgets.base.WComponent;
+import eu.fraho.libs.swing.widgets.base.WNullable;
+import eu.fraho.libs.swing.widgets.datepicker.ThemeSupport;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -63,17 +64,25 @@ final class FormElementFactory {
                 constr = type.getConstructor(List.class, Object.class);
                 List<Enum> elements = new ArrayList<>(EnumSet.allOf((Class<Enum>) getterType));
                 instance = constr.newInstance(elements, value);
-                if (anno.nullable() && WNullable.class.isAssignableFrom(type)) {
-                    ((WNullable) instance).setNullable(anno.nullable());
-                }
             } else {
                 constr = type.getConstructor(getter.getReturnType());
                 instance = constr.newInstance(value);
             }
             log.debug("Created instance {}", instance);
 
+            instance.setReadonly(anno.readonly());
             instance.setupByAnnotation(anno);
             log.debug("Setup by annotation finished");
+
+            if (instance instanceof ThemeSupport) {
+                log.debug("Setting theme");
+                ((ThemeSupport) instance).setTheme(anno.theme().newInstance());
+            }
+
+            if (instance instanceof WNullable) {
+                log.debug("Setting nullable");
+                ((WNullable) instance).setNullable(anno.nullable());
+            }
 
             if (!anno.readonly()) {
                 log.debug("Binding to model and adding data change listener");

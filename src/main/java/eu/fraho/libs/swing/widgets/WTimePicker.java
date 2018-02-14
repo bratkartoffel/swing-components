@@ -38,12 +38,6 @@ public class WTimePicker extends AbstractWPicker<LocalTime> {
     }
 
     @Override
-    public void setTheme(@NotNull @NonNull ColorTheme theme) {
-        super.setTheme(theme);
-        pnlPopup.setTheme(theme);
-    }
-
-    @Override
     protected void setValueFromEvent() {
         log.debug("{}: Setting value from event", getName());
         SwingUtilities.invokeLater(() -> setValue(DateConverterHelper.toLocalTime((Date) getComponent().getValue())));
