@@ -152,7 +152,7 @@ public class DateTimePanelsTest {
                 LocalDate.of(2017, 3, 13),
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(2));
-        fixture.label("WLabel-1.Component").requireText("M\u00E4rz 2017");
+        fixture.label("header").requireText("M\u00E4rz 2017");
 
         fixture.button("nextMonth").click();
         Assert.assertEquals(target.getValue(), LocalDate.of(2017, 4, 13));
@@ -162,7 +162,7 @@ public class DateTimePanelsTest {
                 LocalDate.of(2017, 4, 13),
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(3));
-        fixture.label("WLabel-1.Component").requireText("April 2017");
+        fixture.label("header").requireText("April 2017");
 
         // set value for rollback
         fixture.button("nextMonth").click();
@@ -326,7 +326,7 @@ public class DateTimePanelsTest {
                 LocalDateTime.of(2014, 1, 13, 7, 14, 3),
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(2));
-        fixture.label("WLabel-6.Component").requireText("Januar 2014");
+        fixture.label("header").requireText("Januar 2014");
 
         fixture.button("nextMonth").click();
         Assert.assertEquals(target.getValue(), LocalDateTime.of(2014, 2, 13, 7, 14, 3));
@@ -336,7 +336,7 @@ public class DateTimePanelsTest {
                 LocalDateTime.of(2014, 2, 13, 7, 14, 3),
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(3));
-        fixture.label("WLabel-6.Component").requireText("Februar 2014");
+        fixture.label("header").requireText("Februar 2014");
 
         // set date value for rollback
         fixture.button("nextMonth").click();
