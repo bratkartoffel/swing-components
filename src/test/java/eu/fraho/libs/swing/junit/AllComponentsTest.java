@@ -163,8 +163,8 @@ public class AllComponentsTest {
 
         // select today
         openPopup("WDatePicker-0");
-        find("WDatePicker.popup").wComponent("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-        find("WDatePicker.popup").wComponent("today").label().click();
+        find("WDatePicker.popup").label("now").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        find("WDatePicker.popup").label("now").click();
         find("WDatePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
@@ -252,8 +252,8 @@ public class AllComponentsTest {
 
         // select today
         openPopup("WDatePicker-1");
-        find("WDatePicker.popup").wComponent("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
-        find("WDatePicker.popup").wComponent("today").label().click();
+        find("WDatePicker.popup").label("now").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
+        find("WDatePicker.popup").label("now").click();
         find("WDatePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
@@ -292,8 +292,8 @@ public class AllComponentsTest {
 
         // select today
         openPopup("WDatePicker-1");
-        find("WDatePicker.popup").wComponent("today").label().requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        find("WDatePicker.popup").wComponent("today").label().click();
+        find("WDatePicker.popup").label("now").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        find("WDatePicker.popup").label("now").click();
         find("WDatePicker.popup").button("ok").click();
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, LocalDate.now(), DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -341,8 +341,8 @@ public class AllComponentsTest {
         now = now.withNano(0);
         // select today
         openPopup("WDateTimePicker-0");
-        find("WDateTimePicker.popup").wComponent("now").label().requireText(now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
-        find("WDateTimePicker.popup").wComponent("now").label().click();
+        find("WDateTimePicker.popup").label("now").requireText(now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
+        find("WDateTimePicker.popup").label("now").click();
         find("WDateTimePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());
@@ -451,8 +451,8 @@ public class AllComponentsTest {
         } while (now.getNano() > 100_000_000);
         now = now.withNano(0);
         openPopup("WTimePicker-0");
-        find("WTimePicker.popup").wComponent("now").label().requireText(now.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-        find("WTimePicker.popup").wComponent("now").label().click();
+        find("WTimePicker.popup").label("now").requireText(now.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        find("WTimePicker.popup").label("now").click();
         find("WTimePicker.popup").button("ok").click();
 
         Assert.assertEquals(1, events.size());

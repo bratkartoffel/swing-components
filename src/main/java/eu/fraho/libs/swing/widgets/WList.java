@@ -55,10 +55,10 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements WNul
         this.list = (JList<E>) getComponent().getViewport().getView();
         ListSelectionListener listListener = event -> {
             if (ignoreListener.get()) {
-                log.debug("{}: Ignoring list selection event {}", event);
+                log.debug("{}: Ignoring list selection event {}", getName(), event);
                 return;
             }
-            log.debug("{}: Got list selection event {}", event);
+            log.debug("{}: Got list selection event {}", getName(), event);
             try {
                 handleSelection(event);
             } catch (ChangeVetoException cve) {
@@ -111,7 +111,7 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements WNul
     }
 
     private void rebuild(@Nullable E newVal) {
-        log.debug("{}: Rebuilding for new value {}", newVal);
+        log.debug("{}: Rebuilding for new value {}", getName(), newVal);
         DefaultListModel<E> model = (DefaultListModel<E>) list.getModel();
 
         // rebuild list

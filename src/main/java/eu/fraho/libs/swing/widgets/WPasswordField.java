@@ -39,7 +39,7 @@ public class WPasswordField extends AbstractWComponent<String, JPasswordField> {
         component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(@NotNull @NonNull FocusEvent event) {
-                log.debug("{}: Focus gained {}", WPasswordField.this.getName(), event);
+                log.debug("{}: Focus gained {}", getName(), event);
                 SwingUtilities.invokeLater(() -> {
                     int length = getComponent().getPassword().length;
                     getComponent().setSelectionStart(length);
@@ -49,7 +49,7 @@ public class WPasswordField extends AbstractWComponent<String, JPasswordField> {
 
             @Override
             public void focusLost(@NotNull @NonNull FocusEvent event) {
-                log.debug("{}: Focus lost {}", WPasswordField.this.getName(), event);
+                log.debug("{}: Focus lost {}", getName(), event);
                 setValueFromEvent();
             }
         });

@@ -19,8 +19,8 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 @Getter(AccessLevel.PROTECTED)
 public class WFileChooser extends AbstractWComponent<File, JTextField> {
-    private final JButton btnDelete = new JButton();
-    private final JButton btnSearch = new JButton();
+    private final JButton btnDelete = new JButton("\u2715");
+    private final JButton btnSearch = new JButton("...");
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)
     @NonNull
@@ -44,12 +44,9 @@ public class WFileChooser extends AbstractWComponent<File, JTextField> {
         component.setText(defval == null ? "" : defval.getAbsolutePath());
 
         /* setup buttons */
-        btnSearch.setText("...");
         btnSearch.setName("search");
         btnSearch.addActionListener(event -> showChooser());
-
         btnDelete.setName("delete");
-        btnDelete.setText("\u2715");
         btnDelete.addActionListener(event -> setValue(null));
 
         /* add fields to component */

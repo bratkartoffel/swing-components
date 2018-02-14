@@ -131,7 +131,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     }
 
     private void setSpinnerValue(@Nullable LocalTime value) {
-        log.debug("{}: Setting spinner values to ", getName(), value);
+        log.debug("{}: Setting spinner values to {}", getName(), value);
         if (value != null) {
             spnHour.setValue(value.getHour());
             spnMinute.setValue(value.getMinute());
