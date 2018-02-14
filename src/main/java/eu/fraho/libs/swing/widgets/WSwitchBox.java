@@ -25,10 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @SuppressWarnings({"unused", "DefaultAnnotationParam"})
 @EqualsAndHashCode(callSuper = false)
 public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
-    @NotNull
-    private final JLabel on;
-    @NotNull
-    private final JLabel off;
+    private final JLabel on = new JLabel();
+    private final JLabel off = new JLabel();
 
     @Getter
     private Color offColor = new Color(0.8f, 0f, 0f);
@@ -52,8 +50,8 @@ public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
         super(new JPanel(), value);
 
         // create the components
-        this.off = new JLabel(textOff);
-        this.on = new JLabel(textOn);
+        off.setText(textOff);
+        on.setText(textOn);
 
         // setup the layout
         JPanel component = getComponent();

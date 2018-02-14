@@ -17,8 +17,7 @@ import java.util.Map.Entry;
 @Slf4j
 public class WRadioGroup<E> extends AbstractWComponent<E, JPanel> {
     private final Map<WRadioButton<E>, E> componentMap = new HashMap<>();
-    @NotNull
-    private final ButtonGroup group;
+    private final ButtonGroup group = new ButtonGroup();
 
     public WRadioGroup(@NotNull @NonNull E[] items) {
         this(items, null);
@@ -43,8 +42,6 @@ public class WRadioGroup<E> extends AbstractWComponent<E, JPanel> {
     public WRadioGroup(@NotNull @NonNull List<E> items, @Nullable E value) {
         super(new JPanel(new FlowLayout()), value);
         Objects.requireNonNull(items, "items");
-
-        group = new ButtonGroup();
 
         // build elements
         items.forEach(elem -> {

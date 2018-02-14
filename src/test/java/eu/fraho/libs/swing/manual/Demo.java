@@ -64,8 +64,6 @@ public class Demo extends JFrame {
         form = new WForm<>(model, 2);
         form.addDataChangedListener(this::dataChanged);
         form.setReadonly(readonly);
-        form.setBackground(Color.RED);
-        form.setOpaque(true);
         pnlCenter.setName("content");
         pnlCenter.add(form);
         pnlCenter.setOpaque(false);

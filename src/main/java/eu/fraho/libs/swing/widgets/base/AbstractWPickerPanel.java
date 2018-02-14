@@ -1,7 +1,6 @@
 package eu.fraho.libs.swing.widgets.base;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
-import eu.fraho.libs.swing.widgets.WLabel;
 import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import lombok.AccessLevel;
@@ -19,7 +18,6 @@ import java.time.temporal.Temporal;
 import java.util.Optional;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 @Slf4j
 @SuppressWarnings("unused")
@@ -39,6 +37,10 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
     @Nullable
     private ScheduledThreadPoolExecutor clock = null;
 
+    protected final JLabel lblNow = new JLabel();
+    protected final JButton btnClear = new JButton("\u2715");
+    protected final JButton btnOk = new JButton("\u2713");
+
     public AbstractWPickerPanel(@Nullable T defval) {
         super(new JPanel(new BorderLayout()), defval);
 
@@ -48,6 +50,22 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
                 toggleClock();
             }
         });
+
+        lblNow.setName("now");
+        lblNow.setOpaque(false);
+        lblNow.setForeground(getTheme().fgTodaySelector());
+        lblNow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        lblNow.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        btnClear.addActionListener(event -> setValue(null));
+        btnClear.setName("clear");
+        btnClear.setToolTipText("Clear");
+        setupControlButton(btnClear);
+
+        btnOk.addActionListener(event -> commitChanges());
+        btnOk.setName("ok");
+        btnOk.setToolTipText("Ok");
+        setupControlButton(btnOk);
     }
 
     public void setTheme(@NotNull @NonNull ColorTheme theme) {
@@ -67,7 +85,8 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
     @Override
     public void setReadonly(boolean readonly) {
         log.debug("{}: Setting readonly to {}", getName(), readonly);
-        // nothing to do here
+        btnOk.setEnabled(!readonly);
+        btnClear.setEnabled(!readonly);
     }
 
     protected abstract String getNow();
@@ -77,7 +96,13 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
             if (clock == null && !isInDateTimePanel()) {
                 log.debug("{}: Starting clock", getName());
                 clock = new ScheduledThreadPoolExecutor(1);
-                scheduleUpdateNowLabel(this::getNow);
+                clock.scheduleAtFixedRate(() -> {
+                    lblNow.setText(getNow());
+                    if (!isShowing()) {
+                        log.debug("{}: Stopping clock, no longer showing", getName());
+                        stopClock();
+                    }
+                }, 0, 1, TimeUnit.SECONDS);
             }
         }
     }
@@ -103,16 +128,17 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
         }
     }
 
-    protected abstract WLabel getLblNow();
+    protected void setupDetails(JPanel pnlDetails) {
+        lblNow.setText(getNow());
 
-    protected void scheduleUpdateNowLabel(@NotNull Supplier<String> callback) {
-        clock.scheduleAtFixedRate(() -> {
-            getLblNow().setValue(callback.get());
-            if (!isShowing()) {
-                log.debug("{}: Stopping clock, no longer showing", getName());
-                stopClock();
-            }
-        }, 0, 1, TimeUnit.SECONDS);
+        JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        pnlSouth.add(lblNow);
+        pnlSouth.add(btnClear);
+        pnlSouth.setOpaque(false);
+
+        pnlDetails.add(pnlSouth);
+        pnlDetails.add(btnOk);
+        pnlDetails.setOpaque(false);
     }
 
     @NotNull

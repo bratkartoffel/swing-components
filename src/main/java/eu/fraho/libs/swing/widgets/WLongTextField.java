@@ -9,6 +9,7 @@ import javax.swing.text.NumberFormatter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+@SuppressWarnings("unused")
 public class WLongTextField extends AbstractWTextField<Long> {
     public WLongTextField() {
         this(null, FormField.DEFAULT_COLUMNS);

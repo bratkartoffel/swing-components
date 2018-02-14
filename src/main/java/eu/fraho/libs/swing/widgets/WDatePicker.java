@@ -18,11 +18,11 @@ import java.util.Date;
 @SuppressWarnings("unused")
 public class WDatePicker extends AbstractWPicker<LocalDate> {
     public WDatePicker() {
-        this(null, 8);
+        this(null, 9);
     }
 
     public WDatePicker(@Nullable LocalDate defval) {
-        this(defval, 8);
+        this(defval, 9);
     }
 
     public WDatePicker(@Nullable LocalDate defval, int columns) {

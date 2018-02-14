@@ -131,19 +131,19 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JCompo
         log.debug("{}: Committing changes", getName());
 
         // if a bound model is present, save the value into the model
-        Optional.ofNullable(modelSetter).ifPresent(setter -> {
+        if (model != null && modelSetter != null) {
             try {
                 log.debug("{}: Invoking setter with {}", getName(), currentValue);
-                setter.invoke(model, currentValue);
+                modelSetter.invoke(model, currentValue);
             } catch (ReflectiveOperationException iae) {
-                log.warn("Unable to commit changes to model {}.{}: {}", model.getClass(), setter.getName(), iae.getLocalizedMessage());
+                log.warn("Unable to commit changes to model {}.{}: {}", model.getClass(), modelSetter.getName(), iae.getLocalizedMessage());
                 throw new ChangeVetoException(iae);
             } catch (IllegalArgumentException iae) {
                 log.warn("Unable to commit changes to model {}.{}: {}. Expected type {}, but got {}", model.getClass(),
-                        setter.getName(), iae.getLocalizedMessage(), setter.getParameterTypes()[0], (currentValue == null ? "null" : currentValue.getClass()));
+                        modelSetter.getName(), iae.getLocalizedMessage(), modelSetter.getParameterTypes()[0], (currentValue == null ? "null" : currentValue.getClass()));
                 throw new ChangeVetoException(iae);
             }
-        });
+        }
 
         // set the values
         E oldValue = savedValue;
@@ -361,18 +361,22 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JCompo
         setReadonly(anno.readonly());
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void setOpaque(boolean isOpaque) {
         super.setOpaque(isOpaque);
-        if (component != null && component instanceof JPanel) { // happens on initialization of this JPanel
+        // null happens on initialization of this JPanel
+        if (component != null && component instanceof JPanel) {
             component.setOpaque(isOpaque);
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void setBackground(Color bg) {
         super.setBackground(bg);
-        if (component != null && component instanceof JPanel) { // happens on initialization of this JPanel
+        // null happens on initialization of this JPanel
+        if (component != null && component instanceof JPanel) {
             component.setBackground(bg);
         }
     }

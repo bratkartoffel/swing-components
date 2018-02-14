@@ -3,8 +3,6 @@ package eu.fraho.libs.swing.widgets;
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -18,34 +16,19 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 @SuppressWarnings("unused")
 @Slf4j
 public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
-    // components
     private final JPanel pnlControls = new JPanel(new GridLayout(1, 3));
     private final JPanel pnlDetails = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 3));
 
+    private final WSpinner<Integer> spnHour = new WSpinner<>(new SpinnerNumberModel(0, 0, 23, 1));
+    private final WSpinner<Integer> spnMinute = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
+    private final WSpinner<Integer> spnSecond = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
+
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
     private boolean massUpdateRunning = false;
-
-    @NotNull
-    private final WSpinner<Integer> spnHour;
-    @NotNull
-    private final WSpinner<Integer> spnMinute;
-    @NotNull
-    private final WSpinner<Integer> spnSecond;
-
-    private final JButton btnClear = new JButton();
-    private final JButton btnOk = new JButton();
-    @NotNull
-    @Getter(AccessLevel.PROTECTED)
-    private final WLabel lblNow;
-    @NotNull
-    private final DateTimeFormatter dtf;
-    // components which depend on current value
-    @Nullable
-    private ScheduledThreadPoolExecutor clock = null;
 
     public WTimePanel() {
         this(null);
@@ -54,35 +37,50 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     public WTimePanel(@Nullable LocalTime defval) {
         super(defval);
 
-        spnHour = new WSpinner<>(new SpinnerNumberModel(0, 0, 23, 1));
-        spnMinute = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
-        spnSecond = new WSpinner<>(new SpinnerNumberModel(0, 0, 59, 1));
-
-        spnHour.setColumns(2);
-        spnHour.setName("hour");
-        spnMinute.setColumns(2);
-        spnMinute.setName("minute");
-        spnSecond.setColumns(2);
-        spnSecond.setName("second");
-
-        setSpinnerValue(defval);
-
-        spnHour.addDataChangedListener(this::spinnerChanged);
-        spnMinute.addDataChangedListener(this::spinnerChanged);
-        spnSecond.addDataChangedListener(this::spinnerChanged);
-
-        lblNow = new WLabel("--:--:--");
-        lblNow.setName("now");
-        dtf = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
-
         populateControls();
         populateDetails();
+        setSpinnerValue(defval);
 
         JPanel component = getComponent();
         component.add(pnlControls, BorderLayout.CENTER);
         component.add(pnlDetails, BorderLayout.SOUTH);
         setOpaque(false);
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    }
+
+    private void populateControls() {
+        spnHour.setColumns(2);
+        spnHour.setName("hour");
+        spnHour.addDataChangedListener(this::spinnerChanged);
+        spnMinute.setColumns(2);
+        spnMinute.setName("minute");
+        spnMinute.addDataChangedListener(this::spinnerChanged);
+        spnSecond.setColumns(2);
+        spnSecond.setName("second");
+        spnSecond.addDataChangedListener(this::spinnerChanged);
+
+        pnlControls.setOpaque(false);
+
+        pnlControls.add(spnHour);
+        pnlControls.add(spnMinute);
+        pnlControls.add(spnSecond);
+
+        pnlControls.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        pnlControls.setBackground(getTheme().bgTopPanel());
+    }
+
+    private void populateDetails() {
+        lblNow.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(@NotNull @NonNull MouseEvent event) {
+                if (!isReadonly()) {
+                    log.debug("{}: Clicked on label with current time", getName());
+                    setValue(LocalTime.now().withNano(0));
+                }
+            }
+        });
+
+        setupDetails(pnlDetails);
     }
 
     @Override
@@ -124,59 +122,7 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         spnMinute.setReadonly(readonly);
         spnSecond.setReadonly(readonly);
 
-        btnClear.setEnabled(!readonly);
-        btnOk.setEnabled(!readonly);
-    }
-
-    private void populateControls() {
-        pnlControls.setOpaque(false);
-
-        pnlControls.add(spnHour);
-        pnlControls.add(spnMinute);
-        pnlControls.add(spnSecond);
-
-        pnlControls.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        pnlControls.setBackground(getTheme().bgTopPanel());
-    }
-
-    private void populateDetails() {
-        lblNow.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(@NotNull @NonNull MouseEvent event) {
-                if (!spnHour.isReadonly()) {
-                    log.debug("{}: Clicked on label with current time", getName());
-                    setValue(LocalTime.now().withNano(0));
-                }
-            }
-        });
-        lblNow.setForeground(getTheme().fgTodaySelector());
-        lblNow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        lblNow.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        btnClear.addActionListener(event -> setValue(null));
-        btnClear.setName("clear");
-        btnClear.setText("\u2715");
-        btnClear.setToolTipText("Clear");
-
-        btnOk.addActionListener(event -> commitChanges());
-        btnOk.setName("ok");
-        btnOk.setText("\u2713");
-        btnOk.setToolTipText("Ok");
-
-        setupControlButton(btnClear);
-        setupControlButton(btnOk);
-
-        JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-        pnlSouth.add(lblNow);
-        pnlSouth.add(btnClear);
-        Dimension size = pnlSouth.getPreferredSize();
-        size.width += 35;
-        pnlSouth.setPreferredSize(size);
-        pnlSouth.setOpaque(false);
-
-        pnlDetails.add(pnlSouth);
-        pnlDetails.add(btnOk);
-        pnlDetails.setOpaque(false);
+        lblNow.setEnabled(!readonly);
     }
 
     protected void setInDateTimePanel() {

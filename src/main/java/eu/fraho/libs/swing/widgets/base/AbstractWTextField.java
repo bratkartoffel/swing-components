@@ -26,7 +26,7 @@ public abstract class AbstractWTextField<T> extends AbstractWComponent<T, JForma
 
     protected AbstractWTextField(@NotNull @NonNull JFormattedTextField txtField, @Nullable T defval, int columns, boolean doSetComponentValue) {
         super(txtField, defval);
-        setup(defval, columns, doSetComponentValue);
+        setupComponent(defval, columns, doSetComponentValue);
     }
 
     @Override
@@ -55,7 +55,7 @@ public abstract class AbstractWTextField<T> extends AbstractWComponent<T, JForma
         getComponent().setEnabled(!readonly);
     }
 
-    private void setup(@Nullable T defval, int columns, boolean doSetComponentValue) {
+    private void setupComponent(@Nullable T defval, int columns, boolean doSetComponentValue) {
         log.debug("{}: Setting up with value={}, columns={}, doSetComponentValue={}", getName(), defval, columns, doSetComponentValue);
 
         JFormattedTextField component = getComponent();

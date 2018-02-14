@@ -3,6 +3,8 @@ package eu.fraho.libs.swing.widgets;
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.base.WNullable;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +15,9 @@ import java.util.*;
 
 @SuppressWarnings("unused")
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
 public class WComboBox<E> extends AbstractWComponent<E, JComboBox<E>> implements WNullable {
-    @NotNull
-    private final DefaultComboBoxModel<E> model;
+    private final DefaultComboBoxModel<E> model = new DefaultComboBoxModel<>();
     private boolean nullable = false;
 
     public WComboBox(@NotNull @NonNull E[] items) {
@@ -42,7 +44,6 @@ public class WComboBox<E> extends AbstractWComponent<E, JComboBox<E>> implements
     public WComboBox(@NotNull @NonNull List<E> items, @Nullable E value) {
         super(new JComboBox<>(), value);
         JComboBox<E> component = getComponent();
-        model = new DefaultComboBoxModel<>();
         setElements(items);
         component.setModel(model);
         setValue(value);

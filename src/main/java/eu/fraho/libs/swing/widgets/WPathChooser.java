@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -16,10 +15,8 @@ import java.util.Optional;
 @Slf4j
 @SuppressWarnings("unused")
 public class WPathChooser extends AbstractWComponent<Path, JTextField> {
-    @NotNull
-    private final JButton btnDelete;
-    @NotNull
-    private final JButton btnSearch;
+    private final JButton btnDelete = new JButton("\u2715");
+    private final JButton btnSearch = new JButton("...");
     @Getter
     @Setter
     @NonNull
@@ -43,16 +40,11 @@ public class WPathChooser extends AbstractWComponent<Path, JTextField> {
         component.setText(defval == null ? "" : defval.toString());
 
         /* setup buttons */
-        btnSearch = new JButton();
-        btnSearch.setText("...");
         btnSearch.setName("search");
         btnSearch.addActionListener(event -> showChooser());
 
-        btnDelete = new JButton();
         btnDelete.setName("delete");
-        btnDelete.setText("\u2715");
         btnDelete.addActionListener(event -> setValue(null));
-
 
         /* add fields to component */
         add(btnSearch);

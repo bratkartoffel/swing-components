@@ -20,12 +20,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @SuppressWarnings("unused")
 public class WList<E> extends AbstractWComponent<E, JScrollPane> implements WNullable {
     private final AtomicBoolean ignoreListener = new AtomicBoolean(false);
+    private boolean nullable = false;
     // components
     @NotNull
     private final JList<E> list;
     @NotNull
     private final List<E> items;
-    private boolean nullable = false;
 
     public WList(@NotNull @NonNull E[] items) {
         this(items, null);

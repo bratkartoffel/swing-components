@@ -4,8 +4,6 @@ import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWPickerPanel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableModel;
 import eu.fraho.libs.swing.widgets.datepicker.CalendarTableRenderer;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -28,34 +26,20 @@ import java.util.Optional;
 
 @Slf4j
 public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
-    // TODO make configurable
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int cellHeight = 20;
-    private final int cellWidth = 40;
-
-    // components
     private final JPanel pnlControls = new JPanel(new BorderLayout(0, 0));
     private final JPanel pnlTable = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     private final JPanel pnlDetails = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 3));
 
-    private final JButton btnPrevYear = new JButton();
-    private final JButton btnNextYear = new JButton();
-    private final JButton btnPrevMonth = new JButton();
-    private final JButton btnNextMonth = new JButton();
+    private final JButton btnPrevYear = new JButton("\uD83E\uDC90\uD83E\uDC90");
+    private final JButton btnPrevMonth = new JButton("\uD83E\uDC90");
+    private final JLabel centerText = new JLabel("month");
+    private final JButton btnNextYear = new JButton("\uD83E\uDC92\uD83E\uDC92");
+    private final JButton btnNextMonth = new JButton("\uD83E\uDC92");
 
-    private final JButton btnClear = new JButton();
-    private final JButton btnOk = new JButton();
-
-    // components which depend on current value
     @NotNull
     private final JTable tblDays;
-    @Nullable
+    @NotNull
     private final CalendarTableModel tblDaysModel;
-    @NotNull
-    private final WLabel centerText;
-    @NotNull
-    @Getter(AccessLevel.PROTECTED)
-    private final WLabel lblNow;
 
     public WDatePanel() {
         this(null);
@@ -66,31 +50,6 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
 
         tblDaysModel = new CalendarTableModel(defval);
         tblDays = new JTable(tblDaysModel);
-        centerText = new WLabel();
-        centerText.setName("header");
-        lblNow = new WLabel("----/--/--");
-        lblNow.setName("today");
-
-        btnPrevYear.addActionListener(event -> changeValue(Period.of(-1, 0, 0)));
-        btnPrevYear.setName("prevYear");
-        btnPrevYear.setText("\uD83E\uDC90\uD83E\uDC90");
-
-        btnNextYear.addActionListener(event -> changeValue(Period.of(1, 0, 0)));
-        btnNextYear.setName("nextYear");
-        btnNextYear.setText("\uD83E\uDC92\uD83E\uDC92");
-
-        btnPrevMonth.addActionListener(event -> changeValue(Period.of(0, -1, 0)));
-        btnPrevMonth.setName("prevMonth");
-        btnPrevMonth.setText("\uD83E\uDC90");
-
-        btnNextMonth.addActionListener(event -> changeValue(Period.of(0, 1, 0)));
-        btnNextMonth.setName("nextMonth");
-        btnNextMonth.setText("\uD83E\uDC92");
-
-        setupControlButton(btnPrevYear);
-        setupControlButton(btnNextYear);
-        setupControlButton(btnPrevMonth);
-        setupControlButton(btnNextMonth);
 
         populateControls();
         populateTable();
@@ -101,8 +60,6 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         component.add(pnlControls, BorderLayout.NORTH);
         component.add(pnlTable, BorderLayout.CENTER);
         component.add(pnlDetails, BorderLayout.SOUTH);
-        setOpaque(false);
-
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     }
 
@@ -119,7 +76,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         tblDays.repaint();
 
         LocalDate value = Optional.ofNullable(newVal).orElseGet(LocalDate::now);
-        centerText.setValue(value.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + value.getYear());
+        centerText.setText(value.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + value.getYear());
     }
 
     private void handleSelection(@NotNull @NonNull ListSelectionEvent event) {
@@ -139,11 +96,29 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
     }
 
     private void populateControls() {
+        btnPrevYear.addActionListener(event -> changeValue(Period.of(-1, 0, 0)));
+        btnPrevYear.setName("prevYear");
+
+        btnNextYear.addActionListener(event -> changeValue(Period.of(1, 0, 0)));
+        btnNextYear.setName("nextYear");
+
+        btnPrevMonth.addActionListener(event -> changeValue(Period.of(0, -1, 0)));
+        btnPrevMonth.setName("prevMonth");
+
+        btnNextMonth.addActionListener(event -> changeValue(Period.of(0, 1, 0)));
+        btnNextMonth.setName("nextMonth");
+
+        setupControlButton(btnPrevYear);
+        setupControlButton(btnNextYear);
+        setupControlButton(btnPrevMonth);
+        setupControlButton(btnNextMonth);
+
         JPanel prev = new JPanel(new GridLayout(1, 2, 5, 0));
         prev.add(btnPrevYear);
         prev.add(btnPrevMonth);
         prev.setOpaque(false);
 
+        centerText.setName("header");
         centerText.setOpaque(false);
 
         JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -165,41 +140,17 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
     }
 
     private void populateDetails() {
-        lblNow.setOpaque(false);
         lblNow.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(@NotNull @NonNull MouseEvent event) {
-                if (lblNow.isEnabled()) {
+                if (!isReadonly()) {
                     log.debug("{}: Clicked on label with current date", getName());
                     setValue(LocalDate.now());
                 }
             }
         });
-        lblNow.setForeground(getTheme().fgTodaySelector());
-        lblNow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        lblNow.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        btnClear.addActionListener(event -> setValue(null));
-        btnClear.setName("clear");
-        btnClear.setText("\u2715");
-        btnClear.setToolTipText("Clear");
-
-        btnOk.addActionListener(event -> commitChanges());
-        btnOk.setName("ok");
-        btnOk.setText("\u2713");
-        btnOk.setToolTipText("Ok");
-
-        setupControlButton(btnClear);
-        setupControlButton(btnOk);
-
-        JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        pnlSouth.add(lblNow);
-        pnlSouth.add(btnClear);
-        pnlSouth.setOpaque(false);
-
-        pnlDetails.add(pnlSouth);
-        pnlDetails.add(btnOk);
-        pnlDetails.setOpaque(false);
+        setupDetails(pnlDetails);
     }
 
     private void populateTable() {
@@ -207,13 +158,13 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         tblDays.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         tblDays.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblDays.setCellSelectionEnabled(true);
-        tblDays.setRowHeight(cellHeight);
+        tblDays.setRowHeight(20);
         tblDays.getSelectionModel().addListSelectionListener(this::handleSelection);
         tblDays.setName("calendar");
 
         CalendarTableRenderer renderer = new CalendarTableRenderer(getTheme());
         Collections.list(tblDays.getColumnModel().getColumns()).forEach(column -> {
-            column.setMaxWidth(cellWidth);
+            column.setMaxWidth(40);
             column.setCellRenderer(renderer);
         });
 
@@ -228,7 +179,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         tblDaysHeader.setBorder(null);
 
         JScrollPane scrlPane = new JScrollPane(tblDays, ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrlPane.setPreferredSize(new Dimension(cellWidth * 7, cellHeight * 7));
+        scrlPane.setPreferredSize(new Dimension(40 * 7, 20 * 7));
         scrlPane.setBorder(null);
 
         pnlTable.add(scrlPane);
@@ -241,7 +192,7 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
 
     private void updateCenterLabel() {
         LocalDate value = Optional.ofNullable(getValue()).orElseGet(LocalDate::now);
-        centerText.setValue(value.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + value.getYear());
+        centerText.setText(value.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + value.getYear());
     }
 
     @Override
@@ -259,8 +210,6 @@ public class WDatePanel extends AbstractWPickerPanel<LocalDate> {
         btnPrevMonth.setEnabled(!readonly);
         btnPrevYear.setEnabled(!readonly);
 
-        btnClear.setEnabled(!readonly);
-        btnOk.setEnabled(!readonly);
         lblNow.setEnabled(!readonly);
     }
 
