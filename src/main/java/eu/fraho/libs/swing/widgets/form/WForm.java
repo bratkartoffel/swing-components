@@ -14,7 +14,6 @@ import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import eu.fraho.libs.swing.widgets.datepicker.ThemeSupport;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +85,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
         return classes;
     }
 
-    private void buildComponent(@NotNull @NonNull T model) throws FormCreateException, ModelBindException {
+    private void buildComponent(@NotNull @NonNull T model) {
         List<Class<?>> classes = buildClassTree(model);
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -99,7 +98,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
         classes.forEach(clazz -> buildDeeper(model, gbc, clazz.getDeclaredFields()));
     }
 
-    private void buildDeeper(@NotNull @NonNull T model, @NotNull @NonNull GridBagConstraints gbc, @NotNull @NonNull Field[] fields) throws FormCreateException, ModelBindException {
+    private void buildDeeper(@NotNull @NonNull T model, @NotNull @NonNull GridBagConstraints gbc, @NotNull @NonNull Field[] fields) {
         JPanel component = getComponent();
         log.debug("{}: Building deeper for fields {}", getName(), Arrays.toString(fields));
         Stream.of(fields)
@@ -188,12 +187,12 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
         log.debug("{}: Setting new value ", getName(), newVal);
         try {
             rebuild(newVal);
-        } catch (@NotNull ModelBindException | FormCreateException mbe) {
+        } catch (ModelBindException | FormCreateException mbe) {
             throw new ChangeVetoException("Invalid model.", mbe);
         }
     }
 
-    public void setColumns(int columns) throws FormCreateException, ModelBindException {
+    public void setColumns(int columns) {
         log.debug("{}: Setting columns to {}", getName(), columns);
         this.columns = columns;
         rebuild(getValue());
@@ -219,7 +218,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
     @SuppressWarnings("unchecked")
     @NotNull
     public <E> WComponent<E> getComponent(@NotNull @NonNull String modelName) throws NoSuchElementException {
-        return (WComponent<E>) components.get(modelName).getComponent();
+        return (WComponent<E>) Optional.ofNullable(components.get(modelName)).orElseThrow(NoSuchElementException::new).getComponent();
     }
 
     @Nullable
@@ -228,7 +227,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
         try {
             log.debug("{}: Getting value from model with {}", getName(), getter);
             return getter.invoke(model);
-        } catch (@NotNull IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new FormCreateException("Unable to fetch new value for field '" + field + " in model '" + model.getClass() + "::" + model + "'.", e);
         }
     }
