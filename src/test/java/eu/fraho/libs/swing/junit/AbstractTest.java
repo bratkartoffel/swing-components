@@ -17,7 +17,7 @@ import org.junit.Before;
 
 import javax.swing.*;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 @Slf4j
@@ -39,18 +39,23 @@ public abstract class AbstractTest {
         window.cleanUp();
     }
 
+    protected boolean runsOnTravis() {
+        return Optional.ofNullable(System.getenv("HOSTNAME"))
+                .map(h -> h.toLowerCase().contains("travisci"))
+                .orElse(false);
+    }
+
     protected void clickButton(String component, String btnName) throws InterruptedException {
         find(component).button(btnName).click();
-        if (Objects.equals(System.getenv("TERM"), "xterm")
-                && System.getenv("WINDIR") == null) { // FIXME for travis / docker builds. xvfb seems to be really slow
+
+        if (runsOnTravis()) { // FIXME for travis / docker builds. xvfb seems to be really slow
             Thread.sleep(3_000L);
         }
     }
 
     protected void clickButton(String name) throws InterruptedException {
         window.button(name).click();
-        if (Objects.equals(System.getenv("TERM"), "xterm")
-                && System.getenv("WINDIR") == null) { // FIXME for travis / docker builds. xvfb seems to be really slow
+        if (runsOnTravis()) { // FIXME for travis / docker builds. xvfb seems to be really slow
             Thread.sleep(3_000L);
         }
     }
