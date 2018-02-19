@@ -105,7 +105,7 @@ public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractW
                         log.debug("{}: Stopping clock, no longer showing", getName());
                         stopClock();
                     }
-                }, 0, 1, TimeUnit.SECONDS);
+                }, 1001 - (System.currentTimeMillis() % 1000), 1_000, TimeUnit.MILLISECONDS);
             }
         }
     }

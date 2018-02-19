@@ -7,24 +7,19 @@
 package eu.fraho.libs.swing.junit;
 
 import eu.fraho.libs.swing.junit.assertj.WComponentFixture;
-import eu.fraho.libs.swing.junit.assertj.WComponentFixtureExtension;
 import eu.fraho.libs.swing.widgets.*;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.swing.data.TableCell;
-import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.exception.ComponentLookupException;
-import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.fixture.JTableCellFixture;
 import org.assertj.swing.fixture.JTableFixture;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.math.BigDecimal;
@@ -34,66 +29,46 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 
 @Slf4j
 @SuppressWarnings("Duplicates")
-public class AllComponentsTest {
-    @Getter
-    private FrameFixture window;
-
-    @After
-    public void tearDown() {
-        window.cleanUp();
-    }
-
-    @Before
-    public void setUp() {
-        Locale.setDefault(Locale.GERMANY);
-        AbstractWComponent.clearCounters();
-        window = new FrameFixture(GuiActionRunner.execute(AllComponents::new));
-        window.show();
+public class AllComponentsTest extends AbstractTest {
+    @Override
+    protected Callable<? extends JFrame> getWindowFactory() {
+        return AllComponents::new;
     }
 
     @Test
-    public void testRollback() {
+    public void testRollback() throws InterruptedException {
         setAllValues1German();
-        window.button("rollback").click();
+        clickButton("rollback");
         requireEmptyValues();
     }
 
     @Test
-    public void testLocale() {
+    public void testLocale() throws InterruptedException {
         AbstractWComponent.clearCounters();
-        window.button("locale-us").click();
+        clickButton("locale-us");
         setAllValues1US();
         requireValues1US();
     }
 
     @Test
-    public void testCommit() {
+    public void testCommit() throws InterruptedException {
         setAllValues1German();
-        window.button("commit").click();
+        clickButton("commit");
         requireValues1German();
         setAllValues2German();
-        window.button("rollback").click();
+        clickButton("rollback");
         requireValues1German();
     }
 
     @Test
-    public void dumpStructure() {
-        try {
-            find("doesntExist");
-        } catch (ComponentLookupException cle) {
-            log.info("Swing structure", cle);
-        }
-    }
-
-    @Test
-    public void testReadonly() {
+    public void testReadonly() throws InterruptedException {
         // set readonly
-        window.button("readonly").click();
+        clickButton("readonly");
         find("WBigDecimalTextField-0").textBox().requireDisabled();
         find("WBigIntegerTextField-0").textBox().requireDisabled();
         find("WCheckBox-0").checkBox().requireDisabled();
@@ -123,7 +98,7 @@ public class AllComponentsTest {
         find("WSwitchBox-0").label("on").requireDisabled();
 
         // set writable again
-        window.button("readonly").click();
+        clickButton("readonly");
         find("WBigDecimalTextField-0").textBox().requireEnabled();
         find("WBigIntegerTextField-0").textBox().requireEnabled();
         find("WCheckBox-0").checkBox().requireEnabled();
@@ -162,10 +137,10 @@ public class AllComponentsTest {
         target.addDataChangedListener(events::add);
 
         // select today
-        openPopup("WDatePicker-0");
+        clickButton("WDatePicker-0", "showPopup");
         find("WDatePicker.popup").label("now").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         find("WDatePicker.popup").label("now").click();
-        find("WDatePicker.popup").button("ok").click();
+        clickButton("WDatePicker.popup", "ok");
 
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, LocalDate.now(), DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -176,17 +151,17 @@ public class AllComponentsTest {
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.now(), LocalDate.of(2017, 1, 1), DataChangedEvent.ChangeType.CHANGED), events.get(1));
 
         // select second value in third row (10.01.2017)
-        openPopup("WDatePicker-0");
+        clickButton("WDatePicker-0", "showPopup");
         JTableFixture calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireRowCount(6);
         calendarFixture.requireColumnCount(7);
         calendarFixture.selectCell(TableCell.row(2).column(1));
-        find("WDatePicker.popup").button("ok").click();
+        clickButton("WDatePicker.popup", "ok");
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 10), DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // check first row values
-        openPopup("WDatePicker-0");
+        clickButton("WDatePicker-0", "showPopup");
         calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "26");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "27");
@@ -201,7 +176,7 @@ public class AllComponentsTest {
         calendarFixture.cell(TableCell.row(2).column(1)).background().requireEqualTo(theme.bgGridSelected());
 
         // clear value
-        find("WDatePicker.popup").button("clear").click();
+        clickButton("WDatePicker.popup", "clear");
 
         // find today
         JTableCellFixture todayFixture = calendarFixture.cell((table, cellReader) -> {
@@ -229,7 +204,7 @@ public class AllComponentsTest {
         }
 
         // test moving hides the popup
-        openPopup("WDatePicker-0");
+        clickButton("WDatePicker-0", "showPopup");
         find("WDatePicker.popup").requireVisible();
         Point p = window.target().getLocationOnScreen();
         p.x++;
@@ -244,17 +219,17 @@ public class AllComponentsTest {
 
     @Test
     public void testDatePickerUs() throws InterruptedException {
-        window.button("locale-us").click();
+        clickButton("locale-us");
         List<DataChangedEvent> events = new ArrayList<>();
         WComponentFixture<WDatePicker> fixture = find("WDatePicker-1");
         WDatePicker target = fixture.target();
         target.addDataChangedListener(events::add);
 
         // select today
-        openPopup("WDatePicker-1");
+        clickButton("WDatePicker-1", "showPopup");
         find("WDatePicker.popup").label("now").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")));
         find("WDatePicker.popup").label("now").click();
-        find("WDatePicker.popup").button("ok").click();
+        clickButton("WDatePicker.popup", "ok");
 
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, LocalDate.now(), DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -265,17 +240,17 @@ public class AllComponentsTest {
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.now(), LocalDate.of(2017, 1, 1), DataChangedEvent.ChangeType.CHANGED), events.get(1));
 
         // select second value in third row (10.01.2017)
-        openPopup("WDatePicker-1");
+        clickButton("WDatePicker-1", "showPopup");
         JTableFixture calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireRowCount(6);
         calendarFixture.requireColumnCount(7);
         calendarFixture.selectCell(TableCell.row(2).column(2));
-        find("WDatePicker.popup").button("ok").click();
+        clickButton("WDatePicker.popup", "ok");
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 10), DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // check first row values
-        openPopup("WDatePicker-1");
+        clickButton("WDatePicker-1", "showPopup");
         calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "25");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "26");
@@ -284,17 +259,17 @@ public class AllComponentsTest {
 
     @Test
     public void testDatePickerAr() throws InterruptedException {
-        window.button("locale-ar").click();
+        clickButton("locale-ar");
         List<DataChangedEvent> events = new ArrayList<>();
         WComponentFixture<WDatePicker> fixture = find("WDatePicker-1");
         WDatePicker target = fixture.target();
         target.addDataChangedListener(events::add);
 
         // select today
-        openPopup("WDatePicker-1");
+        clickButton("WDatePicker-1", "showPopup");
         find("WDatePicker.popup").label("now").requireText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         find("WDatePicker.popup").label("now").click();
-        find("WDatePicker.popup").button("ok").click();
+        clickButton("WDatePicker.popup", "ok");
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, LocalDate.now(), DataChangedEvent.ChangeType.CHANGED), events.get(0));
 
@@ -304,17 +279,17 @@ public class AllComponentsTest {
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.now(), LocalDate.of(2017, 1, 1), DataChangedEvent.ChangeType.CHANGED), events.get(1));
 
         // select second value in third row (10.01.2017)
-        openPopup("WDatePicker-1");
+        clickButton("WDatePicker-1", "showPopup");
         JTableFixture calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireRowCount(6);
         calendarFixture.requireColumnCount(7);
         calendarFixture.selectCell(TableCell.row(1).column(3));
-        find("WDatePicker.popup").button("ok").click();
+        clickButton("WDatePicker.popup", "ok");
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDate.of(2017, 1, 1), LocalDate.of(2017, 1, 10), DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // check first row values
-        openPopup("WDatePicker-1");
+        clickButton("WDatePicker-1", "showPopup");
         calendarFixture = find("WDatePicker.popup").table("calendar");
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "6");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "5");
@@ -328,22 +303,11 @@ public class AllComponentsTest {
         WDateTimePicker target = fixture.target();
         target.addDataChangedListener(events::add);
 
-        LocalDateTime now;
-        do {
-            // this is quite ugly, but works somehow
-            // the popup only refreshes the displayed time once every second
-            // so if we open the popup at something like xx:yy:zz.999999
-            // then the "now" differs from the displayed value, thus resulting in an testfailure
-            // this loop waits until the nanosecond part is low enough for the following tests to pass
-            Thread.sleep(10);
-            now = LocalDateTime.now();
-        } while (now.getNano() > 100_000_000);
-        now = now.withNano(0);
-        // select today
-        openPopup("WDateTimePicker-0");
+        clickButton("WDateTimePicker-0", "showPopup");
+        LocalDateTime now = LocalDateTime.now().withNano(0);
         find("WDateTimePicker.popup").label("now").requireText(now.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")));
         find("WDateTimePicker.popup").label("now").click();
-        find("WDateTimePicker.popup").button("ok").click();
+        clickButton("WDateTimePicker.popup", "ok");
 
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, now, DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -354,29 +318,29 @@ public class AllComponentsTest {
         Assert.assertEquals(new DataChangedEvent(target, now, LocalDateTime.of(2017, 1, 1, 4, 13, 22), DataChangedEvent.ChangeType.CHANGED), events.get(1));
 
         // select second value in third row (10.01.2017)
-        openPopup("WDateTimePicker-0");
+        clickButton("WDateTimePicker-0", "showPopup");
         JTableFixture calendarFixture = find("WDateTimePicker.popup").table("calendar");
         calendarFixture.requireRowCount(6);
         calendarFixture.requireColumnCount(7);
         calendarFixture.selectCell(TableCell.row(2).column(1));
-        find("WDateTimePicker.popup").button("ok").click();
+        clickButton("WDateTimePicker.popup", "ok");
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDateTime.of(2017, 1, 1, 4, 13, 22),
                 LocalDateTime.of(2017, 1, 10, 4, 13, 22),
                 DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // set to 09:12:37 in popup
-        openPopup("WDateTimePicker-0");
+        clickButton("WDateTimePicker-0", "showPopup");
         find("WDateTimePicker.popup").wComponent("hour").spinner().select(9);
         find("WDateTimePicker.popup").wComponent("minute").spinner().select(12);
         find("WDateTimePicker.popup").wComponent("second").spinner().select(37);
-        find("WDateTimePicker.popup").button("ok").click();
+        clickButton("WDateTimePicker.popup", "ok");
         Assert.assertEquals(4, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalDateTime.of(2017, 1, 10, 4, 13, 22),
                 LocalDateTime.of(2017, 1, 10, 9, 12, 37), DataChangedEvent.ChangeType.CHANGED), events.get(3));
 
         // check first row values
-        openPopup("WDateTimePicker-0");
+        clickButton("WDateTimePicker-0", "showPopup");
         calendarFixture = find("WDateTimePicker.popup").table("calendar");
         calendarFixture.requireCellValue(TableCell.row(0).column(0), "26");
         calendarFixture.requireCellValue(TableCell.row(0).column(1), "27");
@@ -391,7 +355,7 @@ public class AllComponentsTest {
         calendarFixture.cell(TableCell.row(2).column(1)).background().requireEqualTo(theme.bgGridSelected());
 
         // clear value
-        find("WDateTimePicker.popup").button("clear").click();
+        clickButton("WDateTimePicker.popup", "clear");
 
         // find today
         JTableCellFixture todayFixture = calendarFixture.cell((table, cellReader) -> {
@@ -419,7 +383,7 @@ public class AllComponentsTest {
         }
 
         // test moving hides the popup
-        openPopup("WDateTimePicker-0");
+        clickButton("WDateTimePicker-0", "showPopup");
         find("WDateTimePicker.popup").requireVisible();
         Point p = window.target().getLocationOnScreen();
         p.x++;
@@ -435,25 +399,14 @@ public class AllComponentsTest {
     @Test
     public void testTimePicker() throws InterruptedException {
         List<DataChangedEvent> events = new ArrayList<>();
-        WComponentFixture<WTimePicker> fixture = find("WTimePicker-0");
-        WTimePicker target = fixture.target();
+        WTimePicker target = (WTimePicker) find("WTimePicker-0").target();
         target.addDataChangedListener(events::add);
 
-        LocalTime now;
-        do {
-            // this is quite ugly, but works somehow
-            // the popup only refreshes the displayed time once every second
-            // so if we open the popup at something like xx:yy:zz.999999
-            // then the "now" differs from the displayed value, thus resulting in an testfailure
-            // this loop waits until the nanosecond part is low enough for the following tests to pass
-            Thread.sleep(10);
-            now = LocalTime.now();
-        } while (now.getNano() > 100_000_000);
-        now = now.withNano(0);
-        openPopup("WTimePicker-0");
+        clickButton("WTimePicker-0", "showPopup");
+        LocalTime now = LocalTime.now().withNano(0);
         find("WTimePicker.popup").label("now").requireText(now.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         find("WTimePicker.popup").label("now").click();
-        find("WTimePicker.popup").button("ok").click();
+        clickButton("WTimePicker.popup", "ok");
 
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target, null, now, DataChangedEvent.ChangeType.CHANGED), events.get(0));
@@ -464,16 +417,16 @@ public class AllComponentsTest {
         Assert.assertEquals(new DataChangedEvent(target, now, LocalTime.of(7, 14, 33), DataChangedEvent.ChangeType.CHANGED), events.get(1));
 
         // set to 09:12:37 in popup
-        openPopup("WTimePicker-0");
+        clickButton("WTimePicker-0", "showPopup");
         find("WTimePicker.popup").wComponent("hour").spinner().select(9);
         find("WTimePicker.popup").wComponent("minute").spinner().select(12);
         find("WTimePicker.popup").wComponent("second").spinner().select(37);
-        find("WTimePicker.popup").button("ok").click();
+        clickButton("WTimePicker.popup", "ok");
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target, LocalTime.of(7, 14, 33), LocalTime.of(9, 12, 37), DataChangedEvent.ChangeType.CHANGED), events.get(2));
 
         // test resizing hides the popup
-        openPopup("WTimePicker-0");
+        clickButton("WTimePicker-0", "showPopup");
         find("WTimePicker.popup").requireVisible();
         window.resizeWidthTo(window.target().getWidth() + 1);
         try {
@@ -484,7 +437,7 @@ public class AllComponentsTest {
         }
 
         // test moving hides the popup
-        openPopup("WTimePicker-0");
+        clickButton("WTimePicker-0", "showPopup");
         find("WTimePicker.popup").requireVisible();
         Point p = window.target().getLocationOnScreen();
         p.x++;
@@ -630,14 +583,5 @@ public class AllComponentsTest {
         find("WTextArea-0").textBox().setText("foo\nabc");
         find("WTimePicker-0").textBox().setText("07:14:06");
         find("WSwitchBox-0").label("off").click();
-    }
-
-    private void openPopup(String name) throws InterruptedException {
-        find(name).button("showPopup").click();
-        Thread.sleep(50); // give the popup some time to show up
-    }
-
-    private <X extends AbstractWComponent> WComponentFixture<X> find(String name) {
-        return window.with(WComponentFixtureExtension.withName(name));
     }
 }

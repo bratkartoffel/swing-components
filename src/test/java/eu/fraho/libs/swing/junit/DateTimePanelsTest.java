@@ -11,58 +11,32 @@ import eu.fraho.libs.swing.junit.assertj.WComponentFixtureExtension;
 import eu.fraho.libs.swing.widgets.WDatePanel;
 import eu.fraho.libs.swing.widgets.WDateTimePanel;
 import eu.fraho.libs.swing.widgets.WTimePanel;
-import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.swing.edt.GuiActionRunner;
-import org.assertj.swing.exception.ComponentLookupException;
-import org.assertj.swing.fixture.FrameFixture;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.concurrent.Callable;
 
 @Slf4j
 @SuppressWarnings("Duplicates")
-public class DateTimePanelsTest {
-    @Getter
-    private FrameFixture window;
-
-    @After
-    public void tearDown() {
-        window.cleanUp();
-    }
-
-    @Before
-    public void setUp() {
-        Locale.setDefault(Locale.GERMANY);
-        AbstractWComponent.clearCounters();
-        window = new FrameFixture(GuiActionRunner.execute(DateTimePanels::new));
-        window.show();
+public class DateTimePanelsTest extends AbstractTest {
+    @Override
+    protected Callable<? extends JFrame> getWindowFactory() {
+        return DateTimePanels::new;
     }
 
     @Test
-    public void dumpStructure() {
-        try {
-            window.panel("doesntExist");
-        } catch (ComponentLookupException cle) {
-            log.info("Swing structure", cle);
-        }
-    }
-
-    @Test
-    public void testReadonly() {
+    public void testReadonly() throws InterruptedException {
         // set readonly
-        window.button("readonly").click();
-        WComponentFixture<WDatePanel> datePanel = window.with(WComponentFixtureExtension.withName("WDatePanel-0", WDatePanel.class));
+        clickButton("readonly");
+        WComponentFixture<WDatePanel> datePanel = find("WDatePanel-0");
         datePanel.button("prevYear").requireDisabled();
         datePanel.button("prevMonth").requireDisabled();
         datePanel.button("nextMonth").requireDisabled();
@@ -71,14 +45,14 @@ public class DateTimePanelsTest {
         datePanel.button("clear").requireDisabled();
         datePanel.button("ok").requireDisabled();
 
-        WComponentFixture<WTimePanel> timePanel = window.with(WComponentFixtureExtension.withName("WTimePanel-0", WTimePanel.class));
+        WComponentFixture<WTimePanel> timePanel = find("WTimePanel-0");
         timePanel.spinner("WSpinner-0.Component").requireDisabled();
         timePanel.spinner("WSpinner-1.Component").requireDisabled();
         timePanel.spinner("WSpinner-2.Component").requireDisabled();
         timePanel.button("clear").requireDisabled();
         timePanel.button("ok").requireDisabled();
 
-        WComponentFixture<WDateTimePanel> dateTimePanel = window.with(WComponentFixtureExtension.withName("WDateTimePanel-0", WDateTimePanel.class));
+        WComponentFixture<WDateTimePanel> dateTimePanel = find("WDateTimePanel-0");
         dateTimePanel.button("prevYear").requireDisabled();
         dateTimePanel.button("prevMonth").requireDisabled();
         dateTimePanel.button("nextMonth").requireDisabled();
@@ -91,7 +65,7 @@ public class DateTimePanelsTest {
         dateTimePanel.button("ok").requireDisabled();
 
         // set writable again
-        window.button("readonly").click();
+        clickButton("readonly");
         datePanel.button("prevYear").requireEnabled();
         datePanel.button("prevMonth").requireEnabled();
         datePanel.button("nextMonth").requireEnabled();
@@ -119,14 +93,13 @@ public class DateTimePanelsTest {
     }
 
     @Test
-    public void testDatePanel() {
+    public void testDatePanel() throws InterruptedException {
         List<DataChangedEvent> events = new ArrayList<>();
-        WComponentFixture<WDatePanel> fixture = window.with(WComponentFixtureExtension.withName("WDatePanel-0", WDatePanel.class));
-        WDatePanel target = fixture.target();
+        WDatePanel target = (WDatePanel) find("WDatePanel-0").target();
         target.addDataChangedListener(events::add);
 
         // test switch months / years
-        fixture.button("prevYear").click();
+        clickButton("WDatePanel-0", "prevYear");
         Assert.assertEquals(target.getValue(), LocalDate.of(2016, 4, 13));
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -135,7 +108,7 @@ public class DateTimePanelsTest {
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(0));
 
-        fixture.button("nextYear").click();
+        clickButton("WDatePanel-0", "nextYear");
         Assert.assertEquals(target.getValue(), LocalDate.of(2017, 4, 13));
         Assert.assertEquals(2, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -144,7 +117,7 @@ public class DateTimePanelsTest {
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(1));
 
-        fixture.button("prevMonth").click();
+        clickButton("WDatePanel-0", "prevMonth");
         Assert.assertEquals(target.getValue(), LocalDate.of(2017, 3, 13));
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -152,9 +125,9 @@ public class DateTimePanelsTest {
                 LocalDate.of(2017, 3, 13),
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(2));
-        fixture.label("header").requireText("M\u00E4rz 2017");
+        find("WDatePanel-0").label("header").requireText("M\u00E4rz 2017");
 
-        fixture.button("nextMonth").click();
+        clickButton("WDatePanel-0", "nextMonth");
         Assert.assertEquals(target.getValue(), LocalDate.of(2017, 4, 13));
         Assert.assertEquals(4, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -162,10 +135,10 @@ public class DateTimePanelsTest {
                 LocalDate.of(2017, 4, 13),
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(3));
-        fixture.label("header").requireText("April 2017");
+        find("WDatePanel-0").label("header").requireText("April 2017");
 
         // set value for rollback
-        fixture.button("nextMonth").click();
+        clickButton("WDatePanel-0", "nextMonth");
         Assert.assertEquals(target.getValue(), LocalDate.of(2017, 5, 13));
         Assert.assertEquals(5, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -185,7 +158,7 @@ public class DateTimePanelsTest {
         ), events.get(5));
 
         // test button clear
-        fixture.button("clear").click();
+        clickButton("WDatePanel-0", "clear");
         Assert.assertEquals(7, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
                 LocalDate.of(2017, 4, 13),
@@ -195,7 +168,7 @@ public class DateTimePanelsTest {
         Assert.assertNull(target.getValue());
 
         // test button ok
-        fixture.button("ok").click();
+        clickButton("WDatePanel-0", "ok");
         Assert.assertEquals(8, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
                 LocalDate.of(2017, 4, 13),
@@ -206,14 +179,13 @@ public class DateTimePanelsTest {
     }
 
     @Test
-    public void testTimePanel() {
+    public void testTimePanel() throws InterruptedException {
         List<DataChangedEvent> events = new ArrayList<>();
-        WComponentFixture<WTimePanel> fixture = window.with(WComponentFixtureExtension.withName("WTimePanel-0", WTimePanel.class));
-        WTimePanel target = fixture.target();
+        WTimePanel target = (WTimePanel) find("WTimePanel-0").target();
         target.addDataChangedListener(events::add);
 
         // test setting values
-        fixture.spinner("WSpinner-0.Component").select(3);
+        find("WTimePanel-0").spinner("WSpinner-0.Component").select(3);
         Assert.assertEquals(target.getValue(), LocalTime.of(3, 3, 14));
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -222,7 +194,7 @@ public class DateTimePanelsTest {
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(0));
 
-        fixture.spinner("WSpinner-1.Component").select(17);
+        find("WTimePanel-0").spinner("WSpinner-1.Component").select(17);
         Assert.assertEquals(target.getValue(), LocalTime.of(3, 17, 14));
         Assert.assertEquals(2, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -231,7 +203,7 @@ public class DateTimePanelsTest {
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(1));
 
-        fixture.spinner("WSpinner-2.Component").select(0);
+        find("WTimePanel-0").spinner("WSpinner-2.Component").select(0);
         Assert.assertEquals(target.getValue(), LocalTime.of(3, 17));
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -250,7 +222,7 @@ public class DateTimePanelsTest {
         ), events.get(3));
 
         // set value for rollback
-        fixture.spinner("WSpinner-2.Component").select(40);
+        find("WTimePanel-0").spinner("WSpinner-2.Component").select(40);
         Assert.assertEquals(target.getValue(), LocalTime.of(3, 17, 40));
         Assert.assertEquals(5, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -270,7 +242,7 @@ public class DateTimePanelsTest {
         ), events.get(5));
 
         // test button clear
-        fixture.button("clear").click();
+        clickButton("WTimePanel-0", "clear");
         Assert.assertEquals(7, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
                 LocalTime.of(3, 17),
@@ -278,12 +250,12 @@ public class DateTimePanelsTest {
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(6));
         Assert.assertNull(target.getValue());
-        fixture.spinner("WSpinner-0.Component").requireValue(0);
-        fixture.spinner("WSpinner-1.Component").requireValue(0);
-        fixture.spinner("WSpinner-2.Component").requireValue(0);
+        find("WTimePanel-0").spinner("WSpinner-0.Component").requireValue(0);
+        find("WTimePanel-0").spinner("WSpinner-1.Component").requireValue(0);
+        find("WTimePanel-0").spinner("WSpinner-2.Component").requireValue(0);
 
         // test button ok
-        fixture.button("ok").click();
+        clickButton("WTimePanel-0", "ok");
         Assert.assertEquals(8, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
                 LocalTime.of(3, 17),
@@ -293,14 +265,13 @@ public class DateTimePanelsTest {
     }
 
     @Test
-    public void testDateTimePanel() {
+    public void testDateTimePanel() throws InterruptedException {
         List<DataChangedEvent> events = new ArrayList<>();
-        WComponentFixture<WDateTimePanel> fixture = window.with(WComponentFixtureExtension.withName("WDateTimePanel-0", WDateTimePanel.class));
-        WDateTimePanel target = fixture.target();
+        WDateTimePanel target = (WDateTimePanel) find("WDateTimePanel-0").target();
         target.addDataChangedListener(events::add);
 
         // test switch months / years
-        fixture.button("prevYear").click();
+        clickButton("WDateTimePanel-0", "prevYear");
         Assert.assertEquals(target.getValue(), LocalDateTime.of(2013, 2, 13, 7, 14, 3));
         Assert.assertEquals(1, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -309,7 +280,7 @@ public class DateTimePanelsTest {
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(0));
 
-        fixture.button("nextYear").click();
+        clickButton("WDateTimePanel-0", "nextYear");
         Assert.assertEquals(target.getValue(), LocalDateTime.of(2014, 2, 13, 7, 14, 3));
         Assert.assertEquals(2, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -318,7 +289,7 @@ public class DateTimePanelsTest {
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(1));
 
-        fixture.button("prevMonth").click();
+        clickButton("WDateTimePanel-0", "prevMonth");
         Assert.assertEquals(target.getValue(), LocalDateTime.of(2014, 1, 13, 7, 14, 3));
         Assert.assertEquals(3, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -326,9 +297,9 @@ public class DateTimePanelsTest {
                 LocalDateTime.of(2014, 1, 13, 7, 14, 3),
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(2));
-        fixture.label("header").requireText("Januar 2014");
+        find("WDateTimePanel-0").label("header").requireText("Januar 2014");
 
-        fixture.button("nextMonth").click();
+        clickButton("WDateTimePanel-0", "nextMonth");
         Assert.assertEquals(target.getValue(), LocalDateTime.of(2014, 2, 13, 7, 14, 3));
         Assert.assertEquals(4, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -336,10 +307,10 @@ public class DateTimePanelsTest {
                 LocalDateTime.of(2014, 2, 13, 7, 14, 3),
                 DataChangedEvent.ChangeType.CHANGED
         ), events.get(3));
-        fixture.label("header").requireText("Februar 2014");
+        find("WDateTimePanel-0").label("header").requireText("Februar 2014");
 
         // set date value for rollback
-        fixture.button("nextMonth").click();
+        clickButton("WDateTimePanel-0", "nextMonth");
         Assert.assertEquals(target.getValue(), LocalDateTime.of(2014, 3, 13, 7, 14, 3));
         Assert.assertEquals(5, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -349,7 +320,7 @@ public class DateTimePanelsTest {
         ), events.get(4));
 
         // set time value for rollback
-        fixture.spinner("WSpinner-3.Component").select(4);
+        find("WDateTimePanel-0").spinner("WSpinner-3.Component").select(4);
         Assert.assertEquals(target.getValue(), LocalDateTime.of(2014, 3, 13, 4, 14, 3));
         Assert.assertEquals(6, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
@@ -369,7 +340,7 @@ public class DateTimePanelsTest {
         ), events.get(6));
 
         // test button clear
-        fixture.button("clear").click();
+        clickButton("WDateTimePanel-0", "clear");
         Assert.assertEquals(8, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
                 LocalDateTime.of(2014, 2, 13, 7, 14, 3),
@@ -379,7 +350,7 @@ public class DateTimePanelsTest {
         Assert.assertNull(target.getValue());
 
         // test button ok
-        fixture.button("ok").click();
+        clickButton("WDateTimePanel-0", "ok");
         Assert.assertEquals(9, events.size());
         Assert.assertEquals(new DataChangedEvent(target,
                 LocalDateTime.of(2014, 2, 13, 7, 14, 3),
