@@ -83,7 +83,7 @@ public abstract class AbstractTest {
         find(component).button(btnName).click();
 
         if (runsOnTravisOrDocker()) { // FIXME for travis / docker builds. xvfb seems to be really slow
-            Thread.sleep(3_000L);
+            Thread.sleep(4_000L);
         } else {
             Thread.sleep(100L);
         }
@@ -92,7 +92,7 @@ public abstract class AbstractTest {
     protected void clickButton(String name) throws InterruptedException {
         window.button(name).click();
         if (runsOnTravisOrDocker()) { // FIXME for travis / docker builds. xvfb seems to be really slow
-            Thread.sleep(3_000L);
+            Thread.sleep(4_000L);
         } else {
             Thread.sleep(100L);
         }
