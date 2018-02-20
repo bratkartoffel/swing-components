@@ -96,6 +96,17 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
     }
 
     @Override
+    public void setReadonly(boolean readonly) {
+        super.setReadonly(readonly);
+
+        spnHour.setReadonly(readonly);
+        spnMinute.setReadonly(readonly);
+        spnSecond.setReadonly(readonly);
+
+        lblNow.setEnabled(!readonly);
+    }
+
+    @Override
     public void setValue(@Nullable LocalTime value) throws ChangeVetoException {
         try {
             massUpdateRunning = true;
@@ -113,17 +124,6 @@ public class WTimePanel extends AbstractWPickerPanel<LocalTime> {
         } finally {
             massUpdateRunning = false;
         }
-    }
-
-    @Override
-    public void setReadonly(boolean readonly) {
-        super.setReadonly(readonly);
-
-        spnHour.setReadonly(readonly);
-        spnMinute.setReadonly(readonly);
-        spnSecond.setReadonly(readonly);
-
-        lblNow.setEnabled(!readonly);
     }
 
     @Override

@@ -36,9 +36,6 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
     @Nullable
     private Popup popup;
     @NotNull
-    private AtomicBoolean firstShow = new AtomicBoolean(false);
-
-    @NotNull
     private final HierarchyBoundsListener hierarchyBoundsListener = new HierarchyBoundsListener() {
         @Override
         public void ancestorMoved(@NotNull HierarchyEvent event) {
@@ -52,6 +49,8 @@ public abstract class AbstractWPicker<T extends Temporal> extends AbstractWTextF
             hidePopup();
         }
     };
+    @NotNull
+    private AtomicBoolean firstShow = new AtomicBoolean(false);
 
     public AbstractWPicker(@NotNull @NonNull DateFormat format, @NotNull @NonNull AbstractWPickerPanel<T> pnlPopup, @Nullable T defval, int columns) {
         super(format, defval, columns, false);

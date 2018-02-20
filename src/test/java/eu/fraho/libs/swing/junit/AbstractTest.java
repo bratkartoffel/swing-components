@@ -12,7 +12,6 @@ import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -103,18 +102,16 @@ public abstract class AbstractTest {
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
-    protected <T extends Temporal> T fuzzyAssertTime(T now, DateTimeFormatter formatter, String textToCheck) {
+    protected <T extends Temporal> void fuzzyAssertTime(T now, DateTimeFormatter formatter, String textToCheck) {
         int maxOffset = 1;
         for (int i = -maxOffset; i <= maxOffset; i++) {
             T temp = (T) now.plus(i, ChronoUnit.SECONDS);
             if (Objects.equals(formatter.format(temp), textToCheck)) {
-                return temp;
+                return;
             }
         }
 
         // trigger an assertion failure
         Assert.assertEquals(null, now);
-        return now;
     }
 }

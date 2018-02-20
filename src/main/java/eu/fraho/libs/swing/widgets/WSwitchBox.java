@@ -27,20 +27,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class WSwitchBox extends AbstractWComponent<Boolean, JPanel> {
     private final JLabel on = new JLabel();
     private final JLabel off = new JLabel();
-
-    @Getter
-    private Color offColor = new Color(0.8f, 0f, 0f);
-
-    @Getter
-    private Color onColor = new Color(0f, 0.7f, 0f);
-
-    @Getter
-    private Color borderColor = Color.GRAY;
-
     @NotNull
     private final AtomicBoolean onPressed = new AtomicBoolean(false);
     @NotNull
     private final AtomicBoolean offPressed = new AtomicBoolean(false);
+    @Getter
+    private Color offColor = new Color(0.8f, 0f, 0f);
+    @Getter
+    private Color onColor = new Color(0f, 0.7f, 0f);
+    @Getter
+    private Color borderColor = Color.GRAY;
 
     public WSwitchBox(Boolean value) {
         this("false", "true", value);

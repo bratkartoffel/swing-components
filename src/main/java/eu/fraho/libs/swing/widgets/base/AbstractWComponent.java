@@ -93,6 +93,13 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JCompo
         add(component);
     }
 
+    public static void clearCounters() {
+        log.debug("Clearing object counters");
+        synchronized (counters) {
+            counters.clear();
+        }
+    }
+
     @Override
     public void addDataChangedListener(@NotNull @NonNull Consumer<DataChangedEvent> listener) {
         // add listener
@@ -378,13 +385,6 @@ public abstract class AbstractWComponent<E, C extends JComponent> extends JCompo
         // null happens on initialization of this JPanel
         if (component != null && component instanceof JPanel) {
             component.setBackground(bg);
-        }
-    }
-
-    public static void clearCounters() {
-        log.debug("Clearing object counters");
-        synchronized (counters) {
-            counters.clear();
         }
     }
 }

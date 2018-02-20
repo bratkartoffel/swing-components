@@ -21,9 +21,9 @@ import java.util.Locale;
 @Slf4j
 @SuppressWarnings("Duplicates")
 public class DateTimePanels extends JFrame {
-    private WForm<Model> form;
     private final Model model = new Model();
     private final JPanel pnlCenter = new JPanel();
+    private WForm<Model> form;
 
     public DateTimePanels() {
         setLayout(new BorderLayout());

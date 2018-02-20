@@ -23,12 +23,12 @@ public class AlternativeColorTheme implements ColorTheme {
 
     @Override
     public Color bgGrid() {
-        return new Color(255, 200,200);
+        return new Color(255, 200, 200);
     }
 
     @Override
     public Color bgGridHeader() {
-        return new Color(255,120,120);
+        return new Color(255, 120, 120);
     }
 
     @NotNull

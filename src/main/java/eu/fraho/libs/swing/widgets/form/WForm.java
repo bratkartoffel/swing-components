@@ -2,7 +2,6 @@ package eu.fraho.libs.swing.widgets.form;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.exceptions.FormCreateException;
-import eu.fraho.libs.swing.exceptions.ModelBindException;
 import eu.fraho.libs.swing.widgets.WFileChooser;
 import eu.fraho.libs.swing.widgets.WLabel;
 import eu.fraho.libs.swing.widgets.WPathChooser;
@@ -50,12 +49,13 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
     public WForm(@NotNull @NonNull T model, int columns) throws FormCreateException {
         super(new JPanel(new GridBagLayout()), model);
         this.columns = columns;
-        try {
-            log.debug("{}: Building form for model {}", getName(), model);
-            buildComponent(model);
-        } catch (ModelBindException mbe) {
-            throw new FormCreateException(mbe);
-        }
+        log.debug("{}: Building form for model {}", getName(), model);
+        buildComponent(model);
+    }
+
+    @NotNull
+    private static Map.Entry<Field, FormField> mapToEntry(@NotNull @NonNull Field field) {
+        return new SimpleEntry<>(field, field.getAnnotation(FormField.class));
     }
 
     public void setTheme(ColorTheme theme) {
@@ -67,11 +67,6 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
                 .filter(ThemeSupport.class::isInstance)
                 .map(ThemeSupport.class::cast)
                 .forEach(e -> e.setTheme(theme));
-    }
-
-    @NotNull
-    private static Map.Entry<Field, FormField> mapToEntry(@NotNull @NonNull Field field) {
-        return new SimpleEntry<>(field, field.getAnnotation(FormField.class));
     }
 
     @NotNull
@@ -187,7 +182,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
         log.debug("{}: Setting new value ", getName(), newVal);
         try {
             rebuild(newVal);
-        } catch (ModelBindException | FormCreateException mbe) {
+        } catch (FormCreateException mbe) {
             throw new ChangeVetoException("Invalid model.", mbe);
         }
     }
@@ -248,7 +243,7 @@ public class WForm<T extends FormModel> extends AbstractWComponent<T, JPanel> im
         this.readonly = readonly;
     }
 
-    private void rebuild(@NotNull @NonNull T model) throws FormCreateException, ModelBindException {
+    private void rebuild(@NotNull @NonNull T model) throws FormCreateException {
         log.debug("{}: Starting rebuild");
         JPanel component = getComponent();
         component.removeAll();

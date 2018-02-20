@@ -28,36 +28,31 @@ import java.util.Optional;
  */
 @Slf4j
 public class CalendarTableModel extends AbstractTableModel {
+    private final DateFormatSymbols dateFormatSymbols = new DateFormatSymbols();
     /**
      * does this model represent right to left (RTL) layout, depending on locale?
      */
     private boolean isRightToLeft;
-
     /**
      * the first day of week, depending on locale
      */
     private int firstDayOfWeek = 1;
-
     /**
      * offset depends on current locale and handles the drift to the left / right
      * on the calendar. offset = amount of days till first day in calendar
      */
     private int offset = 0;
-
     /**
      * the base date for this model, always the first of a specific month
      */
     @Getter
     private LocalDate baseDate;
-
     /**
      * the seleced date
      */
     @Nullable
     @Getter
     private LocalDate selectedDate;
-
-    private final DateFormatSymbols dateFormatSymbols = new DateFormatSymbols();
 
     /**
      * Create a new model with the given date selected.

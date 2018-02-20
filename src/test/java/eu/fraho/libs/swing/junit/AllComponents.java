@@ -32,9 +32,9 @@ public class AllComponents extends JFrame {
         }
     }
 
-    private WForm<Model> form;
     private final Model model = new Model();
     private final JPanel pnlCenter = new JPanel();
+    private WForm<Model> form;
 
     public AllComponents() {
         setLayout(new BorderLayout());

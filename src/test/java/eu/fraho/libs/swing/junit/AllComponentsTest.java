@@ -16,7 +16,6 @@ import org.assertj.swing.data.TableCell;
 import org.assertj.swing.exception.ComponentLookupException;
 import org.assertj.swing.fixture.JTableCellFixture;
 import org.assertj.swing.fixture.JTableFixture;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,8 +27,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -308,8 +305,9 @@ public class AllComponentsTest extends AbstractTest {
 
         clickButton("WDateTimePicker-0", "showPopup");
         String nowText = find("WDateTimePicker.popup").label("now").target().getText();
-        LocalDateTime now = fuzzyAssertTime(LocalDateTime.now().withNano(0), DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"), nowText);
+        fuzzyAssertTime(LocalDateTime.now().withNano(0), DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"), nowText);
 
+        LocalDateTime now = LocalDateTime.now().withNano(0);
         find("WDateTimePicker.popup").label("now").click();
         clickButton("WDateTimePicker.popup", "ok");
 
@@ -408,8 +406,9 @@ public class AllComponentsTest extends AbstractTest {
 
         clickButton("WTimePicker-0", "showPopup");
         String nowText = find("WTimePicker.popup").label("now").target().getText();
-        LocalTime now = fuzzyAssertTime(LocalTime.now().withNano(0), DateTimeFormatter.ofPattern("HH:mm:ss"), nowText);
+        fuzzyAssertTime(LocalTime.now().withNano(0), DateTimeFormatter.ofPattern("HH:mm:ss"), nowText);
 
+        LocalTime now = LocalTime.now().withNano(0);
         find("WTimePicker.popup").label("now").click();
         clickButton("WTimePicker.popup", "ok");
 

@@ -23,24 +23,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @SuppressWarnings("unused")
 public abstract class AbstractWPickerPanel<T extends Temporal> extends AbstractWComponent<T, JPanel> implements ThemeSupport {
-    @NotNull
-    @Getter
-    private ColorTheme theme = new DefaultColorTheme();
-
-    @Getter(AccessLevel.PROTECTED)
-    @Setter(AccessLevel.PROTECTED)
-    private boolean inDateTimePanel = false;
-
-    @Nullable
-    @Setter(AccessLevel.PROTECTED)
-    private AbstractWPicker<T> parentPicker = null;
-
-    @Nullable
-    private ScheduledThreadPoolExecutor clock = null;
-
     protected final JLabel lblNow = new JLabel();
     protected final JButton btnClear = new JButton("\u2715");
     protected final JButton btnOk = new JButton("\u2713");
+    @NotNull
+    @Getter
+    private ColorTheme theme = new DefaultColorTheme();
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    private boolean inDateTimePanel = false;
+    @Nullable
+    @Setter(AccessLevel.PROTECTED)
+    private AbstractWPicker<T> parentPicker = null;
+    @Nullable
+    private ScheduledThreadPoolExecutor clock = null;
 
     public AbstractWPickerPanel(@Nullable T defval) {
         super(new JPanel(new BorderLayout()), defval);

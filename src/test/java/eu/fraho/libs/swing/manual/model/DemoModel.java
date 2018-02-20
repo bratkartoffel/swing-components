@@ -1,6 +1,5 @@
 package eu.fraho.libs.swing.manual.model;
 
-import eu.fraho.libs.swing.AlternativeColorTheme;
 import eu.fraho.libs.swing.widgets.*;
 import eu.fraho.libs.swing.widgets.form.FormField;
 import eu.fraho.libs.swing.widgets.form.FormModel;
@@ -39,10 +38,10 @@ public class DemoModel implements FormModel {
 
     @NotNull
     @FormField(caption = "WDatePicker", type = WDatePicker.class)
-    private LocalDate valDatePicker = LocalDate.of(2018,2,12);
+    private LocalDate valDatePicker = LocalDate.of(2018, 2, 12);
 
     @FormField(caption = "WTimePicker", type = WTimePicker.class)
-    private LocalTime valTimePicker = LocalTime.of(21,13,27);
+    private LocalTime valTimePicker = LocalTime.of(21, 13, 27);
 
 
     @NotNull

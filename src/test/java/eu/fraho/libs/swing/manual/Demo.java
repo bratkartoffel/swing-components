@@ -26,19 +26,9 @@ public class Demo extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Demo demo = new Demo();
-            demo.pack();
-            demo.setVisible(true);
-//            demo.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        });
-    }
-
-    private WForm<DemoModel> form;
     private final DemoModel model;
     private final JPanel pnlCenter = new JPanel();
-
+    private WForm<DemoModel> form;
     public Demo() {
         this(new DemoModel());
     }
@@ -53,6 +43,15 @@ public class Demo extends JFrame {
         setLocationByPlatform(true);
         setTitle("swing-components demo application");
         pack();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Demo demo = new Demo();
+            demo.pack();
+            demo.setVisible(true);
+//            demo.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        });
     }
 
     private void setupCenter() {

@@ -16,9 +16,9 @@ import java.util.stream.IntStream;
 @Slf4j
 @SuppressWarnings("Duplicates")
 public class DemoDateTime extends JFrame {
-    private WForm<DemoDateTimeModel> form;
     private final DemoDateTimeModel model;
     private final JPanel pnlCenter = new JPanel();
+    private WForm<DemoDateTimeModel> form;
 
     public DemoDateTime() {
         this(new DemoDateTimeModel());

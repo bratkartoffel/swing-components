@@ -1,6 +1,7 @@
 package eu.fraho.libs.swing.widgets.form;
 
 import eu.fraho.libs.swing.exceptions.FormCreateException;
+import eu.fraho.libs.swing.exceptions.ModelBindException;
 import eu.fraho.libs.swing.widgets.base.WComponent;
 import eu.fraho.libs.swing.widgets.base.WNullable;
 import eu.fraho.libs.swing.widgets.datepicker.ThemeSupport;
@@ -25,10 +26,6 @@ import java.util.stream.Stream;
  */
 @Slf4j
 final class FormElementFactory {
-    private FormElementFactory() {
-        // hide constructor
-    }
-
     /**
      * Create a {@link WComponent} suitable for a field in the given model.
      *
@@ -91,7 +88,7 @@ final class FormElementFactory {
             }
 
             return instance;
-        } catch (@NotNull IllegalArgumentException | ReflectiveOperationException | SecurityException iae) {
+        } catch (@NotNull IllegalArgumentException | ReflectiveOperationException | SecurityException | ModelBindException iae) {
             throw new FormCreateException("Error creating form element " + field.getName(), iae);
         }
     }
