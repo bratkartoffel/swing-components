@@ -2,6 +2,7 @@ package eu.fraho.libs.swing.widgets.datepicker;
 
 import eu.fraho.libs.swing.widgets.WDatePanel;
 import eu.fraho.libs.swing.widgets.WTimePanel;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,21 +19,24 @@ import java.util.Date;
  * @author Simon Frankenberger
  */
 public class DateConverterHelper {
-    public static Date toDate(LocalDate value) {
+    @Nullable
+    public static Date toDate(@Nullable LocalDate value) {
         if (value == null) {
             return null;
         }
         return Date.from(value.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
-    public static Date toDate(LocalDateTime value) {
+    @Nullable
+    public static Date toDate(@Nullable LocalDateTime value) {
         if (value == null) {
             return null;
         }
         return Date.from(value.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static Date toDate(LocalTime value) {
+    @Nullable
+    public static Date toDate(@Nullable LocalTime value) {
         if (value == null) {
             return null;
         }
@@ -40,7 +44,8 @@ public class DateConverterHelper {
                 .atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static Date toDate(Temporal value) {
+    @Nullable
+    public static Date toDate(@Nullable Temporal value) {
         if (value == null) {
             return null;
         }
@@ -55,21 +60,24 @@ public class DateConverterHelper {
         return null;
     }
 
-    public static LocalDate toLocalDate(Date value) {
+    @Nullable
+    public static LocalDate toLocalDate(@Nullable Date value) {
         if (value == null) {
             return null;
         }
         return value.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-    public static LocalDateTime toLocalDateTime(Date value) {
+    @Nullable
+    public static LocalDateTime toLocalDateTime(@Nullable Date value) {
         if (value == null) {
             return null;
         }
         return value.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
-    public static LocalTime toLocalTime(Date value) {
+    @Nullable
+    public static LocalTime toLocalTime(@Nullable Date value) {
         if (value == null) {
             return null;
         }

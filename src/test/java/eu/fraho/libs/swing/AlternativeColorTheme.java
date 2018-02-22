@@ -1,18 +1,19 @@
-package eu.fraho.libs.swing.widgets.datepicker;
+package eu.fraho.libs.swing;
 
 import eu.fraho.libs.swing.widgets.WDatePanel;
+import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 /**
- * Default color theme for the {@link WDatePanel} table.<br>
+ * Alternative color theme for the {@link WDatePanel} table.<br>
  * Basic idea and concept thankfully taken from the famous JDatePicker
  * component.
  *
  * @author Simon Frankenberger
  */
-public class DefaultColorTheme implements ColorTheme {
+public class AlternativeColorTheme implements ColorTheme {
 
     @NotNull
     @Override
@@ -22,12 +23,12 @@ public class DefaultColorTheme implements ColorTheme {
 
     @Override
     public Color bgGrid() {
-        return Color.WHITE;
+        return new Color(255, 200, 200);
     }
 
     @Override
     public Color bgGridHeader() {
-        return Color.LIGHT_GRAY;
+        return new Color(255, 120, 120);
     }
 
     @NotNull
@@ -44,7 +45,7 @@ public class DefaultColorTheme implements ColorTheme {
 
     @Override
     public Color bgTopPanel() {
-        return SystemColor.activeCaption;
+        return Color.RED;
     }
 
     @NotNull
@@ -55,7 +56,7 @@ public class DefaultColorTheme implements ColorTheme {
 
     @Override
     public Color fgGridOtherMonth() {
-        return Color.LIGHT_GRAY;
+        return Color.ORANGE.darker();
     }
 
     @Override
@@ -85,7 +86,7 @@ public class DefaultColorTheme implements ColorTheme {
 
     @Override
     public Color fgTodaySelector() {
-        return Color.BLACK;
+        return Color.GREEN.darker();
     }
 
 }

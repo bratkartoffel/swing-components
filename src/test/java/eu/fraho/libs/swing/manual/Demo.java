@@ -1,13 +1,19 @@
 package eu.fraho.libs.swing.manual;
 
+import eu.fraho.libs.swing.AlternativeColorTheme;
 import eu.fraho.libs.swing.manual.model.DemoModel;
+import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
 import eu.fraho.libs.swing.widgets.form.WForm;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Slf4j
 @SuppressWarnings("Duplicates")
@@ -20,21 +26,32 @@ public class Demo extends JFrame {
         }
     }
 
+    private final DemoModel model;
+    private final JPanel pnlCenter = new JPanel();
     private WForm<DemoModel> form;
-    private DemoModel model = new DemoModel();
-    private JPanel pnlCenter = new JPanel();
-
     public Demo() {
-        setSize(550, 500);
+        this(new DemoModel());
+    }
+
+    public Demo(DemoModel model) {
+        this.model = model;
         setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setupCenter();
         setupButtons();
-        add(new JScrollPane(pnlCenter), BorderLayout.CENTER);
+        add(pnlCenter, BorderLayout.CENTER);
+        setLocationByPlatform(true);
+        setTitle("swing-components demo application");
+        pack();
     }
 
     public static void main(String[] args) {
-        new Demo().setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            Demo demo = new Demo();
+            demo.pack();
+            demo.setVisible(true);
+//            demo.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        });
     }
 
     private void setupCenter() {
@@ -45,11 +62,12 @@ public class Demo extends JFrame {
             form.setVisible(false);
             pnlCenter.remove(form);
         }
-        form = new WForm<>(model);
+        form = new WForm<>(model, 2);
         form.addDataChangedListener(this::dataChanged);
         form.setReadonly(readonly);
         pnlCenter.setName("content");
         pnlCenter.add(form);
+        pnlCenter.setOpaque(false);
     }
 
     private void setupButtons() {
@@ -89,9 +107,17 @@ public class Demo extends JFrame {
         commit.addActionListener(event -> form.commitChanges());
         commit.setName("commit");
 
+        JButton changeLaf = new JButton("change L&F");
+        changeLaf.addActionListener(event -> changeLayout());
+        changeLaf.setName("changeLaf");
+
+        JButton changeTheme = new JButton("change theme");
+        changeTheme.addActionListener(event -> changeTheme());
+        changeTheme.setName("changeTheme");
+
         JPanel pnlSouth = new JPanel();
+        pnlSouth.setOpaque(false);
         pnlSouth.setLayout(new FlowLayout());
-        pnlSouth.setPreferredSize(new Dimension(1, 80));
         pnlSouth.add(setLocaleDe);
         pnlSouth.add(setLocaleFr);
         pnlSouth.add(setLocaleUs);
@@ -101,15 +127,55 @@ public class Demo extends JFrame {
         pnlSouth.add(readonly);
         pnlSouth.add(rollback);
         pnlSouth.add(commit);
+        pnlSouth.add(changeLaf);
+        pnlSouth.add(changeTheme);
         pnlSouth.setName("buttons");
         add(pnlSouth, BorderLayout.SOUTH);
     }
 
-    private void changeLocale(Locale locale) {
+    private void changeTheme() {
+        if (form.getTheme() instanceof AlternativeColorTheme) {
+            form.setTheme(new DefaultColorTheme());
+        } else {
+            form.setTheme(new AlternativeColorTheme());
+        }
+    }
+
+    private void changeLocale(@NotNull Locale locale) {
         setLocale(locale);
         Locale.setDefault(locale);
 
         setupCenter();
+    }
+
+    private void changeLayout() {
+        form.commitChanges();
+        UIManager.LookAndFeelInfo[] installed = UIManager.getInstalledLookAndFeels();
+
+        Optional<String> laf = IntStream.range(0, installed.length)
+                .filter(i -> Objects.equals(UIManager.getLookAndFeel().getName(), installed[i].getName()))
+                .map(i -> ++i % installed.length)
+                .mapToObj(i -> installed[i])
+                .map(UIManager.LookAndFeelInfo::getClassName)
+                .findAny();
+
+        laf.ifPresent(s -> {
+            try {
+                UIManager.setLookAndFeel(s);
+            } catch (Throwable e) {
+                log.error("Unable to set l&f", e);
+            }
+        });
+
+        log.info("Using layout: {}", UIManager.getLookAndFeel().getClass().getName());
+        SwingUtilities.invokeLater(() -> {
+            Demo demo = new Demo(model);
+            demo.pack();
+            demo.setLocation(getLocation());
+            demo.setVisible(true);
+            demo.setExtendedState(getExtendedState());
+            dispose();
+        });
     }
 
     private void dataChanged(DataChangedEvent dataChangedEvent) {

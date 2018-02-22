@@ -2,8 +2,11 @@ package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
-import eu.fraho.libs.swing.widgets.base.Nullable;
+import eu.fraho.libs.swing.widgets.base.WNullable;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -14,43 +17,48 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
-public class WList<E> extends AbstractWComponent<E, JScrollPane> implements Nullable {
+@SuppressWarnings("unused")
+public class WList<E> extends AbstractWComponent<E, JScrollPane> implements WNullable {
     private final AtomicBoolean ignoreListener = new AtomicBoolean(false);
     // components
+    @NotNull
     private final JList<E> list;
+    @NotNull
     private final List<E> items;
     private boolean nullable = false;
 
-    public WList(E[] items) {
+    public WList(@NotNull @NonNull E[] items) {
         this(items, null);
     }
 
-    public WList(E[] items, E value) {
+    public WList(@NotNull @NonNull E[] items, @Nullable E value) {
         this(Arrays.asList(items), value);
     }
 
-    public WList(Collection<E> items) {
+    public WList(@NotNull @NonNull Collection<E> items) {
         this(items, null);
     }
 
-    public WList(Collection<E> items, E value) {
+    public WList(@NotNull @NonNull Collection<E> items, @Nullable E value) {
         this(new ArrayList<>(items), value);
     }
 
-    public WList(List<E> items) {
+    public WList(@NotNull @NonNull List<E> items) {
         this(items, null);
     }
 
     @SuppressWarnings("unchecked")
-    public WList(List<E> items, E currentValue) {
+    public WList(@NotNull @NonNull List<E> items, @Nullable E currentValue) {
         super(new JScrollPane(new JList<>(new DefaultListModel<>())), currentValue);
 
-        this.items = Objects.requireNonNull(items, "items");
+        this.items = items;
         this.list = (JList<E>) getComponent().getViewport().getView();
         ListSelectionListener listListener = event -> {
             if (ignoreListener.get()) {
+                log.debug("{}: Ignoring list selection event {}", getName(), event);
                 return;
             }
+            log.debug("{}: Got list selection event {}", getName(), event);
             try {
                 handleSelection(event);
             } catch (ChangeVetoException cve) {
@@ -67,7 +75,8 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements Null
     }
 
     @Override
-    protected void currentValueChanging(E newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable E newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         if (newVal == null && list.getModel().getSize() > 0 && list.getModel().getElementAt(0) == null) {
             list.setSelectedIndex(0);
         } else {
@@ -75,11 +84,12 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements Null
         }
     }
 
+    @NotNull
     public ListSelectionModel getListSelectionModel() {
         return list.getSelectionModel();
     }
 
-    private void handleSelection(ListSelectionEvent event) {
+    private void handleSelection(@NotNull @NonNull ListSelectionEvent event) {
         if (!event.getValueIsAdjusting()) {
             setValue(list.getSelectedValue());
         }
@@ -92,6 +102,7 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements Null
 
     @Override
     public void setReadonly(boolean readonly) {
+        log.debug("{}: Setting readonly to {}", getName(), readonly);
         list.setEnabled(!readonly);
     }
 
@@ -99,13 +110,14 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements Null
         rebuild(getValue());
     }
 
-    private void rebuild(E newVal) {
+    private void rebuild(@Nullable E newVal) {
+        log.debug("{}: Rebuilding for new value {}", getName(), newVal);
         DefaultListModel<E> model = (DefaultListModel<E>) list.getModel();
 
         // rebuild list
         boolean oldFlag = ignoreListener.compareAndSet(false, true);
         model.removeAllElements();
-        items.forEach(model::addElement);
+        items.stream().sequential().forEach(model::addElement);
 
         if (newVal == null && list.getModel().getSize() > 0 && list.getModel().getElementAt(0) == null) {
             list.setSelectedIndex(0);
@@ -117,24 +129,23 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements Null
         }
     }
 
-    public void setElements(List<E> elements) {
-        Objects.requireNonNull(elements, "elements");
+    public void setElements(@NotNull @NonNull List<E> elements) {
         this.items.clear();
         elements.stream().filter(Objects::nonNull).forEach(items::add);
         rebuild();
     }
 
-    public void setElements(E[] elements) {
-        setElements(Arrays.asList(Objects.requireNonNull(elements, "elements")));
+    public void setElements(@NotNull @NonNull E[] elements) {
+        setElements(Arrays.asList(elements));
     }
 
-    public void addElement(E element) {
-        this.items.add(Objects.requireNonNull(element, "element"));
+    public void addElement(@NotNull @NonNull E element) {
+        this.items.add(element);
         rebuild();
     }
 
-    public void removeElement(E element) {
-        this.items.remove(Objects.requireNonNull(element, "element"));
+    public void removeElement(@NotNull @NonNull E element) {
+        this.items.remove(element);
         rebuild();
     }
 
@@ -150,6 +161,7 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements Null
 
     @Override
     public void setNullable(boolean flag) {
+        log.debug("{}: Setting nullable to {}", getName(), flag);
         if (flag != nullable) {
             items.remove(null);
             if (flag) {
@@ -162,7 +174,8 @@ public class WList<E> extends AbstractWComponent<E, JScrollPane> implements Null
 
     private static class MyListCellRenderer extends DefaultListCellRenderer {
         @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        @NotNull
+        public Component getListCellRendererComponent(@NotNull @NonNull JList<?> list, @Nullable Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component tvalue = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if (value == null) {
                 setText(" ");

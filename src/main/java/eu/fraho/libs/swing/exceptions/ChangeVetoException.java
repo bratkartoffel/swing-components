@@ -14,6 +14,11 @@ public class ChangeVetoException extends SwingComponentsException {
         super(message, cause);
     }
 
+
+    public ChangeVetoException(String message) {
+        super(message);
+    }
+
     public ChangeVetoException(Throwable cause) {
         super(cause);
     }

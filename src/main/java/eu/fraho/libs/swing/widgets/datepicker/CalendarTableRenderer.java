@@ -1,6 +1,10 @@
 package eu.fraho.libs.swing.widgets.datepicker;
 
 import eu.fraho.libs.swing.widgets.WDatePanel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -15,23 +19,27 @@ import java.util.Objects;
  *
  * @author Simon Frankenberger
  */
-public class CalendarTableRenderer extends DefaultTableCellRenderer {
+@Slf4j
+public class CalendarTableRenderer extends DefaultTableCellRenderer implements ThemeSupport {
     /**
      * the underlying ColorTheme
      */
-    private final ColorTheme theme;
+    @NotNull
+    @Getter
+    private ColorTheme theme;
 
     /**
      * Create a new renderer using the given theme.
      *
      * @param theme the {@link ColorTheme} to use.
      */
-    public CalendarTableRenderer(ColorTheme theme) {
-        this.theme = Objects.requireNonNull(theme, "theme");
+    public CalendarTableRenderer(@NotNull @NonNull ColorTheme theme) {
+        this.theme = theme;
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object pValue, boolean isSelected, boolean hasFocus, int row, int column) {
+    @NotNull
+    public Component getTableCellRendererComponent(@NotNull @NonNull JTable table, @NotNull @NonNull Object pValue, boolean isSelected, boolean hasFocus, int row, int column) {
         // fetch selected date
         LocalDate selected = ((CalendarTableModel) table.getModel()).getSelectedDate();
 
@@ -94,5 +102,10 @@ public class CalendarTableRenderer extends DefaultTableCellRenderer {
 
         // all done, return the cell
         return label;
+    }
+
+    public void setTheme(@NotNull @NonNull ColorTheme theme) {
+        log.debug("{}: Changing theme to {}", getName(), theme.getClass());
+        this.theme = theme;
     }
 }

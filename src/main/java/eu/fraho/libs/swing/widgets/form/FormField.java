@@ -3,6 +3,9 @@ package eu.fraho.libs.swing.widgets.form;
 import eu.fraho.libs.swing.widgets.*;
 import eu.fraho.libs.swing.widgets.base.AbstractWTextField;
 import eu.fraho.libs.swing.widgets.base.WComponent;
+import eu.fraho.libs.swing.widgets.datepicker.ColorTheme;
+import eu.fraho.libs.swing.widgets.datepicker.DefaultColorTheme;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,29 +22,37 @@ import java.util.Locale;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface FormField {
-    int DEFAULT_COLUMNS = 10;
+    int DEFAULT_COLUMNS = 20;
+    int DEFAULT_ROWS = 6;
 
     /**
-     * @return The caption of the field, displayed as a label in front of the
-     * component.
+     * @return The caption of the field, displayed as a label in front of the component.
      */
-    String caption();
+    @NotNull String caption();
 
     /**
-     * Used for {@link WSpinner} only.<br>
-     * Parsed as a number of type {@link #spinnerType()} using {@link Locale#US} .
+     * Used for {@link WSpinner} and {@link WSwitchBox} only.<br>
+     * The usage of this field depends on the widget:
+     * <ul>
+     * <li>WSpinner: Parsed as a number of type {@link #spinnerType()} using {@link Locale#US}.</li>
+     * <li>WSwitchBox: Determines the text of the 'on' button</li>
+     * </ul>
      *
      * @return The maximum selectable value.
      */
-    String max() default "";
+    @NotNull String max() default "";
 
     /**
-     * Used for {@link WSpinner} only.<br>
-     * Parsed as a number of type {@link #spinnerType()} using {@link Locale#US} .
+     * Used for {@link WSpinner} and {@link WSwitchBox} only.<br>
+     * The usage of this field depends on the widget:
+     * <ul>
+     * <li>WSpinner: Parsed as a number of type {@link #spinnerType()} using {@link Locale#US}.</li>
+     * <li>WSwitchBox: Determines the text of the 'off' button</li>
+     * </ul>
      *
      * @return The minimum selectable value.
      */
-    String min() default "";
+    @NotNull String min() default "";
 
     /**
      * Used for {@link WList}, {@link WComboBox} and {@link WRadioGroup} only.<br>
@@ -60,7 +71,7 @@ public @interface FormField {
      *
      * @return The type of the spinner
      */
-    SpinnerType spinnerType() default SpinnerType.LONG;
+    @NotNull SpinnerType spinnerType() default SpinnerType.LONG;
 
     /**
      * Used for {@link WSpinner} only.<br>
@@ -68,25 +79,30 @@ public @interface FormField {
      *
      * @return The step size to use for the next and previous value buttons.
      */
-    String step() default "1";
+    @NotNull String step() default "1";
 
     /**
      * @return Which component should be used to display this value?
      */
-    @SuppressWarnings("rawtypes")
+    @NotNull @SuppressWarnings("rawtypes")
     Class<? extends WComponent> type();
 
     /**
-     * Used for {@link WBigDecimalTextField}, {@link WCurrencyTextField} and
-     * {@link WSpinner} only.<br>
+     * Used for {@link WDatePicker}, {@link WTimePicker} and {@link WDateTimePicker} only.<br>
+     *
+     * @return The theme to use
+     */
+    Class<? extends ColorTheme> theme() default DefaultColorTheme.class;
+
+    /**
+     * Used for {@link WBigDecimalTextField}, {@link WCurrencyTextField} and {@link WSpinner} only.<br>
      *
      * @return The minimum shown fractional digits.
      */
     int minPrecision() default 2;
 
     /**
-     * Used for {@link WBigDecimalTextField}, {@link WCurrencyTextField} and
-     * {@link WSpinner} only.<br>
+     * Used for {@link WBigDecimalTextField}, {@link WCurrencyTextField} and {@link WSpinner} only.<br>
      *
      * @return The maximum shown fractional digits.
      */
@@ -95,9 +111,16 @@ public @interface FormField {
     /**
      * Used for all {@link AbstractWTextField} and {@link WSpinner} only.<br>
      *
-     * @return The iconWidth of the component, defined as columns of text.
+     * @return The width of the component, defined as columns of text.
      */
     int columns() default DEFAULT_COLUMNS;
+
+    /**
+     * Used for {@link WTextArea} only.<br>
+     *
+     * @return The height of the component, defined as lines of text.
+     */
+    int rows() default DEFAULT_ROWS;
 
     enum SpinnerType {
         LONG,

@@ -1,9 +1,14 @@
 package eu.fraho.libs.swing.widgets.form;
 
 import eu.fraho.libs.swing.exceptions.FormCreateException;
-import eu.fraho.libs.swing.widgets.base.Nullable;
+import eu.fraho.libs.swing.exceptions.ModelBindException;
 import eu.fraho.libs.swing.widgets.base.WComponent;
+import eu.fraho.libs.swing.widgets.base.WNullable;
+import eu.fraho.libs.swing.widgets.datepicker.ThemeSupport;
 import eu.fraho.libs.swing.widgets.events.DataChangedEvent;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -11,7 +16,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -20,11 +24,8 @@ import java.util.stream.Stream;
  *
  * @author Simon Frankenberger
  */
+@Slf4j
 final class FormElementFactory {
-    private FormElementFactory() {
-        // hide constructor
-    }
-
     /**
      * Create a {@link WComponent} suitable for a field in the given model.
      *
@@ -37,21 +38,22 @@ final class FormElementFactory {
      *                             method is not accessible.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static <E> WComponent<E> createComponent(FormModel model, Field field, Consumer<DataChangedEvent> dataChangedHandler) throws FormCreateException {
-        Objects.requireNonNull(model, "model");
-        Objects.requireNonNull(field, "field");
-        Objects.requireNonNull(dataChangedHandler, "dataChangedHandler");
-
+    public static <E> WComponent<E> createComponent(@NotNull @NonNull FormModel model, @NotNull @NonNull Field field, @NotNull @NonNull Consumer<DataChangedEvent> dataChangedHandler) throws FormCreateException {
+        log.debug("Creating component for field {}", field);
         try {
             FormField anno = field.getAnnotation(FormField.class);
+            log.debug("Found annotation {}", anno);
             Method getter = FormElementFactory.findGetter(model, field.getName());
+            log.debug("Found getter {}", getter);
             Class<E> getterType = (Class<E>) getter.getReturnType();
+            log.debug("Found getter type {}", getterType);
 
             Class<? extends WComponent<E>> type;
             Constructor<? extends WComponent<E>> constr;
 
             type = (Class<? extends WComponent<E>>) anno.type();
             E value = (E) getter.invoke(model);
+            log.debug("Got model value {}", value);
 
             WComponent<E> instance;
 
@@ -59,23 +61,34 @@ final class FormElementFactory {
                 constr = type.getConstructor(List.class, Object.class);
                 List<Enum> elements = new ArrayList<>(EnumSet.allOf((Class<Enum>) getterType));
                 instance = constr.newInstance(elements, value);
-                if (anno.nullable() && Nullable.class.isAssignableFrom(type)) {
-                    ((Nullable) instance).setNullable(anno.nullable());
-                }
             } else {
                 constr = type.getConstructor(getter.getReturnType());
                 instance = constr.newInstance(value);
             }
+            log.debug("Created instance {}", instance);
 
+            instance.setReadonly(anno.readonly());
             instance.setupByAnnotation(anno);
+            log.debug("Setup by annotation finished");
+
+            if (instance instanceof ThemeSupport) {
+                log.debug("Setting theme");
+                ((ThemeSupport) instance).setTheme(anno.theme().newInstance());
+            }
+
+            if (instance instanceof WNullable) {
+                log.debug("Setting nullable");
+                ((WNullable) instance).setNullable(anno.nullable());
+            }
 
             if (!anno.readonly()) {
+                log.debug("Binding to model and adding data change listener");
                 instance.bindModel(model, field.getType(), field.getName());
                 instance.addDataChangedListener(dataChangedHandler);
             }
 
             return instance;
-        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException iae) {
+        } catch (@NotNull IllegalArgumentException | ReflectiveOperationException | SecurityException | ModelBindException iae) {
             throw new FormCreateException("Error creating form element " + field.getName(), iae);
         }
     }
@@ -88,11 +101,10 @@ final class FormElementFactory {
      * @return The getter method for the given field.
      * @throws FormCreateException If no getter could be found.
      */
-    public static Method findGetter(FormModel model, String field) throws FormCreateException {
-        Objects.requireNonNull(model, "model");
-        Objects.requireNonNull(field, "field");
-
+    @NotNull
+    public static Method findGetter(@NotNull @NonNull FormModel model, @NotNull @NonNull String field) throws FormCreateException {
         String getter = "get" + Character.toUpperCase(field.charAt(0)) + field.substring(1);
+        log.debug("Searching for {}.{}()", model.getClass().getName(), getter);
 
         return Stream
                 .of(model.getClass().getMethods())

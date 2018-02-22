@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        projectVersion = '0.1.0-SNAPSHOT'
+        projectVersion = '0.1.0'
     }
     repositories {
         mavenCentral()
@@ -33,6 +33,7 @@ buildscript {
     ext {
         slf4jVersion = '[1.7.12,2.0['
         lombokVersion = '[1.16,2.0['
+        jetbrainsAnnotationsVersion = '[15.0,16.0['
         logbackVersion = '[1.1.3,2.0['
         junitVersion = '[4.12,5.0['
         assertJVersion = '[3.8,4.0['
@@ -44,6 +45,7 @@ buildscript {
 dependencies {
     compile("org.slf4j:slf4j-api:${slf4jVersion}")
     compile("org.projectlombok:lombok:${lombokVersion}")
+    compile("org.jetbrains:annotations:${jetbrainsAnnotationsVersion}")
 
     testCompile("ch.qos.logback:logback-classic:${logbackVersion}")
     testCompile("junit:junit:${junitVersion}")
@@ -76,14 +78,15 @@ jacocoTestReport {
 }
 check.dependsOn jacocoTestReport
 
+test {
+	testLogging {
+		events "passed", "skipped", "failed"
+		exceptionFormat "full"
+	}
+}
+
 if (project.hasProperty('release')) {
     apply plugin: 'io.codearte.nexus-staging'
-
-    // abort on test failures on releasing
-    test {
-        ignoreFailures = false
-    }
-
     apply plugin: 'signing'
 
     // Signature of artifacts

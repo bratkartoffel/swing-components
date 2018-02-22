@@ -2,62 +2,69 @@ package eu.fraho.libs.swing.widgets;
 
 import eu.fraho.libs.swing.exceptions.ChangeVetoException;
 import eu.fraho.libs.swing.widgets.base.AbstractWComponent;
-import eu.fraho.libs.swing.widgets.base.Nullable;
+import eu.fraho.libs.swing.widgets.base.WNullable;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
 
-public class WComboBox<E> extends AbstractWComponent<E, JComboBox<E>> implements Nullable {
-    private final DefaultComboBoxModel<E> model;
+@SuppressWarnings("unused")
+@Slf4j
+@Getter(AccessLevel.PROTECTED)
+public class WComboBox<E> extends AbstractWComponent<E, JComboBox<E>> implements WNullable {
+    private final DefaultComboBoxModel<E> model = new DefaultComboBoxModel<>();
     private boolean nullable = false;
 
-    public WComboBox(E[] items) {
+    public WComboBox(@NotNull @NonNull E[] items) {
         this(items, null);
     }
 
-    public WComboBox(E[] items, E value) {
+    public WComboBox(@NotNull @NonNull E[] items, @Nullable E value) {
         this(Arrays.asList(items), value);
     }
 
-    public WComboBox(Collection<E> items) {
+    public WComboBox(@NotNull @NonNull Collection<E> items) {
         this(items, null);
     }
 
-    public WComboBox(Collection<E> items, E value) {
+    public WComboBox(@NotNull @NonNull Collection<E> items, @Nullable E value) {
         this(new ArrayList<>(items), value);
     }
 
-    public WComboBox(List<E> items) {
+    public WComboBox(@NotNull @NonNull List<E> items) {
         this(items, null);
     }
 
     @SuppressWarnings("unchecked")
-    public WComboBox(List<E> items, E value) {
+    public WComboBox(@NotNull @NonNull List<E> items, @Nullable E value) {
         super(new JComboBox<>(), value);
-        Objects.requireNonNull(items, "items");
         JComboBox<E> component = getComponent();
-        model = new DefaultComboBoxModel<>();
-        items.forEach(model::addElement);
+        setElements(items);
         component.setModel(model);
         setValue(value);
         component.addActionListener(event -> setValue((E) model.getSelectedItem()));
     }
 
-    public void addElement(E element) {
-        model.addElement(Objects.requireNonNull(element, "element"));
+    public void addElement(@NotNull @NonNull E element) {
+        model.addElement(element);
     }
 
-    public void setElements(E[] elements) {
-        setElements(Arrays.asList(Objects.requireNonNull(elements, "elements")));
+    public void setElements(@NotNull @NonNull E[] elements) {
+        setElements(Arrays.asList(elements));
     }
 
-    public void setElements(List<E> items) {
+    public void setElements(@NotNull @NonNull List<E> items) {
         removeAllElements();
-        items.stream().filter(Objects::nonNull).forEach(model::addElement);
+        items.stream().sequential().filter(Objects::nonNull).forEach(model::addElement);
     }
 
     @Override
-    public void setValue(E value) throws ChangeVetoException {
+    public void setValue(@Nullable E value) throws ChangeVetoException {
         super.setValue(value);
         getComponent().setSelectedItem(value);
     }
@@ -67,7 +74,8 @@ public class WComboBox<E> extends AbstractWComponent<E, JComboBox<E>> implements
     }
 
     @Override
-    protected void currentValueChanging(E newVal) throws ChangeVetoException {
+    protected void currentValueChanging(@Nullable E newVal) throws ChangeVetoException {
+        log.debug("{}: Got value changing event to '{}'", getName(), newVal);
         getComponent().setSelectedItem(newVal);
     }
 
@@ -81,8 +89,8 @@ public class WComboBox<E> extends AbstractWComponent<E, JComboBox<E>> implements
         getComponent().setEnabled(!readonly);
     }
 
-    public void removeElement(E element) {
-        model.removeElement(Objects.requireNonNull(element, "element"));
+    public void removeElement(@NotNull @NonNull E element) {
+        model.removeElement(element);
     }
 
     @Override
@@ -92,6 +100,7 @@ public class WComboBox<E> extends AbstractWComponent<E, JComboBox<E>> implements
 
     @Override
     public void setNullable(boolean flag) {
+        log.debug("{}: Setting nullable to {}", getName(), flag);
         if (flag != nullable) {
             model.removeElement(null);
             if (flag) {
