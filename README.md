@@ -6,6 +6,7 @@ swing-components
 [![Code Coverage](https://img.shields.io/codecov/c/github/bratkartoffel/swing-components/develop.svg)](https://codecov.io/github/bratkartoffel/swing-components?branch=develop)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b6f49ded296343cfb27025731ed367c6)](https://www.codacy.com/app/bratkartoffel/swing-components?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bratkartoffel/swing-components&amp;utm_campaign=Badge_Grade)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://doge.mit-license.org)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbratkartoffel%2Fswing-components.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbratkartoffel%2Fswing-components?ref=badge_shield)
 
 
 Some swing components I needed for several projects.
@@ -76,3 +77,7 @@ Screenshots:
 
 ![Example german](doc/demo_de.png)
 ![Example us](doc/demo_us.png)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbratkartoffel%2Fswing-components.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbratkartoffel%2Fswing-components?ref=badge_large)
